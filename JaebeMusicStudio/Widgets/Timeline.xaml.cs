@@ -41,7 +41,26 @@ namespace JaebeMusicStudio.Widgets
 
         private void openFileSampleButton_Click(object sender, RoutedEventArgs e)
         {
+            var dialog = new Microsoft.Win32.OpenFileDialog();
+            dialog.Filter = "pliki dźwiękowe|wav.*,wave.*,mp3.*|Wszystkie Pliki|*.*";
+            dialog.ShowDialog();
+            try
+            {
+                if (dialog.FileName != "")
+                {
 
+                    string[] explode = dialog.FileName.Split('.');
+                    Sound.SampledSound.soundFormat format = Sound.SampledSound.soundFormat.wave;
+                    if (explode.Last() == "mp3")
+                        format = Sound.SampledSound.soundFormat.mp3;
+                    var stream = new System.IO.FileStream(dialog.FileName, System.IO.FileMode.Open);
+                    var ss = new Sound.SampledSound(stream, format);
+                }
+            }
+            catch
+            {
+                MainWindow.error("Błąd otwarcia pliku");
+            }
         }
     }
 }

@@ -35,5 +35,9 @@ namespace JaebeMusicStudio
             viewerThread.SetApartmentState(ApartmentState.STA); // needs to be STA or throws exception
             viewerThread.Start();
         }
+        public static void error(string message)
+        {
+            MessageBox.Show(message);
+        }
     }
 }
