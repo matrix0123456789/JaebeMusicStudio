@@ -25,7 +25,15 @@ namespace JaebeMusicStudio.UI
         public ButtonPretty()
         {
             InitializeComponent();
+            button.Click += Click_proxy;
         }
+
+        private void Click_proxy(object sender, RoutedEventArgs e)
+        {
+            if (Click != null)
+                Click(this, e);
+        }
+
         [Bindable(true)]
         public Object Text
         {
@@ -51,5 +59,7 @@ namespace JaebeMusicStudio.UI
                var a= button.FontFamily.Source;
             }
         }
+        [Bindable(true)]
+        public event RoutedEventHandler Click;
     }
 }
