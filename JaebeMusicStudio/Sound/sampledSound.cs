@@ -27,7 +27,7 @@ namespace JaebeMusicStudio.Sound
         }
         public enum soundFormat
         {
-            mp3,wave
+            mp3, wave
         }
         BinaryReader startMP3()
         {
@@ -40,12 +40,14 @@ namespace JaebeMusicStudio.Sound
         }
         BinaryReader startWave()
         {
-            var reader= new BinaryReader(stream);
+            var reader = new BinaryReader(stream);
             reader.BaseStream.Position = 22;
             channels = reader.ReadUInt16();
-            sampleRate = reader.ReadUInt32(); if (channels == 0 || sampleRate == 0)
-
-            { MessageBox.Show("Nieprawidłowy plik", "Bląd", MessageBoxButton.OK, MessageBoxImage.Error); }
+            sampleRate = reader.ReadUInt32();
+            if (channels == 0 || sampleRate == 0)
+            {
+                MessageBox.Show("Nieprawidłowy plik", "Bląd", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
             bitrate = (ushort)(8 * reader.ReadInt32() / sampleRate / channels);
 
             reader.BaseStream.Position = 44;
@@ -80,7 +82,7 @@ namespace JaebeMusicStudio.Sound
                 for (long i = 0; i < length; i++)
                 {
                     for (ushort c = 0; c < channels; c++)
-                        wave[c, i] = data.ReadByte() / ( 128f);
+                        wave[c, i] = data.ReadByte() / (128f);
                 }
             }
         }

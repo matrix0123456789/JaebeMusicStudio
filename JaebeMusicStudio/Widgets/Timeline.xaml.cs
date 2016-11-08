@@ -42,7 +42,7 @@ namespace JaebeMusicStudio.Widgets
         private void openFileSampleButton_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new Microsoft.Win32.OpenFileDialog();
-            dialog.Filter = "pliki dźwiękowe|wav.*,wave.*,mp3.*|Wszystkie Pliki|*.*";
+            dialog.Filter = "pliki dźwiękowe|*.wav,*.wave,*.mp3|Wszystkie Pliki|*.*";
             dialog.ShowDialog();
             try
             {

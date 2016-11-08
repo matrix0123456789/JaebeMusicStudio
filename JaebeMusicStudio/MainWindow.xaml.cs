@@ -32,12 +32,37 @@ namespace JaebeMusicStudio
                 System.Windows.Threading.Dispatcher.Run();
             });
             windowsThreads.Add(viewerThread);
+            viewerThread.Name = "PseudoWindow Thread";
             viewerThread.SetApartmentState(ApartmentState.STA); // needs to be STA or throws exception
             viewerThread.Start();
         }
         public static void error(string message)
         {
             MessageBox.Show(message);
+        }
+
+        private void saveButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.SaveFileDialog();
+            dialog.Filter = "pliki JMS|*.jms";
+            dialog.ShowDialog();
+
+            if (dialog.FileName != "")
+            {
+                Sound.Project.current.serialize(dialog.FileName);
+            }
+        }
+
+        private void openButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog();
+            dialog.Filter = "pliki JMS|*.jms";
+            dialog.ShowDialog();
+
+            if (dialog.FileName != "")
+            {
+                Sound.Project.current.open(dialog.FileName);
+            }
         }
     }
 }
