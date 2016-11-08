@@ -63,8 +63,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Sound\OneSample.cs" />
     <Compile Include="Sound\Project.cs" />
     <Compile Include="Sound\SampledSound.cs" />
+    <Compile Include="Sound\SoundElement.cs" />
+    <Compile Include="Sound\SoundLine.cs" />
     <Compile Include="Sound\Track.cs" />
     <Compile Include="UI\ButtonPretty.xaml.cs">
       <DependentUpon>ButtonPretty.xaml</DependentUpon>

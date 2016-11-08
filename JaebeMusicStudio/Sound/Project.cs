@@ -15,8 +15,10 @@ namespace JaebeMusicStudio.Sound
     class Project
     {
         float _tempo = 120;
+        uint _sampleRate = 48000;
         public float tempo { get { return tempo; } }
         public static Project current = null;
+       public List<SoundLine> lines = new List<SoundLine>() { new SoundLine() };
         List<Track> tracks = new List<Track>();
         /// <summary>
         /// Event: new track was added. First parameter is index of new track;
@@ -36,7 +38,13 @@ namespace JaebeMusicStudio.Sound
 
             document.LoadXml("<?xml version=\"1.0\" encoding=\"UTF-8\"?><project></project>");
 
-            var zip=ZipFile.Create(path);
+            foreach(var x in lines)
+            {
+                x.serialize(document);
+            }
+
+
+            var zip = ZipFile.Create(path);
             CustomStaticDataSource sds = new CustomStaticDataSource();
             var str = new MemoryStream();
             var writer = new StreamWriter(str);
@@ -51,7 +59,7 @@ namespace JaebeMusicStudio.Sound
             zip.Close();
         }
         public void open(string path)
-        {
+        {//todo robic nowy obiekt project przy otwarciu
             var read = new System.IO.FileStream(path, FileMode.Open);
 
             read.Position = 0;
@@ -73,7 +81,25 @@ namespace JaebeMusicStudio.Sound
         }
         void loadXML(XmlDocument document)
         {
+            var lines = document.GetElementsByTagName("SoundLine");
+            foreach (XmlNode line in lines)
+            {
+                this.lines.Add(new SoundLine(line));
+            }
+            int count = 0;
+            foreach (XmlNode line in lines)
+            {
+                foreach (XmlNode input in line.ChildNodes)
+                {
+                    this.lines[count].inputs.Add(new SoundLineConnection());//todo zczytywać dane
+                }
+                count++;
+            }
 
+        }
+        public float countSamples(float input)
+        {
+            return input * tempo / 60f * _sampleRate;
         }
         class CustomStaticDataSource : IStaticDataSource
         {

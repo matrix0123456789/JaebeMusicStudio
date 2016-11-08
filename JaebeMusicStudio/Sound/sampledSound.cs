@@ -12,7 +12,7 @@ namespace JaebeMusicStudio.Sound
     class SampledSound
     {
         private FileStream stream;
-        ushort channels = 1;
+        public ushort channels = 1;
         uint sampleRate;
         ushort bitrate;
         float[,] wave;
