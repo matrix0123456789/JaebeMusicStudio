@@ -37,6 +37,11 @@ namespace JaebeMusicStudio.Sound
         {
             long samples = (long)Project.current.countSamples(length);
             var ret = new float[sample.channels, samples];
+            for (var i = 0; i < samples; i++)//todo koniec sampla
+            {//todo mono w samplu
+                ret[0, i] = sample.wave[0, (int)(((innerOffset + start) * Project.current.tempo / 60f + (float)i / Project.current.sampleRate) * sample.sampleRate)];
+                ret[1, i] = sample.wave[1, (int)(((innerOffset + start) * Project.current.tempo / 60f + (float)i / Project.current.sampleRate) * sample.sampleRate)];
+            }
             return ret;
         }
         public void serialize(XmlNode node)

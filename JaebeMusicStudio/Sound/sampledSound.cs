@@ -14,9 +14,9 @@ namespace JaebeMusicStudio.Sound
         private FileStream stream;
         public string path = null;
         public ushort channels = 1;
-        uint sampleRate;
+       public uint sampleRate;
         ushort bitrate;
-        float[,] wave;
+        public float[,] wave;
         static Dictionary<string, SampledSound> filesByPaths = new Dictionary<string, SampledSound>();
         public SampledSound(FileStream stream, soundFormat format)
         {

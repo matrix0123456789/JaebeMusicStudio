@@ -71,28 +71,36 @@ namespace JaebeMusicStudio.Sound
         {
             this.renderingStart = position;
             this.renderingLength = renderLength;
-            foreach(var line in lines)
+            foreach (var line in lines)
             {
                 line.cleanToRender((int)countSamples(renderingLength));
             }
-            foreach(var track in tracks)
+            foreach (var track in tracks)
             {
-                foreach(var element in track.elements)
+                foreach (var element in track.elements)
                 {
                     if (element.offset < position + renderingLength && element.offset + element.length > position)
                     {
                         element.soundLine.currentToRender++;
                         System.Threading.ThreadPool.QueueUserWorkItem((el) =>
                         {
-                            var rand = new Random();
-                            var rendered = new float[2, 3000];
-                            for (var i = 0; i < 3000; i++)
-                                rendered[0, i] = (float)rand.NextDouble();
-                            (el as SoundElement).soundLine.rendered(0,rendered);
+                            var renderStart = (el as SoundElement).offset - position;
+                            if (renderingStart >= 0)
+                            {
+                                var rendered = (el as SoundElement).getSound(renderingStart, renderingLength);
+                                (el as SoundElement).soundLine.rendered(0, rendered);
+                            }
+                            else
+                            {
+                                var rendered = (el as SoundElement).getSound(0, renderingLength);
+                                (el as SoundElement).soundLine.rendered((int)countSamples(-renderingStart), rendered);
+                            }
                         }, element);
                     }
                 }
             }
+            if (lines[0].currentToRender == 0)
+                returnedSound(lines[0].lastRendered);
         }
 
         public void serialize(string path)
@@ -161,7 +169,7 @@ namespace JaebeMusicStudio.Sound
             {
                 Player.returnedSound(data);
 
-                
+
             }
         }
         public float countSamples(float input)

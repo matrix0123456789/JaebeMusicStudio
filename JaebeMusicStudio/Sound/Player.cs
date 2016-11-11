@@ -42,11 +42,12 @@ namespace JaebeMusicStudio.Sound
 
         static void render(object a = null)
         {
-            if (!rendering&&bufor.BufferedDuration.TotalMilliseconds < renderPeriod)
+            if (!rendering&&bufor.BufferedDuration.TotalMilliseconds < renderPeriod*2)
             {
                 rendering = true;
-                var renderLength = (((float)renderPeriod) * Project.current.tempo / 60f - bufor.BufferedDuration.TotalMilliseconds) / 1000f;
+                var renderLength = (((float)renderPeriod)*2 * Project.current.tempo / 60f - bufor.BufferedDuration.TotalMilliseconds) / 1000f;
                 Project.current.render(position, (float)renderLength);
+                position += (float)renderLength;
             }
         }
         static public void returnedSound(float[,] sound)
