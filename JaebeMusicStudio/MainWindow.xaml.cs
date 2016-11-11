@@ -61,7 +61,7 @@ namespace JaebeMusicStudio
 
             if (dialog.FileName != "")
             {
-                Sound.Project.current.open(dialog.FileName);
+                Sound.Project.current=new Sound.Project(dialog.FileName);
             }
         }
     }

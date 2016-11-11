@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace JaebeMusicStudio.Sound
 {
@@ -20,5 +21,6 @@ namespace JaebeMusicStudio.Sound
         /// <returns></returns>
         float[,] getSound(float start, float length);
         float offset { get; set; }
+        void serialize(XmlNode node);
     }
 }

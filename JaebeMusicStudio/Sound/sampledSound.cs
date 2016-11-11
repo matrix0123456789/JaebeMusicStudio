@@ -12,15 +12,28 @@ namespace JaebeMusicStudio.Sound
     class SampledSound
     {
         private FileStream stream;
+        public string path = null;
         public ushort channels = 1;
         uint sampleRate;
         ushort bitrate;
         float[,] wave;
+        static Dictionary<string, SampledSound> filesByPaths = new Dictionary<string, SampledSound>();
         public SampledSound(FileStream stream, soundFormat format)
         {
             this.stream = stream;
             BinaryReader streamRaw;
             if (format == soundFormat.mp3)
+                streamRaw = startMP3();
+            else streamRaw = startWave();
+            read(streamRaw);
+        }
+        public SampledSound(string path)
+        {
+            this.path = path;
+            var explode = path.Split('.');
+            stream = new System.IO.FileStream(path, System.IO.FileMode.Open);
+            BinaryReader streamRaw;
+            if (explode.Last() == "mp3")
                 streamRaw = startMP3();
             else streamRaw = startWave();
             read(streamRaw);
@@ -38,6 +51,19 @@ namespace JaebeMusicStudio.Sound
             bitrate = (ushort)convertedStream.WaveFormat.BitsPerSample;
             return new BinaryReader(convertedStream);
         }
+
+        internal static SampledSound FindByUrl(string url)
+        {
+            if (filesByPaths.ContainsKey(url))
+                return filesByPaths[url];
+            else
+            {
+                var file = new SampledSound(url);
+                filesByPaths[url] = file;
+                return file;
+            }
+        }
+
         BinaryReader startWave()
         {
             var reader = new BinaryReader(stream);
@@ -57,7 +83,7 @@ namespace JaebeMusicStudio.Sound
         {
             if (bitrate == 32)
             {
-                long length = (data.BaseStream.Length - data.BaseStream.Position) / 4;
+                long length = (data.BaseStream.Length - data.BaseStream.Position) / 4/ channels;
                 wave = new float[channels, length];
                 for (long i = 0; i < length; i++)
                 {
@@ -67,7 +93,7 @@ namespace JaebeMusicStudio.Sound
             }
             else if (bitrate == 16)
             {
-                long length = (data.BaseStream.Length - data.BaseStream.Position) / 2;
+                long length = (data.BaseStream.Length - data.BaseStream.Position) / 2/ channels;
                 wave = new float[channels, length];
                 for (long i = 0; i < length; i++)
                 {
@@ -77,7 +103,7 @@ namespace JaebeMusicStudio.Sound
             }
             else if (bitrate == 8)
             {
-                long length = (data.BaseStream.Length - data.BaseStream.Position);
+                long length = (data.BaseStream.Length - data.BaseStream.Position)/ channels;
                 wave = new float[channels, length];
                 for (long i = 0; i < length; i++)
                 {
