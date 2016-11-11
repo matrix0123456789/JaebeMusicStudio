@@ -17,10 +17,15 @@ namespace JaebeMusicStudio.Sound
     {
         float _tempo = 120;
         uint _sampleRate = 48000;
-        public float tempo { get { return tempo; } }
+        public float tempo { get { return _tempo; } }
+        public float sampleRate { get { return _sampleRate; } }
         public static Project current = null;
         public List<SoundLine> lines = new List<SoundLine>() { };
         List<Track> tracks = new List<Track>();
+        Queue<SoundElement> renderingQueue = new Queue<SoundElement>();
+        private float renderingStart;
+        private float renderingLength;
+
         /// <summary>
         /// Event: new track was added. First parameter is index of new track;
         /// </summary>
@@ -61,6 +66,35 @@ namespace JaebeMusicStudio.Sound
             if (trackAdded != null)
                 trackAdded(number, newTrack);
         }
+
+        internal void render(float position, float renderLength)
+        {
+            this.renderingStart = position;
+            this.renderingLength = renderLength;
+            foreach(var line in lines)
+            {
+                line.cleanToRender((int)countSamples(renderingLength));
+            }
+            foreach(var track in tracks)
+            {
+                foreach(var element in track.elements)
+                {
+                    if (element.offset < position + renderingLength && element.offset + element.length > position)
+                    {
+                        element.soundLine.currentToRender++;
+                        System.Threading.ThreadPool.QueueUserWorkItem((el) =>
+                        {
+                            var rand = new Random();
+                            var rendered = new float[2, 3000];
+                            for (var i = 0; i < 3000; i++)
+                                rendered[0, i] = (float)rand.NextDouble();
+                            (el as SoundElement).soundLine.rendered(0,rendered);
+                        }, element);
+                    }
+                }
+            }
+        }
+
         public void serialize(string path)
         {
             var document = new XmlDocument();
@@ -119,6 +153,15 @@ namespace JaebeMusicStudio.Sound
             foreach (XmlNode track in tracks)
             {
                 this.tracks.Add(new Track(track));
+            }
+        }
+        public void returnedSound(float[,] data)
+        {
+            if (Player.status == Player.Status.playing || Player.status == Player.Status.paused)
+            {
+                Player.returnedSound(data);
+
+                
             }
         }
         public float countSamples(float input)

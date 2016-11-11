@@ -64,6 +64,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Sound\OneSample.cs" />
+    <Compile Include="Sound\Player.cs" />
     <Compile Include="Sound\Project.cs" />
     <Compile Include="Sound\SampledSound.cs" />
     <Compile Include="Sound\SoundElement.cs" />

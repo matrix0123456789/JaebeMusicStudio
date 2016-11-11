@@ -11,14 +11,19 @@ namespace JaebeMusicStudio.Sound
     class OneSample : SoundElement
     {
         SampledSound sample;
-        float innerOffset, length, speed;
+        float innerOffset, speed;
+        public float length { get; set; }
         public float offset { get; set; }
+        public SoundLine soundLine { get; set; }
         public OneSample(XmlNode element)
         {
+            //todo tymczasowo
+            soundLine = Project.current.lines[0];
 
+
+            length = float.Parse(element.Attributes["length"].Value, CultureInfo.InvariantCulture);
             offset = float.Parse(element.Attributes["offset"].Value, CultureInfo.InvariantCulture);
             innerOffset = float.Parse(element.Attributes["innerOffset"].Value, CultureInfo.InvariantCulture);
-            length = float.Parse(element.Attributes["length"].Value, CultureInfo.InvariantCulture);
             speed = float.Parse(element.Attributes["speed"].Value, CultureInfo.InvariantCulture);
             sample = SampledSound.FindByUrl(element.Attributes["src"].Value);
         }

@@ -64,5 +64,10 @@ namespace JaebeMusicStudio
                 Sound.Project.current=new Sound.Project(dialog.FileName);
             }
         }
+
+        private void playButton_Click(object sender, RoutedEventArgs e)
+        {
+            Sound.Player.play();
+        }
     }
 }

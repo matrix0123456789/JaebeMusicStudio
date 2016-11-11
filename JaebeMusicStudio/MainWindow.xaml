@@ -11,6 +11,7 @@
         <Grid Name="windowArea">
             <UI:ButtonPretty Height="20" Margin="0,10,10,0" VerticalAlignment="Top" FontFamily="/fonts/jms.ttf#jms" HorizontalAlignment="Left" Width="20" Icon="e800" x:Name="saveButton" Click="saveButton_Click"></UI:ButtonPretty>
             <UI:ButtonPretty Height="20" Margin="0,60,10,0" VerticalAlignment="Top" FontFamily="/fonts/jms.ttf#jms" HorizontalAlignment="Left" Width="20" Icon="e800" x:Name="openButton" Click="openButton_Click"></UI:ButtonPretty>
+            <UI:ButtonPretty Height="20" Margin="50,10,0,0" VerticalAlignment="Top" FontFamily="/fonts/jms.ttf#jms" HorizontalAlignment="Left" Width="20" Icon="e800" x:Name="playButton" Click="playButton_Click"/>
         </Grid>
     </Grid>
 </Window>
