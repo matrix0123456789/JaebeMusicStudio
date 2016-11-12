@@ -100,26 +100,33 @@ namespace JaebeMusicStudio.Sound
                 {
                     if (element.offset < position + renderingLength && element.offset + element.length > position)
                     {
-                        element.soundLine.currentToRender++;
-                        System.Threading.ThreadPool.QueueUserWorkItem((el) =>
+                        lock (element.soundLine)
                         {
-                            var renderStart = (el as SoundElement).offset - position;
-                            if (renderStart >= 0)//you must wait to start playing
+                            element.soundLine.currentToRender++;
+                            System.Threading.ThreadPool.QueueUserWorkItem((el) =>
                             {
-                                var rendered = (el as SoundElement).getSound(0, renderingLength - renderStart);
-                                (el as SoundElement).soundLine.rendered((int)countSamples(renderingStart), rendered);
-                            }
-                            else
+                                var renderStart = (el as SoundElement).offset - position;
+                                if (renderStart >= 0)//you must wait to start playing
                             {
-                                var rendered = (el as SoundElement).getSound(-renderStart, renderingLength);
-                                (el as SoundElement).soundLine.rendered(0, rendered);
-                            }
-                        }, element);
+                                    var rendered = (el as SoundElement).getSound(0, renderingLength - renderStart);
+                                    (el as SoundElement).soundLine.rendered((int)countSamples(renderingStart), rendered);
+                                }
+                                else
+                                {
+                                    var rendered = (el as SoundElement).getSound(-renderStart, renderingLength);
+                                    (el as SoundElement).soundLine.rendered(0, rendered);
+                                }
+                            }, element);
+                        }
                     }
                 }
             }
-            if (lines[0].currentToRender == 0)
-                returnedSound(lines[0].lastRendered);
+            //if (lines[0].currentToRender == 0)
+            //    returnedSound(lines[0].lastRendered);
+            foreach (var line in lines)
+            {
+                line.checkIfReady();
+            }
         }
 
         public void serialize(string path)
@@ -170,7 +177,10 @@ namespace JaebeMusicStudio.Sound
                         var volume = 1f;
                         if (input.Attributes["volume"] != null)
                             volume = float.Parse(input.Attributes["volume"].Value, CultureInfo.InvariantCulture);
-                        this.lines[count].inputs.Add(new SoundLineConnection(int.Parse(input.Attributes["lineNumber"].Value), volume));//todo zczytywać dane
+                        var otherLineNumber = int.Parse(input.Attributes["lineNumber"].Value);
+                        var connection = new SoundLineConnection(otherLineNumber, this.lines[count], volume);
+                        this.lines[otherLineNumber].inputs.Add(connection);
+                        this.lines[count].outputs.Add(connection);
                     }
                     catch { }
                 }

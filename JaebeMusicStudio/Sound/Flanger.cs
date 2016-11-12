@@ -95,9 +95,8 @@ namespace JaebeMusicStudio.Sound
                     maxAmplitude -= history[historyPosition].GetLength(1);
                 } while (maxAmplitude >= 0);
 
-
-
-                history.RemoveRange(0, historyPosition - 1);
+                if (historyPosition - 1 > 0)
+                    history.RemoveRange(0, historyPosition - 1);
 
             }
         }

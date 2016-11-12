@@ -14,6 +14,7 @@ namespace JaebeMusicStudio.Sound
         /// other lines, that are connected to this
         /// </summary>
         public List<SoundLineConnection> inputs = new List<SoundLineConnection>();
+        public List<SoundLineConnection> outputs = new List<SoundLineConnection>();
         public List<Effect> effects = new List<Effect>();
         public int currentToRender = 0;
         public float[,] lastRendered;
@@ -44,7 +45,7 @@ namespace JaebeMusicStudio.Sound
             foreach (var input in inputs)
             {
                 var node2 = document.CreateElement("SoundLineInput");
-                node2.SetAttribute("lineNumber", Project.current.lines.IndexOf(input.line).ToString());
+                node2.SetAttribute("lineNumber", Project.current.lines.IndexOf(input.output).ToString());
                 node2.SetAttribute("volume", input.volume.ToString(CultureInfo.InvariantCulture));
                 node.AppendChild(node2);
             }
@@ -52,58 +53,103 @@ namespace JaebeMusicStudio.Sound
         }
         public void cleanToRender(int samples)
         {
-            currentToRender = 0;
+            currentToRender = inputs.Count;
             lastRendered = new float[2, samples];
         }
         public void rendered(int offset, float[,] data)
-        {//todo optymalizacja oofes=0 i 1 
-            if (volume != 0)
+        {
+            lock (this)
             {
-                var length = data.GetLength(1);
-                if (length + offset > lastRendered.GetLength(1))
-                    length = lastRendered.GetLength(1) - offset;
-                for (int i = 0; i < length; i++)
-                {
-                    lastRendered[0, i + offset] = data[0, i];
-                    lastRendered[1, i + offset] = data[1, i];
-                }
-            }
-            currentToRender--;
-            if (currentToRender == 0)
-            {
-                //todo dane międzyliniowe
-                var sound = lastRendered;
                 if (volume != 0)
                 {
-                    if (volume != 1)
+                    var length = data.GetLength(1);
+                    if (length + offset > lastRendered.GetLength(1))
+                        length = lastRendered.GetLength(1) - offset;
+                    if (offset == 0)
                     {
-                        var length = data.GetLength(1);
-                        for (int i = 0; i < length; i++)
+                        if (data.GetLength(0) == 1)
                         {
-                            lastRendered[0, i] *= volume;
-                            lastRendered[1, i] *= volume;
+                            for (int i = 0; i < length; i++)
+                            {
+                                lastRendered[0, i] = lastRendered[1, i] = data[0, i];
+                            }
+                        }
+                        else {
+                            for (int i = 0; i < length; i++)
+                            {
+                                lastRendered[0, i] = data[0, i];
+                                lastRendered[1, i] = data[1, i];
+                            }
                         }
                     }
-                    foreach (var effect in effects)
+                    else
                     {
-                        sound = effect.doFilter(sound);
+                        if (data.GetLength(0) == 1)
+                        {
+                            for (int i = 0; i < length; i++)
+                            {
+                                lastRendered[0, i + offset] = lastRendered[1, i + offset] = data[0, i];
+                            }
+                        }
+                        else {
+                            for (int i = 0; i < length; i++)
+                            {
+                                lastRendered[0, i + offset] = data[0, i];
+                                lastRendered[1, i + offset] = data[1, i];
+                            }
+                        }
                     }
                 }
-                if (this == Project.current.lines[0])
+                currentToRender--;
+            }
+                checkIfReady();
+           
+        }
+        public void checkIfReady()
+        {
+            lock (this) {
+                if (currentToRender == 0)
                 {
-                    Project.current.returnedSound(sound);
+                    //todo dane międzyliniowe
+                    var sound = lastRendered;
+                    if (volume != 0)
+                    {
+                        if (volume != 1)
+                        {
+                            var length = lastRendered.GetLength(1);
+                            for (int i = 0; i < length; i++)
+                            {
+                                lastRendered[0, i] *= volume;
+                                lastRendered[1, i] *= volume;
+                            }
+                        }
+                        foreach (var effect in effects)
+                        {
+                            sound = effect.doFilter(sound);
+                        }
+                    }
+                    foreach (var output in outputs)
+                    {
+                        output.output.rendered(0, sound);
+                    }
+                    if (this == Project.current.lines[0])
+                    {
+                        Project.current.returnedSound(sound);
+                    }
                 }
             }
         }
     }
-    struct SoundLineConnection
+    class SoundLineConnection
     {
-        public SoundLine line;
+        public SoundLine output;
+        public SoundLine input;
         public float volume;
 
-        public SoundLineConnection(int lineNumber, float volume) : this()
+        public SoundLineConnection(int lineNumberOutput, SoundLine input, float volume)
         {
-            this.line = Project.current.lines[lineNumber];
+            this.output = Project.current.lines[lineNumberOutput];
+            this.input = input;
             this.volume = volume;
         }
     }

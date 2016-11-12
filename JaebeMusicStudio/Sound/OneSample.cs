@@ -44,12 +44,12 @@ namespace JaebeMusicStudio.Sound
                 samples = (long)((sample.wave.GetLength(1) - 1 - startOffset) / samplesRatio);
 
             if (sample.channels == 1)
-                for (var i = 0; i < samples; i++)//todo koniec sampla
+                for (var i = 0; i < samples; i++)
                 {
                     ret[0, i] = sample.wave[0, (int)(startOffset + (float)i * samplesRatio)];
                 }
             else
-                for (var i = 0; i < samples; i++)//todo koniec sampla
+                for (var i = 0; i < samples; i++)
                 {
                     var positionInside = (int)(startOffset + (float)i * samplesRatio);
                     ret[0, i] = sample.wave[0, positionInside];
