@@ -71,14 +71,15 @@ namespace JaebeMusicStudio.Sound
                         {
                             for (int i = 0; i < length; i++)
                             {
-                                lastRendered[0, i] = lastRendered[1, i] = data[0, i];
+                                lastRendered[0, i] += data[0, i];
+                                lastRendered[1, i] += data[0, i];
                             }
                         }
                         else {
                             for (int i = 0; i < length; i++)
                             {
-                                lastRendered[0, i] = data[0, i];
-                                lastRendered[1, i] = data[1, i];
+                                lastRendered[0, i] += data[0, i];
+                                lastRendered[1, i] += data[1, i];
                             }
                         }
                     }
@@ -88,26 +89,28 @@ namespace JaebeMusicStudio.Sound
                         {
                             for (int i = 0; i < length; i++)
                             {
-                                lastRendered[0, i + offset] = lastRendered[1, i + offset] = data[0, i];
+                                lastRendered[0, i + offset] += data[0, i];
+                                lastRendered[1, i + offset] += data[0, i];
                             }
                         }
                         else {
                             for (int i = 0; i < length; i++)
                             {
-                                lastRendered[0, i + offset] = data[0, i];
-                                lastRendered[1, i + offset] = data[1, i];
+                                lastRendered[0, i + offset] += data[0, i];
+                                lastRendered[1, i + offset] += data[1, i];
                             }
                         }
                     }
                 }
                 currentToRender--;
             }
-                checkIfReady();
-           
+            checkIfReady();
+
         }
         public void checkIfReady()
         {
-            lock (this) {
+            lock (this)
+            {
                 if (currentToRender == 0)
                 {
                     //todo dane międzyliniowe
