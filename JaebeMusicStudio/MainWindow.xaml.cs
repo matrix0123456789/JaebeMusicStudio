@@ -35,6 +35,19 @@ namespace JaebeMusicStudio
             viewerThread.Name = "PseudoWindow Thread";
             viewerThread.SetApartmentState(ApartmentState.STA); // needs to be STA or throws exception
             viewerThread.Start();
+
+            Thread t2 = new Thread(delegate ()
+            {
+                while (true)
+                {
+                    Thread.Sleep(10);
+                    Dispatcher.Invoke(() =>
+                    {
+                        label.Content = Sound.Player.position;
+                    });
+                }
+            });
+            t2.Start();
         }
         public static void error(string message)
         {
@@ -68,6 +81,12 @@ namespace JaebeMusicStudio
         private void playButton_Click(object sender, RoutedEventArgs e)
         {
             Sound.Player.play();
+        }
+
+        private void rewindButton_Click(object sender, RoutedEventArgs e)
+        {
+
+            Sound.Player.setPosition(0);
         }
     }
 }

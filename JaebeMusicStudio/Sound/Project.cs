@@ -85,15 +85,15 @@ namespace JaebeMusicStudio.Sound
                         System.Threading.ThreadPool.QueueUserWorkItem((el) =>
                         {
                             var renderStart = (el as SoundElement).offset - position;
-                            if (renderingStart >= 0)
+                            if (renderStart >= 0)//you must wait to start playing
                             {
-                                var rendered = (el as SoundElement).getSound(renderingStart, renderingLength);
-                                (el as SoundElement).soundLine.rendered(0, rendered);
+                                var rendered = (el as SoundElement).getSound(0, renderingLength- renderStart);
+                                (el as SoundElement).soundLine.rendered((int)countSamples(renderingStart), rendered);
                             }
                             else
                             {
-                                var rendered = (el as SoundElement).getSound(0, renderingLength);
-                                (el as SoundElement).soundLine.rendered((int)countSamples(-renderingStart), rendered);
+                                var rendered = (el as SoundElement).getSound(-renderStart, renderingLength);
+                                (el as SoundElement).soundLine.rendered(0, rendered);
                             }
                         }, element);
                     }
@@ -174,7 +174,7 @@ namespace JaebeMusicStudio.Sound
         }
         public float countSamples(float input)
         {
-            return input * tempo / 60f * _sampleRate;
+            return input / tempo * 60f * _sampleRate;
         }
         class CustomStaticDataSource : IStaticDataSource
         {

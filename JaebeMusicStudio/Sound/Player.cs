@@ -13,7 +13,7 @@ namespace JaebeMusicStudio.Sound
         static public Status status = Status.paused;
         static public float position;
         static bool rendering = false;
-        static int renderPeriod = 10;
+        static int renderPeriod = 100;
         static System.Threading.Timer renderingTimer;
         public enum Status { fileRendering, playing, paused }
         public static BufferedWaveProvider bufor = new BufferedWaveProvider(new WaveFormat((int)Sound.Project.current.sampleRate, 2));
@@ -39,13 +39,17 @@ namespace JaebeMusicStudio.Sound
                 renderingTimer.Dispose();
             }
         }
+        public static void setPosition(float position)
+        {
+            Player.position = position;
+        }
 
         static void render(object a = null)
         {
-            if (!rendering&&bufor.BufferedDuration.TotalMilliseconds < renderPeriod*2)
+            if (!rendering&&bufor.BufferedDuration.TotalMilliseconds < renderPeriod)
             {
                 rendering = true;
-                var renderLength = (((float)renderPeriod)*2 * Project.current.tempo / 60f - bufor.BufferedDuration.TotalMilliseconds) / 1000f;
+                var renderLength = (((float)renderPeriod*2 - bufor.BufferedDuration.TotalMilliseconds) * Project.current.tempo / 60f ) / 1000f;
                 Project.current.render(position, (float)renderLength);
                 position += (float)renderLength;
             }
