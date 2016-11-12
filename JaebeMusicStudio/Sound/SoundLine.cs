@@ -14,6 +14,7 @@ namespace JaebeMusicStudio.Sound
         /// other lines, that are connected to this
         /// </summary>
         public List<SoundLineConnection> inputs = new List<SoundLineConnection>();
+        public List<Effect> effects = new List<Effect>();
         public int currentToRender = 0;
         public float[,] lastRendered;
         public float volume;
@@ -21,10 +22,18 @@ namespace JaebeMusicStudio.Sound
         public SoundLine()
         {
         }
-        public SoundLine(XmlNode xml)
+        public SoundLine(XmlElement xml)
         {
             if (xml.Attributes["volume"] != null)
                 volume = float.Parse(xml.Attributes["volume"].Value, CultureInfo.InvariantCulture);
+            foreach(XmlElement x in xml.ChildNodes)
+            {
+                switch(x.Name){
+                    case "Flanger":
+                        effects.Add(new Flanger(x));
+                    break;
+                }
+            }
         }
 
         internal void serialize(XmlDocument document)

@@ -137,14 +137,14 @@ namespace JaebeMusicStudio.Sound
         void loadXML(XmlDocument document)
         {
             var lines = document.GetElementsByTagName("SoundLine");
-            foreach (XmlNode line in lines)
+            foreach (XmlElement line in lines)
             {
                 this.lines.Add(new SoundLine(line));
             }
             int count = 0;
-            foreach (XmlNode line in lines)
+            foreach (XmlElement line in lines)
             {
-                foreach (XmlNode input in line.ChildNodes)
+                foreach (XmlElement input in line.ChildNodes)
                 {
                     try
                     {

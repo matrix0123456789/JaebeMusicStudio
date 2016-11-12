@@ -63,6 +63,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Sound\Effect.cs" />
+    <Compile Include="Sound\Flanger.cs" />
     <Compile Include="Sound\OneSample.cs" />
     <Compile Include="Sound\Player.cs" />
     <Compile Include="Sound\Project.cs" />
