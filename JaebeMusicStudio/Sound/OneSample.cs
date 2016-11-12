@@ -35,13 +35,26 @@ namespace JaebeMusicStudio.Sound
 
         public float[,] getSound(float start, float length)
         {
-            long samples = (long)Project.current.countSamples(length);
-            var ret = new float[sample.channels, samples];
-            for (var i = 0; i < samples; i++)//todo koniec sampla
-            {//todo mono w samplu
-                ret[0, i] = sample.wave[0, (int)(((innerOffset + start) / Project.current.tempo * 60f + (float)i / Project.current.sampleRate) * sample.sampleRate)];
-                ret[1, i] = sample.wave[1, (int)(((innerOffset + start) / Project.current.tempo * 60f + (float)i / Project.current.sampleRate) * sample.sampleRate)];
-            }
+            long samples = (long)Project.current.countSamples(length);//how many samples you need on output
+            var ret = new float[sample.channels, samples];//sound that will be returned
+            var startOffset = ((innerOffset + start) / Project.current.tempo * 60f) * sample.sampleRate;//start of reading in sample
+            var samplesRatio = sample.sampleRate / Project.current.sampleRate;
+
+            if ((int)(startOffset + (float)samples * samplesRatio) >= sample.wave.GetLength(1))//end of sample
+                samples = (long)((sample.wave.GetLength(1) - 1 - startOffset) / samplesRatio);
+
+            if (sample.channels == 1)
+                for (var i = 0; i < samples; i++)//todo koniec sampla
+                {
+                    ret[0, i] = sample.wave[0, (int)(startOffset + (float)i * samplesRatio)];
+                }
+            else
+                for (var i = 0; i < samples; i++)//todo koniec sampla
+                {
+                    var positionInside = (int)(startOffset + (float)i * samplesRatio);
+                    ret[0, i] = sample.wave[0, positionInside];
+                    ret[1, i] = sample.wave[1, positionInside];
+                }
             return ret;
         }
         public void serialize(XmlNode node)
