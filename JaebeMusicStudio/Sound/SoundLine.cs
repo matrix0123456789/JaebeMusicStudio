@@ -26,12 +26,13 @@ namespace JaebeMusicStudio.Sound
         {
             if (xml.Attributes["volume"] != null)
                 volume = float.Parse(xml.Attributes["volume"].Value, CultureInfo.InvariantCulture);
-            foreach(XmlElement x in xml.ChildNodes)
+            foreach (XmlElement x in xml.ChildNodes)
             {
-                switch(x.Name){
+                switch (x.Name)
+                {
                     case "Flanger":
                         effects.Add(new Flanger(x));
-                    break;
+                        break;
                 }
             }
         }
@@ -56,21 +57,41 @@ namespace JaebeMusicStudio.Sound
         }
         public void rendered(int offset, float[,] data)
         {//todo optymalizacja oofes=0 i 1 
-            var length = data.GetLength(1);
-            if (length + offset > lastRendered.GetLength(1))
-                length = lastRendered.GetLength(1) - offset;
-            for (int i=0;i< length; i++)
+            if (volume != 0)
             {
-                lastRendered[0, i + offset] = data[0, i];
-                lastRendered[1, i + offset] = data[1, i];
+                var length = data.GetLength(1);
+                if (length + offset > lastRendered.GetLength(1))
+                    length = lastRendered.GetLength(1) - offset;
+                for (int i = 0; i < length; i++)
+                {
+                    lastRendered[0, i + offset] = data[0, i];
+                    lastRendered[1, i + offset] = data[1, i];
+                }
             }
             currentToRender--;
             if (currentToRender == 0)
             {
                 //todo dane międzyliniowe
+                var sound = lastRendered;
+                if (volume != 0)
+                {
+                    if (volume != 1)
+                    {
+                        var length = data.GetLength(1);
+                        for (int i = 0; i < length; i++)
+                        {
+                            lastRendered[0, i] *= volume;
+                            lastRendered[1, i] *= volume;
+                        }
+                    }
+                    foreach (var effect in effects)
+                    {
+                        sound = effect.doFilter(sound);
+                    }
+                }
                 if (this == Project.current.lines[0])
                 {
-                    Project.current.returnedSound(lastRendered);
+                    Project.current.returnedSound(sound);
                 }
             }
         }
@@ -78,7 +99,7 @@ namespace JaebeMusicStudio.Sound
     struct SoundLineConnection
     {
         public SoundLine line;
-       public float volume;
+        public float volume;
 
         public SoundLineConnection(int lineNumber, float volume) : this()
         {

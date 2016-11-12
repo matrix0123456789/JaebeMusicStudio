@@ -13,7 +13,7 @@ namespace JaebeMusicStudio.Sound
         static public Status status = Status.paused;
         static public float position;
         static bool rendering = false;
-        static int renderPeriod = 10;
+        static int renderPeriod = 15;
         static System.Threading.Thread renderingThread;
         public enum Status { fileRendering, playing, paused }
         public static BufferedWaveProvider bufor = new BufferedWaveProvider(new WaveFormat((int)Sound.Project.current.sampleRate, 2));
@@ -70,8 +70,20 @@ namespace JaebeMusicStudio.Sound
             var data = new byte[sound.Length * 2];
             for (var i = 0; i < sound.GetLength(1); i++)
             {
-                data[i * 4 + 1] = (byte)(sound[0, i] * 127);
-                data[i * 4 + 3] = (byte)(sound[1, i] * 127);
+                var left = (long)(sound[0, i] * 0x8000);
+                var right = (long)(sound[1, i] * 0x8000);
+                if (left > 0x7fff)
+                    left = 0x7fff;
+                if (left < -0x8000)
+                    left = -0x8000;
+                if (right > 0x7fff)
+                    right = 0x7fff;
+                if (right < -0x8000)
+                    right = -0x8000;
+                data[i * 4] = (byte)(left );
+                data[i * 4 + 1] = (byte)((ushort)left >>8);
+                data[i * 4 + 2] = (byte)(right);
+                data[i * 4 + 3] = (byte)((ushort)right >>8);
             }
             bufor.AddSamples(data, 0, sound.Length * 2);
             rendering = false;

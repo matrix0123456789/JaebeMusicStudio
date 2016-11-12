@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -25,11 +26,24 @@ namespace JaebeMusicStudio.Sound
         Queue<SoundElement> renderingQueue = new Queue<SoundElement>();
         private float renderingStart;
         private float renderingLength;
+        static Timer memoryCleaning;
+        static Project()
+        {
+            memoryCleaning = new Timer((o) =>
+            {
+                if (current != null)
+                {
+                    foreach (var x in current.lines)
+                    {
+                        foreach (var y in x.effects)
+                        {
+                            y.cleanMemory();
+                        }
+                    }
+                }
+            }, null, 10000, 10000);
+        }
 
-        /// <summary>
-        /// Event: new track was added. First parameter is index of new track;
-        /// </summary>
-        /// 
         public Project()
         {
             lines.Add(new SoundLine());
@@ -57,6 +71,11 @@ namespace JaebeMusicStudio.Sound
             } while (ent != null);
 
         }
+        /// <summary>
+        /// Event: new track was added. First parameter is index of new track;
+        /// </summary>
+        /// 
+
         public event Action<int, Track> trackAdded;
         public void addEmptyTrack()
         {
@@ -178,7 +197,7 @@ namespace JaebeMusicStudio.Sound
         }
         public TimeSpan countTime(float input)
         {
-            return new TimeSpan((long)(100 * input / tempo * 60f)* 100000);
+            return new TimeSpan((long)(100 * input / tempo * 60f) * 100000);
         }
         class CustomStaticDataSource : IStaticDataSource
         {

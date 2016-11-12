@@ -24,51 +24,82 @@ namespace JaebeMusicStudio.Sound
 
         public float[,] doFilter(float[,] input)
         {
-            var len1 = input.GetLength(1);
-            var ret = new float[input.GetLength(0), input.GetLength(1)];
-            for (int n = 0; n < frequency.Count; n++)
+            lock (this)
             {
-                var amplitude_sample = amplitude[n] * Project.current.sampleRate;
-                var ileNaCykl = 1 / frequency[n] * Project.current.sampleRate / Math.PI / 2;
-                for (int i = 0; i < len1; i++)
+                history.Add(input);
+                var len1 = input.GetLength(1);
+                var ret = new float[input.GetLength(0), input.GetLength(1)];
+                for (int n = 0; n < frequency.Count; n++)
                 {
+                    var amplitude_sample = amplitude[n] * Project.current.sampleRate;
+                    var ileNaCykl = 1 / frequency[n] * Project.current.sampleRate / Math.PI / 2;
+                    for (int i = 0; i < len1; i++)
+                    {
 
-                    var z = amplitude_sample * (-1 - Math.Sin((i + counter) / ileNaCykl));
-                    var x = (int)z;
-                    var proporcje = z - x;
-                    if (x >= 0)
-                    {
-                        ret[0, i] += ((float)(input[0, x] * (1 - proporcje) + input[0, x + 1] * proporcje) / 2);
-                        ret[1, i] += ((float)(input[1, x] * (1 - proporcje) + input[1, x + 1] * proporcje) / 2);
-                    }
-                    else
-                    {
-                        float input_x00, input_x01, input_x10, input_x11;
-                        var historyPosition = history.Count;
-                        do
+                        var z = amplitude_sample * (-1 - Math.Sin((i + counter) / ileNaCykl)) + i - 1;
+                        var x = (int)z;
+                        var proporcje = z - x;
+                        if (x >= 0)
                         {
-                            historyPosition--;
-                            x += history[historyPosition].GetLength(1);
-                        } while (x < 0);
-                        input_x00 = history[historyPosition][0, x];
-                        input_x10 = history[historyPosition][1, x];
-                        if (x == history[historyPosition].GetLength(1))
-                        {
-                            input_x01 = history[historyPosition + 1][0, 0];
-                            input_x11 = history[historyPosition + 1][1, 0];
+                            ret[0, i] += ((float)(input[0, x] * (1 - proporcje) + input[0, x + 1] * proporcje) / 2);
+                            ret[1, i] += ((float)(input[1, x] * (1 - proporcje) + input[1, x + 1] * proporcje) / 2);
                         }
                         else
                         {
-                            input_x01 = history[historyPosition][0, x + 1];
-                            input_x11 = history[historyPosition][1, x + 1];
+                            float input_x00, input_x01, input_x10, input_x11;
+                            var historyPosition = history.Count - 1;
+                            do
+                            {
+                                historyPosition--;
+                                if (historyPosition < 0)
+                                    break;
+                                x += history[historyPosition].GetLength(1);
+                            } while (x < 0);
+                            if (historyPosition < 0)
+                                continue;
+                            input_x00 = history[historyPosition][0, x];
+                            input_x10 = history[historyPosition][1, x];
+                            if (x + 1 == history[historyPosition].GetLength(1))
+                            {
+                                input_x01 = history[historyPosition + 1][0, 0];
+                                input_x11 = history[historyPosition + 1][1, 0];
+                            }
+                            else
+                            {
+                                input_x01 = history[historyPosition][0, x + 1];
+                                input_x11 = history[historyPosition][1, x + 1];
+                            }
+                            ret[0, i] += ((float)(input_x00 * (1 - proporcje) + input_x01 * proporcje) / 2);
+                            ret[1, i] += ((float)(input_x10 * (1 - proporcje) + input_x11 * proporcje) / 2);
                         }
-                        ret[0, i] += ((float)(input_x00 * (1 - proporcje) + input_x01 * proporcje) / 2);
-                        ret[1, i] += ((float)(input_x10 * (1 - proporcje) + input_x11 * proporcje) / 2);
                     }
                 }
+                counter += input.GetLength(1);
+                return ret;
             }
-            counter += input.GetLength(1);
-            return ret;
+        }
+        public void cleanMemory()
+        {
+            lock (this)
+            {
+                var maxAmplitude = amplitude.Max();
+                if (maxAmplitude < -amplitude.Min())
+                    maxAmplitude = -amplitude.Min();
+                maxAmplitude *= 2;
+                var historyPosition = history.Count - 1;
+                do
+                {
+                    historyPosition--;
+                    if (historyPosition < 0)
+                        break;
+                    maxAmplitude -= history[historyPosition].GetLength(1);
+                } while (maxAmplitude >= 0);
+
+
+
+                history.RemoveRange(0, historyPosition - 1);
+
+            }
         }
     }
 }
