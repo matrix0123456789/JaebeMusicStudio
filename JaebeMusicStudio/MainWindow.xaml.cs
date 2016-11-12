@@ -43,7 +43,8 @@ namespace JaebeMusicStudio
                     Thread.Sleep(10);
                     Dispatcher.Invoke(() =>
                     {
-                        label.Content = Sound.Player.position;
+                        var timePosition = Sound.Project.current.countTime(Sound.Player.position);
+                        Time.Content = timePosition.ToString();
                     });
                 }
             });
@@ -87,6 +88,11 @@ namespace JaebeMusicStudio
         {
 
             Sound.Player.setPosition(0);
+        }
+
+        private void pauseButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

@@ -87,7 +87,7 @@ namespace JaebeMusicStudio.Sound
                             var renderStart = (el as SoundElement).offset - position;
                             if (renderStart >= 0)//you must wait to start playing
                             {
-                                var rendered = (el as SoundElement).getSound(0, renderingLength- renderStart);
+                                var rendered = (el as SoundElement).getSound(0, renderingLength - renderStart);
                                 (el as SoundElement).soundLine.rendered((int)countSamples(renderingStart), rendered);
                             }
                             else
@@ -175,6 +175,10 @@ namespace JaebeMusicStudio.Sound
         public float countSamples(float input)
         {
             return input / tempo * 60f * _sampleRate;
+        }
+        public TimeSpan countTime(float input)
+        {
+            return new TimeSpan((long)(100 * input / tempo * 60f)* 100000);
         }
         class CustomStaticDataSource : IStaticDataSource
         {

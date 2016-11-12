@@ -17,7 +17,7 @@ namespace JaebeMusicStudio.Sound
         static System.Threading.Thread renderingThread;
         public enum Status { fileRendering, playing, paused }
         public static BufferedWaveProvider bufor = new BufferedWaveProvider(new WaveFormat((int)Sound.Project.current.sampleRate, 2));
-        public static WasapiOut WasapiWyjście = new WasapiOut(AudioClientShareMode.Exclusive, 10);
+        public static WasapiOut WasapiWyjście = new WasapiOut(AudioClientShareMode.Shared, false,10);
         static Player()
         {
             WasapiWyjście.Init(bufor);
