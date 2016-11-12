@@ -22,8 +22,8 @@ namespace JaebeMusicStudio.Sound
         public float sampleRate { get { return _sampleRate; } }
         public static Project current = null;
         public List<SoundLine> lines = new List<SoundLine>() { };
-        List<Track> tracks = new List<Track>();
-        Queue<SoundElement> renderingQueue = new Queue<SoundElement>();
+        public List<Track> tracks = new List<Track>();
+       // Queue<SoundElement> renderingQueue = new Queue<SoundElement>();
         private float renderingStart;
         private float renderingLength;
         static Timer memoryCleaning;

@@ -14,5 +14,6 @@ namespace JaebeMusicStudio.UI
             Content = page;
             Show();
         }
+        
     }
 }

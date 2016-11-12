@@ -18,6 +18,7 @@ namespace JaebeMusicStudio.Sound
         public enum Status { fileRendering, playing, paused }
         public static BufferedWaveProvider bufor = new BufferedWaveProvider(new WaveFormat((int)Sound.Project.current.sampleRate, 2));
         public static WasapiOut WasapiWyjście = new WasapiOut(AudioClientShareMode.Shared, false,10);
+        public static event Action<float> positionChanged;
         static Player()
         {
             WasapiWyjście.Init(bufor);
@@ -46,6 +47,8 @@ namespace JaebeMusicStudio.Sound
         public static void setPosition(float position)
         {
             Player.position = position;
+            if (positionChanged != null)
+                positionChanged(position);
         }
         static DateTime lastRendered;
         static void render(object a = null)
@@ -59,6 +62,8 @@ namespace JaebeMusicStudio.Sound
                     var renderLength = (((float)renderPeriod * 2 - bufor.BufferedDuration.TotalMilliseconds) * Project.current.tempo / 60f) / 1000f;
                     Project.current.render(position, (float)renderLength);
                     position += (float)renderLength;
+                    if (positionChanged != null)
+                        positionChanged(position);
                 }
                 var sleepTime = renderPeriod - (int)(DateTime.Now - lastRendered).TotalMilliseconds;
                 if (sleepTime > 0)

@@ -14,6 +14,7 @@
             <UI:ButtonPretty Height="20" Margin="60,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="20" Icon="e800" x:Name="playButton" Click="playButton_Click"/>
             <UI:ButtonPretty Height="20" Margin="85,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="20" Icon="e802" x:Name="pauseButton" Click="pauseButton_Click"/>
             <UI:ButtonPretty Height="20" Margin="110,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="20" Icon="e804" x:Name="rewindButton" Click="rewindButton_Click"/>
+            <UI:ButtonPretty Height="20" Margin="10,35,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="20" Icon="e804" x:Name="openTimelineButton" Click="openTimelineButton_Click"/>
             <Label x:Name="Time" Content="00:00/00:00" HorizontalAlignment="Left" Margin="135,6,0,0" VerticalAlignment="Top"/>
         </Grid>
     </Grid>

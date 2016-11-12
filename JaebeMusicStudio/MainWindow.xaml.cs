@@ -26,16 +26,6 @@ namespace JaebeMusicStudio
         {
             InitializeComponent();
             Sound.Project.current = new Sound.Project();
-            Thread viewerThread = new Thread(delegate ()
-            {
-                var okno = new UI.PseudoWindow(new Widgets.Timeline());
-                System.Windows.Threading.Dispatcher.Run();
-            });
-            windowsThreads.Add(viewerThread);
-            viewerThread.Name = "PseudoWindow Thread";
-            viewerThread.SetApartmentState(ApartmentState.STA); // needs to be STA or throws exception
-            viewerThread.Start();
-
             Thread t2 = new Thread(delegate ()
             {
                 while (true)
@@ -92,6 +82,21 @@ namespace JaebeMusicStudio
 
         private void pauseButton_Click(object sender, RoutedEventArgs e)
         {
+
+        }
+
+        private void openTimelineButton_Click(object sender, RoutedEventArgs e)
+        {
+            Thread viewerThread = new Thread(delegate ()
+            {
+                var okno = new UI.PseudoWindow(new Widgets.Timeline());
+                System.Windows.Threading.Dispatcher.Run();
+            });
+            windowsThreads.Add(viewerThread);
+            viewerThread.Name = "PseudoWindow Thread";
+            viewerThread.SetApartmentState(ApartmentState.STA); // needs to be STA or throws exception
+            viewerThread.Start();
+
 
         }
     }
