@@ -6,7 +6,7 @@
       xmlns:UI="clr-namespace:JaebeMusicStudio.UI"
       xmlns:local="clr-namespace:JaebeMusicStudio.Widgets"
       mc:Ignorable="d" 
-      d:DesignHeight="300" d:DesignWidth="300"
+      d:DesignHeight="390" d:DesignWidth="652"
       Title="Timeline"
       >
 
@@ -21,7 +21,7 @@
                 <StackPanel Width="200"  HorizontalAlignment="left" Name="tracksStack">
                     <UI:ButtonPretty Text="Nowa ścierzka" x:Name="addNewTrackButton" Click="addNewTrackButton_Click"></UI:ButtonPretty>
                 </StackPanel>
-                <ScrollViewer Margin="200,0,0,0">
+                <ScrollViewer Margin="200,0,0,0" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Visible" Name="scrollHorizontal">
                     <Grid 
       MouseWheel="Page_MouseWheel" Background="#fff" Name="tracksContentStackGrid">
                         <StackPanel Name="tracksContentStack"></StackPanel>

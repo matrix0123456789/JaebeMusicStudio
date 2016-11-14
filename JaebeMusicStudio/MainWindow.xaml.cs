@@ -21,7 +21,7 @@ namespace JaebeMusicStudio
     /// </summary>
     public partial class MainWindow : Window
     {
-        static List<Thread> windowsThreads=new List<Thread>();
+     //   static List<Thread> windowsThreads=new List<Thread>();
         public MainWindow()
         {
             InitializeComponent();
@@ -65,6 +65,7 @@ namespace JaebeMusicStudio
 
             if (dialog.FileName != "")
             {
+                UI.PseudoWindow.closeAll();
                 Sound.Project.current=new Sound.Project(dialog.FileName);
             }
         }
@@ -92,7 +93,6 @@ namespace JaebeMusicStudio
                 var okno = new UI.PseudoWindow(new Widgets.Timeline());
                 System.Windows.Threading.Dispatcher.Run();
             });
-            windowsThreads.Add(viewerThread);
             viewerThread.Name = "PseudoWindow Thread";
             viewerThread.SetApartmentState(ApartmentState.STA); // needs to be STA or throws exception
             viewerThread.Start();

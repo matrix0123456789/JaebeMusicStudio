@@ -23,13 +23,14 @@ namespace JaebeMusicStudio.Widgets
         /// <summary>
         /// how many pixels represents one note
         /// </summary>
-        double scaleX = 1;
+        double scaleX = 10;
         public Timeline()
         {
             InitializeComponent();
             Sound.Project.current.trackAdded += project_trackAdded;
             Sound.Player.positionChanged += Player_positionChanged;
             showContent();
+            scrollHorizontal.ScrollChanged += showTimeLabels;
         }
 
         private void Player_positionChanged(float obj = 0)
@@ -42,6 +43,7 @@ namespace JaebeMusicStudio.Widgets
 
         void showContent()
         {
+            showTimeLabels();
             tracksStack.Children.RemoveRange(0, tracksStack.Children.Count - 2);
             tracksContentStack.Children.Clear();
             var index = 0;
@@ -51,6 +53,30 @@ namespace JaebeMusicStudio.Widgets
                 index++;
             }
             Player_positionChanged();
+        }
+        void showTimeLabels(object a=null, object b=null)
+        {
+            TimeLabels.Children.Clear();
+            double pixelOffset = -scrollHorizontal.HorizontalOffset+tracksStack.ActualWidth;
+            var scale = 1 / scaleX * 50;
+            var scale1 = Math.Pow(10, Math.Ceiling(Math.Log10(scale)));
+            if (scale1/5 > scale)
+                scale = scale1 / 5;
+            else if (scale1/2 > scale)
+                scale = scale1 / 2;
+            else
+                scale = scale1;
+            for (double i = 0; pixelOffset + scale * i * scaleX < TimeLabels.ActualWidth; i++)
+            {
+                var text = new TextBlock();
+                text.Margin = new Thickness(pixelOffset + scale * i * scaleX - 100, 0, 0, 0);
+                text.HorizontalAlignment = HorizontalAlignment.Left;
+                text.TextAlignment = TextAlignment.Center;
+                text.Width = 200;
+                text.Text = (i * scale).ToString();
+                TimeLabels.Children.Add(text);
+
+            }
         }
         private void project_trackAdded(int index, Sound.Track track)
         {
