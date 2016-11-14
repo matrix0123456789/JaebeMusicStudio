@@ -88,6 +88,7 @@
     <Compile Include="Sound\OneSample.cs" />
     <Compile Include="Sound\Player.cs" />
     <Compile Include="Sound\Project.cs" />
+    <Compile Include="Sound\Reverb.cs" />
     <Compile Include="Sound\SampledSound.cs" />
     <Compile Include="Sound\SoundElement.cs" />
     <Compile Include="Sound\SoundLine.cs" />

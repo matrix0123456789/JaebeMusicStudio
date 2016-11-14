@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -34,12 +35,20 @@ namespace JaebeMusicStudio
                     Dispatcher.Invoke(() =>
                     {
                         var timePosition = Sound.Project.current.countTime(Sound.Player.position);
-                        Time.Content = timePosition.ToString();
+                        var timeLength = Sound.Project.current.countTime(Sound.Project.current.length);
+                        Time.Content = timePosition.ToString()+'/'+ timeLength.ToString();
                     });
                 }
             });
             t2.Start();
+            Closed += MainWindow_Closed;
         }
+
+        private void MainWindow_Closed(object sender, EventArgs e)
+        {
+            Process.GetCurrentProcess().Kill();
+        }
+
         public static void error(string message)
         {
             MessageBox.Show(message);

@@ -23,10 +23,11 @@ namespace JaebeMusicStudio.Sound
         public static Project current = null;
         public List<SoundLine> lines = new List<SoundLine>() { };
         public List<Track> tracks = new List<Track>();
-       // Queue<SoundElement> renderingQueue = new Queue<SoundElement>();
+        // Queue<SoundElement> renderingQueue = new Queue<SoundElement>();
         private float renderingStart;
         private float renderingLength;
         static Timer memoryCleaning;
+
         static Project()
         {
             memoryCleaning = new Timer((o) =>
@@ -71,6 +72,27 @@ namespace JaebeMusicStudio.Sound
             } while (ent != null);
 
         }
+
+        public float length
+        {
+            get
+            {
+                var ret = 0f;
+                foreach (var track in tracks)
+                {
+                    foreach (var x in track.elements)
+                    {
+                        if (x.offset + x.length > ret)
+                        {
+                            ret = x.offset + x.length;
+                        }
+                    }
+                }
+                return ret;
+            }
+        }
+
+
         /// <summary>
         /// Event: new track was added. First parameter is index of new track;
         /// </summary>
@@ -107,7 +129,7 @@ namespace JaebeMusicStudio.Sound
                             {
                                 var renderStart = (el as SoundElement).offset - position;
                                 if (renderStart >= 0)//you must wait to start playing
-                            {
+                                {
                                     var rendered = (el as SoundElement).getSound(0, renderingLength - renderStart);
                                     (el as SoundElement).soundLine.rendered((int)countSamples(renderingStart), rendered);
                                 }
