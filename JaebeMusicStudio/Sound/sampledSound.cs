@@ -112,5 +112,10 @@ namespace JaebeMusicStudio.Sound
                 }
             }
         }
+
+        public float Length
+        {
+            get { return Project.current.SamplesToBeats(wave.Length); }
+        }
     }
 }

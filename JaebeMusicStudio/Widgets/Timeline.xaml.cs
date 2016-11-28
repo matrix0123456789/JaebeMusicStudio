@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using JaebeMusicStudio.Sound;
 
 namespace JaebeMusicStudio.Widgets
 {
@@ -54,15 +55,15 @@ namespace JaebeMusicStudio.Widgets
             }
             Player_positionChanged();
         }
-        void showTimeLabels(object a=null, object b=null)
+        void showTimeLabels(object a = null, object b = null)
         {
             TimeLabels.Children.Clear();
-            double pixelOffset = -scrollHorizontal.HorizontalOffset+tracksStack.ActualWidth;
+            double pixelOffset = -scrollHorizontal.HorizontalOffset + tracksStack.ActualWidth;
             var scale = 1 / scaleX * 50;
             var scale1 = Math.Pow(10, Math.Ceiling(Math.Log10(scale)));
-            if (scale1/5 > scale)
+            if (scale1 / 5 > scale)
                 scale = scale1 / 5;
-            else if (scale1/2 > scale)
+            else if (scale1 / 2 > scale)
                 scale = scale1 / 2;
             else
                 scale = scale1;
@@ -98,6 +99,14 @@ namespace JaebeMusicStudio.Widgets
             {
                 project_soundElementAdded(content, element);
             }
+            track.SoundElementAdded += Track_SoundElementAdded;
+        }
+
+        private void Track_SoundElementAdded(Track arg1, ISoundElement arg2)
+        {
+            var index = Project.current.tracks.IndexOf(arg1);
+            var trackContainer = (Grid)tracksContentStack.Children[index];
+            project_soundElementAdded(trackContainer, arg2);
         }
 
         void project_soundElementAdded(Grid trackContainer, Sound.ISoundElement element)
@@ -133,7 +142,8 @@ namespace JaebeMusicStudio.Widgets
                 if (dialog.FileName != "")
                 {
 
-                    var ss = new Sound.SampledSound(dialog.FileName);
+                    var ss = new Sound.OneSample(SampledSound.FindByUrl(dialog.FileName));
+                    Project.current.FindTrackWithSpace(ss.Offset, ss.Offset + ss.Length).AddElement(ss);
                 }
             }
             catch
@@ -148,6 +158,27 @@ namespace JaebeMusicStudio.Widgets
             {
                 scaleX *= Math.Pow(2, e.Delta / 200f);
                 showContent();
+            }
+        }
+
+        private void Timeline_OnDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent("FileName"))
+            {
+                var files = (string[])e.Data.GetData("FileNameW");
+                foreach (var file in files)
+                {
+                    try
+                    {
+                        var ss = new Sound.OneSample(SampledSound.FindByUrl(file));
+                        Project.current.FindTrackWithSpace(ss.Offset, ss.Offset + ss.Length).AddElement(ss);
+
+                    }
+                    catch
+                    {
+                        MainWindow.error("Błąd otwarcia pliku");
+                    }
+                }
             }
         }
     }

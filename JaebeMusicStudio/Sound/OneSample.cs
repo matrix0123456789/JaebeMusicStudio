@@ -11,7 +11,7 @@ namespace JaebeMusicStudio.Sound
     class OneSample : ISoundElement
     {
         SampledSound sample;
-        float innerOffset, speed;
+        float innerOffset, speed=1;
         public float Length { get; set; }
         public float Offset { get; set; }
         public SoundLine SoundLine { get; set; }
@@ -31,6 +31,7 @@ namespace JaebeMusicStudio.Sound
         public OneSample(SampledSound sample)
         {
             this.sample = sample;
+            Length = this.sample.Length;
         }
 
         public float[,] GetSound(float start, float length)

@@ -99,13 +99,14 @@ namespace JaebeMusicStudio.Sound
         /// 
 
         public event Action<int, Track> trackAdded;
-        public void AddEmptyTrack()
+        public Track AddEmptyTrack()
         {
             var number = tracks.Count;
             var newTrack = new Track();
             tracks.Add(newTrack);
             if (trackAdded != null)
                 trackAdded(number, newTrack);
+            return newTrack;
         }
 
         internal void Render(float position, float renderLength)
@@ -230,6 +231,28 @@ namespace JaebeMusicStudio.Sound
         public TimeSpan CountTime(float input)
         {
             return new TimeSpan((long)(100 * input / tempo * 60f) * 100000);
+        }
+        public float SamplesToBeats(float input)
+        {
+            return input * tempo / 60f / _sampleRate;
+        }
+        public Track FindTrackWithSpace(float from, float to)
+        {
+            foreach (var track in tracks)
+            {
+                var canBe = true;
+                foreach (var element in track.Elements)
+                {
+                    if (element.Offset < to && element.Offset + element.Length > from)
+                    {
+                        canBe = false;
+                        break;
+                    }
+                }
+                if (canBe)
+                    return track;
+            }
+            return AddEmptyTrack();
         }
         class CustomStaticDataSource : IStaticDataSource
         {

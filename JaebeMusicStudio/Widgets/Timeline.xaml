@@ -8,6 +8,7 @@
       mc:Ignorable="d" 
       d:DesignHeight="390" d:DesignWidth="652"
       Title="Timeline"
+      AllowDrop="True" Drop="Timeline_OnDrop"
       >
 
     <Grid>

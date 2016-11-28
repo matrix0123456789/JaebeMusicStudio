@@ -18,7 +18,7 @@ namespace JaebeMusicStudio.Sound
         public List<Effect> effects = new List<Effect>();
         public int currentToRender = 0;
         public float[,] lastRendered;
-        public float volume;
+        public float volume=1;
 
         public SoundLine()
         {
