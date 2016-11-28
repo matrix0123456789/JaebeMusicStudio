@@ -22,7 +22,7 @@ namespace JaebeMusicStudio.Sound
             }
         }
 
-        public float[,] doFilter(float[,] input)
+        public float[,] DoFilter(float[,] input)
         {
             lock (this)
             {
@@ -78,7 +78,7 @@ namespace JaebeMusicStudio.Sound
                 return ret;
             }
         }
-        public void cleanMemory()
+        public void CleanMemory()
         {
             lock (this)
             {

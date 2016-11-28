@@ -8,7 +8,7 @@ namespace JaebeMusicStudio.Sound
 {
     interface Effect
     {
-        float[,] doFilter(float[,] input);
-        void cleanMemory();
+        float[,] DoFilter(float[,] input);
+        void CleanMemory();
     }
 }

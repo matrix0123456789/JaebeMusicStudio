@@ -38,7 +38,7 @@ namespace JaebeMusicStudio.Sound
                     {
                         foreach (var y in x.effects)
                         {
-                            y.cleanMemory();
+                            y.CleanMemory();
                         }
                     }
                 }
@@ -64,7 +64,7 @@ namespace JaebeMusicStudio.Sound
                 {
                     var document = new XmlDocument();
                     document.Load(zis);
-                    loadXML(document);
+                    LoadXml(document);
                     break;
                 }
 
@@ -80,11 +80,11 @@ namespace JaebeMusicStudio.Sound
                 var ret = 0f;
                 foreach (var track in tracks)
                 {
-                    foreach (var x in track.elements)
+                    foreach (var x in track.Elements)
                     {
-                        if (x.offset + x.length > ret)
+                        if (x.Offset + x.Length > ret)
                         {
-                            ret = x.offset + x.length;
+                            ret = x.Offset + x.Length;
                         }
                     }
                 }
@@ -99,7 +99,7 @@ namespace JaebeMusicStudio.Sound
         /// 
 
         public event Action<int, Track> trackAdded;
-        public void addEmptyTrack()
+        public void AddEmptyTrack()
         {
             var number = tracks.Count;
             var newTrack = new Track();
@@ -108,35 +108,35 @@ namespace JaebeMusicStudio.Sound
                 trackAdded(number, newTrack);
         }
 
-        internal void render(float position, float renderLength)
+        internal void Render(float position, float renderLength)
         {
             this.renderingStart = position;
             this.renderingLength = renderLength;
             foreach (var line in lines)
             {
-                line.cleanToRender((int)countSamples(renderingLength));
+                line.cleanToRender((int)CountSamples(renderingLength));
             }
             foreach (var track in tracks)
             {
-                foreach (var element in track.elements)
+                foreach (var element in track.Elements)
                 {
-                    if (element.offset < position + renderingLength && element.offset + element.length > position)
+                    if (element.Offset < position + renderingLength && element.Offset + element.Length > position)
                     {
-                        lock (element.soundLine)
+                        lock (element.SoundLine)
                         {
-                            element.soundLine.currentToRender++;
+                            element.SoundLine.currentToRender++;
                             System.Threading.ThreadPool.QueueUserWorkItem((el) =>
                             {
-                                var renderStart = (el as SoundElement).offset - position;
+                                var renderStart = (el as ISoundElement).Offset - position;
                                 if (renderStart >= 0)//you must wait to start playing
                                 {
-                                    var rendered = (el as SoundElement).getSound(0, renderingLength - renderStart);
-                                    (el as SoundElement).soundLine.rendered((int)countSamples(renderingStart), rendered);
+                                    var rendered = (el as ISoundElement).GetSound(0, renderingLength - renderStart);
+                                    (el as ISoundElement).SoundLine.rendered((int)CountSamples(renderingStart), rendered);
                                 }
                                 else
                                 {
-                                    var rendered = (el as SoundElement).getSound(-renderStart, renderingLength);
-                                    (el as SoundElement).soundLine.rendered(0, rendered);
+                                    var rendered = (el as ISoundElement).GetSound(-renderStart, renderingLength);
+                                    (el as ISoundElement).SoundLine.rendered(0, rendered);
                                 }
                             }, element);
                         }
@@ -151,7 +151,7 @@ namespace JaebeMusicStudio.Sound
             }
         }
 
-        public void serialize(string path)
+        public void Serialize(string path)
         {
             var document = new XmlDocument();
 
@@ -159,11 +159,11 @@ namespace JaebeMusicStudio.Sound
 
             foreach (var x in lines)
             {
-                x.serialize(document);
+                x.Serialize(document);
             }
             foreach (var x in tracks)
             {
-                x.serialize(document);
+                x.Serialize(document);
             }
 
 
@@ -182,7 +182,7 @@ namespace JaebeMusicStudio.Sound
             zip.Close();
         }
 
-        void loadXML(XmlDocument document)
+        void LoadXml(XmlDocument document)
         {
             var lines = document.GetElementsByTagName("SoundLine");
             foreach (XmlElement line in lines)
@@ -214,20 +214,20 @@ namespace JaebeMusicStudio.Sound
                 this.tracks.Add(new Track(track));
             }
         }
-        public void returnedSound(float[,] data)
+        public void ReturnedSound(float[,] data)
         {
             if (Player.status == Player.Status.playing || Player.status == Player.Status.paused)
             {
-                Player.returnedSound(data);
+                Player.ReturnedSound(data);
 
 
             }
         }
-        public float countSamples(float input)
+        public float CountSamples(float input)
         {
             return input / tempo * 60f * _sampleRate;
         }
-        public TimeSpan countTime(float input)
+        public TimeSpan CountTime(float input)
         {
             return new TimeSpan((long)(100 * input / tempo * 60f) * 100000);
         }

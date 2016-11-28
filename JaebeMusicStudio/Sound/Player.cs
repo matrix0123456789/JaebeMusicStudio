@@ -24,18 +24,18 @@ namespace JaebeMusicStudio.Sound
             WasapiWyjście.Init(bufor);
             
         }
-        public static void play()
+        public static void Play()
         {
             if (status == Status.paused)
             {
                 status = Status.playing;
-                renderingThread = new System.Threading.Thread(render);
+                renderingThread = new System.Threading.Thread(Render);
                 renderingThread.Name = "renderingThread";
                 renderingThread.Start();
                 WasapiWyjście.Play();
             }
         }
-        public static void pause()
+        public static void Pause()
         {
             if (status == Status.playing)
             {
@@ -44,14 +44,14 @@ namespace JaebeMusicStudio.Sound
                 WasapiWyjście.Pause();
             }
         }
-        public static void setPosition(float position)
+        public static void SetPosition(float position)
         {
             Player.position = position;
             if (positionChanged != null)
                 positionChanged(position);
         }
         static DateTime lastRendered;
-        static void render(object a = null)
+        static void Render(object a = null)
         {
             while (true)
             {
@@ -60,7 +60,7 @@ namespace JaebeMusicStudio.Sound
                 {
                     rendering = true;
                     var renderLength = (((float)renderPeriod * 2 - bufor.BufferedDuration.TotalMilliseconds) * Project.current.tempo / 60f) / 1000f;
-                    Project.current.render(position, (float)renderLength);
+                    Project.current.Render(position, (float)renderLength);
                     position += (float)renderLength;
                     if (positionChanged != null)
                         positionChanged(position);
@@ -70,7 +70,7 @@ namespace JaebeMusicStudio.Sound
                     System.Threading.Thread.Sleep(sleepTime);
             }
         }
-        static public void returnedSound(float[,] sound)
+        static public void ReturnedSound(float[,] sound)
         {
             var data = new byte[sound.Length * 2];
             for (var i = 0; i < sound.GetLength(1); i++)

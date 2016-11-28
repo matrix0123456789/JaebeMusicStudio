@@ -34,8 +34,8 @@ namespace JaebeMusicStudio
                     Thread.Sleep(10);
                     Dispatcher.Invoke(() =>
                     {
-                        var timePosition = Sound.Project.current.countTime(Sound.Player.position);
-                        var timeLength = Sound.Project.current.countTime(Sound.Project.current.length);
+                        var timePosition = Sound.Project.current.CountTime(Sound.Player.position);
+                        var timeLength = Sound.Project.current.CountTime(Sound.Project.current.length);
                         Time.Content = timePosition.ToString()+'/'+ timeLength.ToString();
                     });
                 }
@@ -62,7 +62,7 @@ namespace JaebeMusicStudio
 
             if (dialog.FileName != "")
             {
-                Sound.Project.current.serialize(dialog.FileName);
+                Sound.Project.current.Serialize(dialog.FileName);
             }
         }
 
@@ -81,13 +81,13 @@ namespace JaebeMusicStudio
 
         private void playButton_Click(object sender, RoutedEventArgs e)
         {
-            Sound.Player.play();
+            Sound.Player.Play();
         }
 
         private void rewindButton_Click(object sender, RoutedEventArgs e)
         {
 
-            Sound.Player.setPosition(0);
+            Sound.Player.SetPosition(0);
         }
 
         private void pauseButton_Click(object sender, RoutedEventArgs e)

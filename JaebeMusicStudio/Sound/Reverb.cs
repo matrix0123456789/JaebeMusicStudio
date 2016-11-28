@@ -18,14 +18,14 @@ namespace JaebeMusicStudio.Sound
         {
         }
 
-        public void cleanMemory()
+        public void CleanMemory()
         {
 
         }
 
-        public float[,] doFilter(float[,] input)
+        public float[,] DoFilter(float[,] input)
         {
-            long samplesToWait = (long)Project.current.countSamples(delay);
+            long samplesToWait = (long)Project.current.CountSamples(delay);
             float[,] ret = new float[2, input.GetLength(1)];
             for (long i = 0; i < input.GetLength(1); i++)
             {

@@ -10,7 +10,7 @@ namespace JaebeMusicStudio.Sound
 {
     class Track
     {
-        public List<SoundElement> elements = new List<SoundElement>();
+        public List<ISoundElement> Elements = new List<ISoundElement>();
         public Track()
         {
         }
@@ -18,7 +18,7 @@ namespace JaebeMusicStudio.Sound
         {
             foreach(XmlNode element in xml.ChildNodes)
             {
-                SoundElement soundElement;
+                ISoundElement soundElement;
                 switch (element.Name)
                 {
                     case "OneSample":
@@ -26,15 +26,15 @@ namespace JaebeMusicStudio.Sound
                         break;
                     default: continue;
                 }
-                elements.Add(soundElement);
+                Elements.Add(soundElement);
             }
         }
-        internal void serialize(XmlDocument document)
+        internal void Serialize(XmlDocument document)
         {
             var node = document.CreateElement("Track");
-            foreach (var element in elements)
+            foreach (var element in Elements)
             {
-                element.serialize(node);
+                element.Serialize(node);
             }
             document.DocumentElement.AppendChild(node);
         }

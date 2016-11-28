@@ -42,7 +42,7 @@ namespace JaebeMusicStudio.Sound
             }
         }
 
-        internal void serialize(XmlDocument document)
+        internal void Serialize(XmlDocument document)
         {
             var node = document.CreateElement("SoundLine");
             node.SetAttribute("volume", volume.ToString(CultureInfo.InvariantCulture));
@@ -132,7 +132,7 @@ namespace JaebeMusicStudio.Sound
                         }
                         foreach (var effect in effects)
                         {
-                            sound = effect.doFilter(sound);
+                            sound = effect.DoFilter(sound);
                         }
                     }
                     foreach (var output in outputs)
@@ -141,7 +141,7 @@ namespace JaebeMusicStudio.Sound
                     }
                     if (this == Project.current.lines[0])
                     {
-                        Project.current.returnedSound(sound);
+                        Project.current.ReturnedSound(sound);
                     }
                 }
             }

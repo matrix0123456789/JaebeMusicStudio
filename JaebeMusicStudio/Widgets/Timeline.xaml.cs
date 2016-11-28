@@ -94,13 +94,13 @@ namespace JaebeMusicStudio.Widgets
             content.Children.Add(line);
             content.Height = 40;
             tracksContentStack.Children.Insert(index, content);
-            foreach (var element in track.elements)
+            foreach (var element in track.Elements)
             {
                 project_soundElementAdded(content, element);
             }
         }
 
-        void project_soundElementAdded(Grid trackContainer, Sound.SoundElement element)
+        void project_soundElementAdded(Grid trackContainer, Sound.ISoundElement element)
         {
             var grid = new Grid();
             var rect = new Rectangle();
@@ -111,8 +111,8 @@ namespace JaebeMusicStudio.Widgets
             else
                 rect.Fill = Brushes.Blue;
             grid.Children.Add(rect);
-            grid.Width = element.length * scaleX;
-            grid.Margin = new Thickness(element.offset * scaleX, 0, 0, 0);
+            grid.Width = element.Length * scaleX;
+            grid.Margin = new Thickness(element.Offset * scaleX, 0, 0, 0);
             grid.VerticalAlignment = VerticalAlignment.Stretch;
             grid.HorizontalAlignment = HorizontalAlignment.Left;
             trackContainer.Children.Add(grid);
@@ -120,7 +120,7 @@ namespace JaebeMusicStudio.Widgets
         }
         private void addNewTrackButton_Click(object sender, RoutedEventArgs e)
         {
-            Sound.Project.current.addEmptyTrack();
+            Sound.Project.current.AddEmptyTrack();
         }
 
         private void openFileSampleButton_Click(object sender, RoutedEventArgs e)

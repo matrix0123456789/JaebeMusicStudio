@@ -11,7 +11,7 @@ namespace JaebeMusicStudio.Sound
     /// 
     /// element on track
     /// </summary>
-    interface SoundElement
+    interface ISoundElement
     {
         /// <summary>
         /// 
@@ -19,10 +19,10 @@ namespace JaebeMusicStudio.Sound
         /// <param name="start"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        float[,] getSound(float start, float length);
-        float offset { get; set; }
-        float length { get; set; }
-        SoundLine soundLine { get; set; }
-        void serialize(XmlNode node);
+        float[,] GetSound(float start, float length);
+        float Offset { get; set; }
+        float Length { get; set; }
+        SoundLine SoundLine { get; set; }
+        void Serialize(XmlNode node);
     }
 }
