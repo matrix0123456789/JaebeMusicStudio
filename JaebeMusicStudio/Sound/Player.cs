@@ -11,8 +11,8 @@ namespace JaebeMusicStudio.Sound
     static class Player
     {
         public static float[] LastVolume = { 0, 0 };
-        static public Status status = Status.paused;
-        static public float position;
+        public static Status status = Status.paused;
+        public static float position;
         static bool rendering = false;
         static int renderPeriod = 15;
         static System.Threading.Thread renderingThread;

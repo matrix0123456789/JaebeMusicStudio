@@ -9,6 +9,8 @@
       d:DesignHeight="390" d:DesignWidth="652"
       Title="Timeline"
       AllowDrop="True" Drop="Timeline_OnDrop"
+      MouseMove="Timeline_OnMouseMove"
+      MouseUp="Timeline_OnMouseUp"
       >
 
     <Grid>

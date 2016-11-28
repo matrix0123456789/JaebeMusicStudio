@@ -25,6 +25,11 @@ namespace JaebeMusicStudio.Widgets
         /// how many pixels represents one note
         /// </summary>
         double scaleX = 10;
+
+        private ISoundElement editingElement;
+        private FrameworkElement editingVisualElement;
+        private Point editingStartposition;
+
         public Timeline()
         {
             InitializeComponent();
@@ -125,8 +130,18 @@ namespace JaebeMusicStudio.Widgets
             grid.VerticalAlignment = VerticalAlignment.Stretch;
             grid.HorizontalAlignment = HorizontalAlignment.Left;
             trackContainer.Children.Add(grid);
+            grid.Tag = element;
+            grid.MouseLeftButtonDown += Element_MouseLeftButtonDown;
 
         }
+
+        private void Element_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            editingStartposition = e.GetPosition(this);
+            editingElement = (ISoundElement)(sender as Grid).Tag;
+            editingVisualElement = (FrameworkElement)sender;
+        }
+
         private void addNewTrackButton_Click(object sender, RoutedEventArgs e)
         {
             Sound.Project.current.AddEmptyTrack();
@@ -178,6 +193,52 @@ namespace JaebeMusicStudio.Widgets
                     {
                         MainWindow.error("Błąd otwarcia pliku");
                     }
+                }
+            }
+        }
+
+        float editCalcNewTime(MouseEventArgs e)
+        {
+            var timeDifference = (editingStartposition.X - e.GetPosition(this).X) / scaleX;
+            var newTime = editingElement.Offset - timeDifference;
+            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+            {
+                var scale = 1 / scaleX * 20;
+                var scale1 = Math.Pow(10, Math.Ceiling(Math.Log10(scale)));
+                if (scale1 / 5 > scale)
+                    scale = scale1 / 5;
+                else if (scale1 / 2 > scale)
+                    scale = scale1 / 2;
+                else
+                    scale = scale1;
+                newTime = Math.Round(newTime / scale) * scale;
+            }
+            return (float)newTime;
+        }
+        private void Timeline_OnMouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed && editingElement != null)
+            {
+               var newTime = editCalcNewTime(e);
+
+
+                editingVisualElement.Margin=new Thickness(newTime*scaleX,0,0,0);
+
+            }
+        }
+
+        private void Timeline_OnMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                if ( editingElement != null)
+                {
+                    var newTime = editCalcNewTime(e);
+
+                    editingElement.Offset = newTime;
+                    editingVisualElement.Margin = new Thickness(newTime * scaleX, 0, 0, 0);
+                    editingVisualElement = null;
+                    editingElement = null;
                 }
             }
         }
