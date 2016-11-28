@@ -22,7 +22,7 @@ namespace JaebeMusicStudio
     /// </summary>
     public partial class MainWindow : Window
     {
-     //   static List<Thread> windowsThreads=new List<Thread>();
+        //   static List<Thread> windowsThreads=new List<Thread>();
         public MainWindow()
         {
             InitializeComponent();
@@ -36,7 +36,19 @@ namespace JaebeMusicStudio
                     {
                         var timePosition = Sound.Project.current.CountTime(Sound.Player.position);
                         var timeLength = Sound.Project.current.CountTime(Sound.Project.current.length);
-                        Time.Content = timePosition.ToString()+'/'+ timeLength.ToString();
+                        Time.Content = timePosition.ToString() + '/' + timeLength.ToString();
+
+                        if (Sound.Player.LastVolume[0] <= 1)
+                            VolumeL.Width = Sound.Player.LastVolume[0] * 100;
+                        else
+                            VolumeL.Width = 100;
+
+                        if (Sound.Player.LastVolume[1] <= 1)
+                            VolumeR.Width = Sound.Player.LastVolume[1] * 100;
+                        else
+                            VolumeR.Width = 100;
+
+
                     });
                 }
             });
@@ -75,7 +87,7 @@ namespace JaebeMusicStudio
             if (dialog.FileName != "")
             {
                 UI.PseudoWindow.closeAll();
-                Sound.Project.current=new Sound.Project(dialog.FileName);
+                Sound.Project.current = new Sound.Project(dialog.FileName);
             }
         }
 
