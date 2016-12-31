@@ -5,20 +5,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using JaebeMusicStudio.Exceptions;
 
 namespace JaebeMusicStudio.Sound
 {
     class OneSample : ISoundElement
     {
         SampledSound sample;
-        float innerOffset, speed=1;
+        float innerOffset, speed = 1;
         public float Length { get; set; }
         public float Offset { get; set; }
         public SoundLine SoundLine { get; set; }
         public OneSample(XmlNode element)
         {
             //todo tymczasowo
-            SoundLine = Project.current.lines[0];
+            if (element.Attributes["soundLine"] != null)
+            {
+                var number = uint.Parse(element.Attributes["soundLine"].Value);
+                if (number >= Project.current.lines.Count)
+                    throw new BadFileException();
+                SoundLine = Project.current.lines[(int)number];
+            }
+            else
+                SoundLine = Project.current.lines[0];
 
 
             Length = float.Parse(element.Attributes["length"].Value, CultureInfo.InvariantCulture);

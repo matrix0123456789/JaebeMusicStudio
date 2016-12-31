@@ -83,6 +83,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Exceptions\BadFileException.cs" />
     <Compile Include="Sound\Effect.cs" />
     <Compile Include="Sound\Flanger.cs" />
     <Compile Include="Sound\OneSample.cs" />
@@ -99,6 +100,12 @@
     <Compile Include="UI\PseudoWindow.cs" />
     <Compile Include="UI\Slider.xaml.cs">
       <DependentUpon>Slider.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\Mixer.xaml.cs">
+      <DependentUpon>Mixer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\SoundLineUI.xaml.cs">
+      <DependentUpon>SoundLineUI.xaml</DependentUpon>
     </Compile>
     <Compile Include="Widgets\Timeline.xaml.cs">
       <DependentUpon>Timeline.xaml</DependentUpon>
@@ -120,6 +127,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Slider.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Widgets\Mixer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Widgets\SoundLineUI.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

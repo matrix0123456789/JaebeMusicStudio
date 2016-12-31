@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JaebeMusicStudio.Sound;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -14,29 +15,24 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace JaebeMusicStudio.UI
+namespace JaebeMusicStudio.Widgets
 {
     /// <summary>
-    /// Interaction logic for scroll.xaml
+    /// Interaction logic for SoundLineUI.xaml
     /// </summary>
-    public partial class Slider : UserControl
+    public partial class SoundLineUI : UserControl
     {
-        [Bindable(true)]
-        public event RoutedPropertyChangedEventHandler<double> ValueChanged;
-        public Slider()
+        private SoundLine line;
+        public SoundLineUI(SoundLine line)
         {
+            this.line = line;
             InitializeComponent();
+            volume.Value = line.volume;
         }
 
-        public double Value
+        private void Volume_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            get { return slider.Value; }
-            set { slider.Value = value; }
-        }
-
-        private void Slider_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            ValueChanged?.Invoke(sender,e);
+            line.volume = (float)volume.Value;
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JaebeMusicStudio.Sound
 {
-    interface Effect
+    public interface Effect
     {
         float[,] DoFilter(float[,] input);
         void CleanMemory();

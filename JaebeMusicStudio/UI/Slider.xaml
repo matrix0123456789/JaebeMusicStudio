@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="20" d:DesignWidth="100">
     <Grid>
-        <Slider x:Name="slider"/>
+        <Slider x:Name="slider" Maximum="1" Minimum="0" ValueChanged="Slider_OnValueChanged"/>
 
     </Grid>
 </UserControl>

@@ -8,7 +8,7 @@ using System.Xml;
 
 namespace JaebeMusicStudio.Sound
 {
-    class SoundLine
+    public class SoundLine
     {
         /// <summary>
         /// other lines, that are connected to this
@@ -60,8 +60,9 @@ namespace JaebeMusicStudio.Sound
             currentToRender = inputs.Count;
             lastRendered = new float[2, samples];
         }
-        public void rendered(int offset, float[,] data)
+        public void rendered(int offset, float[,] data, float volumeChange=1)
         {
+            float vol = volume*volumeChange;
             lock (this)
             {
                 if (volume != 0)
@@ -75,15 +76,15 @@ namespace JaebeMusicStudio.Sound
                         {
                             for (int i = 0; i < length; i++)
                             {
-                                lastRendered[0, i] += data[0, i];
-                                lastRendered[1, i] += data[0, i];
+                                lastRendered[0, i] += data[0, i]* vol;
+                                lastRendered[1, i] += data[0, i] * vol;
                             }
                         }
                         else {
                             for (int i = 0; i < length; i++)
                             {
-                                lastRendered[0, i] += data[0, i];
-                                lastRendered[1, i] += data[1, i];
+                                lastRendered[0, i] += data[0, i] * vol;
+                                lastRendered[1, i] += data[1, i] * vol;
                             }
                         }
                     }
@@ -93,15 +94,15 @@ namespace JaebeMusicStudio.Sound
                         {
                             for (int i = 0; i < length; i++)
                             {
-                                lastRendered[0, i + offset] += data[0, i];
-                                lastRendered[1, i + offset] += data[0, i];
+                                lastRendered[0, i + offset] += data[0, i] * vol;
+                                lastRendered[1, i + offset] += data[0, i] * vol;
                             }
                         }
                         else {
                             for (int i = 0; i < length; i++)
                             {
-                                lastRendered[0, i + offset] += data[0, i];
-                                lastRendered[1, i + offset] += data[1, i];
+                                lastRendered[0, i + offset] += data[0, i] * vol;
+                                lastRendered[1, i + offset] += data[1, i] * vol;
                             }
                         }
                     }
@@ -137,7 +138,7 @@ namespace JaebeMusicStudio.Sound
                     }
                     foreach (var output in outputs)
                     {
-                        output.output.rendered(0, sound);
+                        output.output.rendered(0, sound, output.volume);
                     }
                     if (this == Project.current.lines[0])
                     {
@@ -147,7 +148,7 @@ namespace JaebeMusicStudio.Sound
             }
         }
     }
-    class SoundLineConnection
+    public class SoundLineConnection
     {
         public SoundLine output;
         public SoundLine input;
