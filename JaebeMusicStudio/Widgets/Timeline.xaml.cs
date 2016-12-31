@@ -172,6 +172,7 @@ namespace JaebeMusicStudio.Widgets
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
                 scaleX *= Math.Pow(2, e.Delta / 200f);
+                scrollHorizontal.ScrollToHorizontalOffset((scrollHorizontal.HorizontalOffset + scrollHorizontal.ActualWidth/2) * Math.Pow(2, e.Delta / 200f) - scrollHorizontal.ActualWidth / 2);
                 showContent();
             }
         }
@@ -219,10 +220,10 @@ namespace JaebeMusicStudio.Widgets
         {
             if (e.LeftButton == MouseButtonState.Pressed && editingElement != null)
             {
-               var newTime = editCalcNewTime(e);
+                var newTime = editCalcNewTime(e);
 
 
-                editingVisualElement.Margin=new Thickness(newTime*scaleX,0,0,0);
+                editingVisualElement.Margin = new Thickness(newTime * scaleX, 0, 0, 0);
 
             }
         }
@@ -231,7 +232,7 @@ namespace JaebeMusicStudio.Widgets
         {
             if (e.ChangedButton == MouseButton.Left)
             {
-                if ( editingElement != null)
+                if (editingElement != null)
                 {
                     var newTime = editCalcNewTime(e);
 
