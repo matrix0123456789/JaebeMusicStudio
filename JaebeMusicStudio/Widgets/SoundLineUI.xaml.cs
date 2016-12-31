@@ -20,19 +20,44 @@ namespace JaebeMusicStudio.Widgets
     /// <summary>
     /// Interaction logic for SoundLineUI.xaml
     /// </summary>
-    public partial class SoundLineUI : UserControl
+    public partial class SoundLineUI : UserControl, IDisposable
     {
         private SoundLine line;
         public SoundLineUI(SoundLine line)
         {
             this.line = line;
+            line.ConnectUI();
             InitializeComponent();
             volume.Value = line.volume;
+        }
+
+        public void Dispose()
+        {
+           line.DisconnectUI();
         }
 
         private void Volume_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             line.volume = (float)volume.Value;
         }
+
+        public void Refresh()
+        {
+           
+
+                if (Sound.Player.LastVolume[0] <= 1)
+                    VolumeL.Width = line.LastVolume[0] * 100;
+                else
+                    VolumeL.Width = 100;
+
+                if (Sound.Player.LastVolume[1] <= 1)
+                    VolumeR.Width = line.LastVolume[1] * 100;
+                else
+                    VolumeR.Width = 100;
+
+
+            
+        }
+
     }
 }

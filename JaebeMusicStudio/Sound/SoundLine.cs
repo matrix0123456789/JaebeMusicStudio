@@ -19,6 +19,8 @@ namespace JaebeMusicStudio.Sound
         public int currentToRender = 0;
         public float[,] lastRendered;
         public float volume=1;
+        private int connectedUIs;
+        public float[] LastVolume = { 0, 0 };
 
         public SoundLine()
         {
@@ -62,7 +64,7 @@ namespace JaebeMusicStudio.Sound
         }
         public void rendered(int offset, float[,] data, float volumeChange=1)
         {
-            float vol = volume*volumeChange;
+            float vol = volumeChange;
             lock (this)
             {
                 if (volume != 0)
@@ -118,7 +120,6 @@ namespace JaebeMusicStudio.Sound
             {
                 if (currentToRender == 0)
                 {
-                    //todo dane międzyliniowe
                     var sound = lastRendered;
                     if (volume != 0)
                     {
@@ -144,8 +145,41 @@ namespace JaebeMusicStudio.Sound
                     {
                         Project.current.ReturnedSound(sound);
                     }
+                    if (connectedUIs!=0)
+                    {
+                        float minL = sound[0, 0];
+                        float minR = sound[1, 0];
+                        float maxL = sound[0, 0];
+                        float maxR = sound[1, 0];
+                        for (var i = 0; i < sound.GetLength(1); i++)
+                        {
+                            if (sound[0, i] < minL)
+                                minL = sound[0, i];
+                            else if (sound[0, i] > maxL)
+                                maxL = sound[0, i];
+                            if (sound[1, i] < minR)
+                                minR = sound[1, i];
+                            else if (sound[1, i] > maxR)
+                                maxR = sound[1, i];
+                            }
+                        minL = Math.Abs(minL);
+                        maxL = Math.Abs(maxL);
+                        minR = Math.Abs(minR);
+                        maxR = Math.Abs(maxR);
+                        LastVolume[0] = minL > maxL ? minL : maxL;
+                        LastVolume[1] = minR > maxR ? minR : maxR;
+                    }
                 }
             }
+        }
+
+        public void ConnectUI()
+        {
+            connectedUIs++;
+        }
+        public void DisconnectUI()
+        {
+            connectedUIs--;
         }
     }
     public class SoundLineConnection

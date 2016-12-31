@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,6 +26,21 @@ namespace JaebeMusicStudio.Widgets
         {
             InitializeComponent();
             showContent();
+            Thread t2 = new Thread(delegate ()
+            {
+                while (true)
+                {
+                    Thread.Sleep(10);
+                    Dispatcher?.Invoke(() =>
+                    {
+                        foreach (var x in SoundLinesList.Children)
+                        {
+                            (x as SoundLineUI)?.Refresh();
+                        }
+                    });
+                }
+            });
+            t2.Start();
         }
 
         void showContent()
