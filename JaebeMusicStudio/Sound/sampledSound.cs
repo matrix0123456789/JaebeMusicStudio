@@ -9,14 +9,18 @@ using System.Windows;
 
 namespace JaebeMusicStudio.Sound
 {
-    class SampledSound
+    public class SampledSound
     {
         private FileStream stream;
         public string path = null;
         public ushort channels = 1;
-       public uint sampleRate;
+        public uint sampleRate;
         ushort bitrate;
         public float[,] wave;
+        /// <summary>
+        /// used to show wave
+        /// </summary>
+        private List<float[,]> simpledWave = new List<float[,]>();
         static Dictionary<string, SampledSound> filesByPaths = new Dictionary<string, SampledSound>();
         public SampledSound(FileStream stream, soundFormat format)
         {
@@ -83,7 +87,7 @@ namespace JaebeMusicStudio.Sound
         {
             if (bitrate == 32)
             {
-                long length = (data.BaseStream.Length - data.BaseStream.Position) / 4/ channels;
+                long length = (data.BaseStream.Length - data.BaseStream.Position) / 4 / channels;
                 wave = new float[channels, length];
                 for (long i = 0; i < length; i++)
                 {
@@ -93,7 +97,7 @@ namespace JaebeMusicStudio.Sound
             }
             else if (bitrate == 16)
             {
-                long length = (data.BaseStream.Length - data.BaseStream.Position) / 2/ channels;
+                long length = (data.BaseStream.Length - data.BaseStream.Position) / 2 / channels;
                 wave = new float[channels, length];
                 for (long i = 0; i < length; i++)
                 {
@@ -103,7 +107,7 @@ namespace JaebeMusicStudio.Sound
             }
             else if (bitrate == 8)
             {
-                long length = (data.BaseStream.Length - data.BaseStream.Position)/ channels;
+                long length = (data.BaseStream.Length - data.BaseStream.Position) / channels;
                 wave = new float[channels, length];
                 for (long i = 0; i < length; i++)
                 {
@@ -116,6 +120,61 @@ namespace JaebeMusicStudio.Sound
         public float Length
         {
             get { return Project.current.SamplesToBeats(wave.Length); }
+        }
+
+        public float[,] simpled(int levelOfDetail)
+        {
+            lock (simpledWave)
+            {
+                if (simpledWave.Count>=levelOfDetail)
+                {
+                    return simpledWave[levelOfDetail - 1];
+                }
+                else
+                {
+                    if (levelOfDetail == 1)
+                    {
+                        var newSamples = wave.GetLength(1) / 64;
+                        var sound = new float[2, newSamples];
+                        for (int i = 0; i < newSamples; i++)
+                        {
+                            float min, max = min = wave[0, i * 64];
+                            for (int j = 1; j < 64; j++)
+                            {
+                                if (wave[0, i * 64 + j] > max)
+                                    max = wave[0, i * 64 + j];
+                                else if (wave[0, i * 64 + j] < min)
+                                    min = wave[0, i * 64 + j];
+                            }
+                            sound[0, i] = max;
+                            sound[1, i] = min;
+                        }
+                        simpledWave.Add(sound);
+                        return sound;
+                    }
+                    else
+                    {
+                        var previous = simpled(levelOfDetail - 1);
+                        var newSamples = previous.GetLength(1) / 64;
+                        var sound = new float[2, newSamples];
+                        for (int i = 0; i < newSamples; i++)
+                        {
+                            float min = previous[1, i * 64], max = previous[0, i * 64];
+                            for (int j = 1; j < 64; j++)
+                            {
+                                if (previous[0, i * 64 + j] > max)
+                                    max = previous[0, i * 64 + j];
+                                else if (previous[1, i * 64 + j] < min)
+                                    min = previous[1, i * 64 + j];
+                            }
+                            sound[0, i] = max;
+                            sound[1, i] = min;
+                        }
+                        simpledWave.Add(sound);
+                        return sound;
+                    }
+                }
+            }
         }
     }
 }

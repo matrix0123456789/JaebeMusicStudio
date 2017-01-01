@@ -105,8 +105,12 @@
     <Compile Include="Widgets\EffectMini.xaml.cs">
       <DependentUpon>EffectMini.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Widgets\ILookInside.cs" />
     <Compile Include="Widgets\Mixer.xaml.cs">
       <DependentUpon>Mixer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\OneSampleLookInside.xaml.cs">
+      <DependentUpon>OneSampleLookInside.xaml</DependentUpon>
     </Compile>
     <Compile Include="Widgets\ReverbUI.xaml.cs">
       <DependentUpon>ReverbUI.xaml</DependentUpon>
@@ -150,6 +154,10 @@
     <Page Include="Widgets\Mixer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Widgets\OneSampleLookInside.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Widgets\ReverbUI.xaml">
       <Generator>MSBuild:Compile</Generator>

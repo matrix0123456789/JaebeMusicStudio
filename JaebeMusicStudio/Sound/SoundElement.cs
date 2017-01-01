@@ -11,7 +11,7 @@ namespace JaebeMusicStudio.Sound
     /// 
     /// element on track
     /// </summary>
-    interface ISoundElement
+    public interface ISoundElement
     {
         /// <summary>
         /// 

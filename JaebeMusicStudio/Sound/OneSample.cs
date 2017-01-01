@@ -9,9 +9,9 @@ using JaebeMusicStudio.Exceptions;
 
 namespace JaebeMusicStudio.Sound
 {
-    class OneSample : ISoundElement
+    public class OneSample : ISoundElement
     {
-        SampledSound sample;
+        public SampledSound sample;
         float innerOffset, speed = 1;
         private float length, offset;
         public float Length { get { return length; } set { length = value; positionChanged?.Invoke(this); } }

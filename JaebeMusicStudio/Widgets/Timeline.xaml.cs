@@ -149,13 +149,16 @@ namespace JaebeMusicStudio.Widgets
         {
             var grid = new Grid();
             var rect = new Rectangle();
+            grid.Children.Add(rect);
             rect.Stroke = Brushes.Black;
             rect.StrokeThickness = 1;
-            if (element.GetType() == typeof(Sound.OneSample))
+            if (element is Sound.OneSample)
+            {
                 rect.Fill = Brushes.Red;
+                grid.Children.Add(new OneSampleLookInside(element as OneSample));
+            }
             else
                 rect.Fill = Brushes.Blue;
-            grid.Children.Add(rect);
             grid.Width = element.Length * scaleX;
             grid.Margin = new Thickness(element.Offset * scaleX, 0, 0, 0);
             grid.VerticalAlignment = VerticalAlignment.Stretch;
