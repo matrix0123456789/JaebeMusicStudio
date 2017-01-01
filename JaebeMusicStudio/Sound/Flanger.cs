@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,12 @@ namespace JaebeMusicStudio.Sound
         List<float> frequency = new List<float>(), amplitude = new List<float>();
         long counter = 0;
         List<float[,]> history = new List<float[,]>();
-        public Flanger() { }
+
+        public Flanger()
+        {
+            frequency.Add(1);
+            amplitude.Add(1);
+        }
         public Flanger(XmlElement xml)
         {
             foreach (XmlElement x in xml.ChildNodes)
@@ -99,6 +105,20 @@ namespace JaebeMusicStudio.Sound
                     history.RemoveRange(0, historyPosition - 1);
 
             }
+        }
+
+        public void Serialize(XmlNode node)
+        {
+            var node2 = node.OwnerDocument.CreateElement("Flanger");
+            for (int i = 0; i < frequency.Count; i++)
+            {
+
+                var node3 = node.OwnerDocument.CreateElement("FlangerElement");
+                node3.SetAttribute("frequency", frequency[i].ToString(CultureInfo.InvariantCulture));
+                node3.SetAttribute("amplitude", amplitude[i].ToString(CultureInfo.InvariantCulture));
+                node2.AppendChild(node3);
+            }
+            node.AppendChild(node2);
         }
     }
 }

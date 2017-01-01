@@ -61,6 +61,10 @@ namespace JaebeMusicStudio.Sound
                 node2.SetAttribute("volume", input.volume.ToString(CultureInfo.InvariantCulture));
                 node.AppendChild(node2);
             }
+            foreach (var effect in effects)
+            {
+                effect.Serialize(node);
+            }
             document.DocumentElement.AppendChild(node);
         }
         public void cleanToRender(int samples)

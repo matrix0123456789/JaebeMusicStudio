@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +20,14 @@ namespace JaebeMusicStudio.Sound
         public float Pan { get { return pan; } set { pan = value; } }
         public Reverb(XmlElement x)
         {
+            if (x.Attributes["volume"] != null)
+                volume = float.Parse(x.Attributes["volume"].Value, CultureInfo.InvariantCulture);
+            if (x.Attributes["delay"] != null)
+                delay = float.Parse(x.Attributes["delay"].Value, CultureInfo.InvariantCulture);
+            if (x.Attributes["feedback"] != null)
+                feedback = float.Parse(x.Attributes["feedback"].Value, CultureInfo.InvariantCulture);
+            if (x.Attributes["pan"] != null)
+                pan = float.Parse(x.Attributes["pan"].Value, CultureInfo.InvariantCulture);
         }
 
         public Reverb()
@@ -28,6 +37,16 @@ namespace JaebeMusicStudio.Sound
         public void CleanMemory()
         {
 
+        }
+
+        public void Serialize(XmlNode node)
+        {
+            var node2 = node.OwnerDocument.CreateElement("Reverb");
+            node2.SetAttribute("volume", Volume.ToString(CultureInfo.InvariantCulture));
+            node2.SetAttribute("delay", Delay.ToString(CultureInfo.InvariantCulture));
+            node2.SetAttribute("feedback", Feedback.ToString(CultureInfo.InvariantCulture));
+            node2.SetAttribute("pan", Pan.ToString(CultureInfo.InvariantCulture));
+            node.AppendChild(node2);
         }
 
         public float[,] DoFilter(float[,] input)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,6 +25,14 @@ namespace JaebeMusicStudio.Sound
         }
         public void CleanMemory()
         {
+        }
+
+        public void Serialize(XmlNode node)
+        {
+
+            var node2 = node.OwnerDocument.CreateElement("NonlinearDistortion");
+            node2.SetAttribute("exponentiation", powerExponentiation.ToString(CultureInfo.InvariantCulture));
+            node.AppendChild(node2);
         }
 
         public float[,] DoFilter(float[,] input)
