@@ -24,5 +24,6 @@ namespace JaebeMusicStudio.Sound
         float Length { get; set; }
         SoundLine SoundLine { get; set; }
         void Serialize(XmlNode node);
+        event Action<ISoundElement> positionChanged;
     }
 }

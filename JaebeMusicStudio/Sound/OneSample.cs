@@ -13,8 +13,9 @@ namespace JaebeMusicStudio.Sound
     {
         SampledSound sample;
         float innerOffset, speed = 1;
-        public float Length { get; set; }
-        public float Offset { get; set; }
+        private float length, offset;
+        public float Length { get { return length; } set { length = value; positionChanged?.Invoke(this); } }
+        public float Offset { get { return offset; } set { offset = value; positionChanged?.Invoke(this); } }
         public SoundLine SoundLine { get; set; }
         public OneSample(XmlNode element)
         {
@@ -30,8 +31,8 @@ namespace JaebeMusicStudio.Sound
                 SoundLine = Project.current.lines[0];
 
 
-            Length = float.Parse(element.Attributes["length"].Value, CultureInfo.InvariantCulture);
-            Offset = float.Parse(element.Attributes["offset"].Value, CultureInfo.InvariantCulture);
+            length = float.Parse(element.Attributes["length"].Value, CultureInfo.InvariantCulture);
+            offset = float.Parse(element.Attributes["offset"].Value, CultureInfo.InvariantCulture);
             innerOffset = float.Parse(element.Attributes["innerOffset"].Value, CultureInfo.InvariantCulture);
             speed = float.Parse(element.Attributes["speed"].Value, CultureInfo.InvariantCulture);
             sample = SampledSound.FindByUrl(element.Attributes["src"].Value);
@@ -78,5 +79,7 @@ namespace JaebeMusicStudio.Sound
                 node2.SetAttribute("src", sample.path);
             node.AppendChild(node2);
         }
+
+        public event Action<ISoundElement> positionChanged;
     }
 }

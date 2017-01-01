@@ -11,19 +11,20 @@ namespace JaebeMusicStudio.Sound
     class Track
     {
         public List<ISoundElement> Elements = new List<ISoundElement>();
-        public event Action<Track, ISoundElement> SoundElementAdded; 
+        public event Action<Track, ISoundElement> SoundElementAdded;
+        public event Action<Track, ISoundElement> SoundElementRemoved;
         public Track()
         {
         }
         public Track(XmlNode xml)
         {
-            foreach(XmlNode element in xml.ChildNodes)
+            foreach (XmlNode element in xml.ChildNodes)
             {
                 ISoundElement soundElement;
                 switch (element.Name)
                 {
                     case "OneSample":
-                    soundElement = new OneSample(element);
+                        soundElement = new OneSample(element);
                         break;
                     default: continue;
                 }
@@ -45,7 +46,13 @@ namespace JaebeMusicStudio.Sound
             if (ss.SoundLine == null)
                 ss.SoundLine = Project.current.lines[0];
             Elements.Add(ss);
-            SoundElementAdded?.Invoke(this,ss);
+            SoundElementAdded?.Invoke(this, ss);
+        }
+
+        internal void RemoveElement(ISoundElement soundElement)
+        {
+            Elements.Remove(soundElement);
+            SoundElementRemoved?.Invoke(this, soundElement);
         }
     }
 }

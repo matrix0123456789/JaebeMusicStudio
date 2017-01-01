@@ -86,32 +86,63 @@ namespace JaebeMusicStudio.Widgets
         }
         private void project_trackAdded(int index, Sound.Track track)
         {
-            var grid = new Grid();
-            grid.Background = Brushes.Aqua;
-            grid.Height = 40;
-            tracksStack.Children.Insert(index, grid);
-
-            var content = new Grid();
-            var line = new Rectangle();
-            line.HorizontalAlignment = HorizontalAlignment.Stretch;
-            line.VerticalAlignment = VerticalAlignment.Bottom;
-            line.Height = 1;
-            line.Fill = Brushes.Black;
-            content.Children.Add(line);
-            content.Height = 40;
-            tracksContentStack.Children.Insert(index, content);
-            foreach (var element in track.Elements)
+            Dispatcher.Invoke(() =>
             {
-                project_soundElementAdded(content, element);
-            }
-            track.SoundElementAdded += Track_SoundElementAdded;
+                var grid = new Grid();
+                grid.Background = Brushes.Aqua;
+                grid.Height = 40;
+                tracksStack.Children.Insert(index, grid);
+
+                var content = new Grid();
+                content.Tag = track;
+                var line = new Rectangle();
+                line.HorizontalAlignment = HorizontalAlignment.Stretch;
+                line.VerticalAlignment = VerticalAlignment.Bottom;
+                line.Height = 1;
+                line.Fill = Brushes.Black;
+                content.Children.Add(line);
+                content.Height = 40;
+                tracksContentStack.Children.Insert(index, content);
+                foreach (var element in track.Elements)
+                {
+                    project_soundElementAdded(content, element);
+                }
+                track.SoundElementAdded += Track_SoundElementAdded;
+                track.SoundElementRemoved += Track_SoundElementRemoved;
+            });
+        }
+
+        private void Track_SoundElementRemoved(Track track, ISoundElement element)
+        {
+
+            Dispatcher.Invoke(() =>
+            {
+                foreach (var trackUI in tracksContentStack.Children)
+                {
+                    if ((trackUI as FrameworkElement)?.Tag==track)
+                    {
+                        foreach (var elem in (trackUI as Grid).Children)
+                        {
+                            if ((elem as Grid)?.Tag == element)
+                            {
+                                (trackUI as Grid).Children.Remove(elem as Grid);
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+            });
         }
 
         private void Track_SoundElementAdded(Track arg1, ISoundElement arg2)
         {
-            var index = Project.current.tracks.IndexOf(arg1);
+            Dispatcher.Invoke(() =>
+            {
+                var index = Project.current.tracks.IndexOf(arg1);
             var trackContainer = (Grid)tracksContentStack.Children[index];
             project_soundElementAdded(trackContainer, arg2);
+            });
         }
 
         void project_soundElementAdded(Grid trackContainer, Sound.ISoundElement element)
@@ -132,7 +163,42 @@ namespace JaebeMusicStudio.Widgets
             trackContainer.Children.Add(grid);
             grid.Tag = element;
             grid.MouseLeftButtonDown += Element_MouseLeftButtonDown;
+            element.positionChanged += Element_positionChanged;
 
+            var menu=new ContextMenu();
+            var menu_delete = new MenuItem() {Header = "Usun"};
+            menu_delete.Tag = new Object []{element, trackContainer.Tag};
+            menu_delete.Click += element_delete_Click;
+            menu.Items.Add(menu_delete);
+            grid.ContextMenu = menu;
+
+        }
+
+        private void element_delete_Click(object sender, RoutedEventArgs e)
+        {
+            var data = (sender as FrameworkElement).Tag as Object[];
+            (data[1] as Track).RemoveElement(data[0] as ISoundElement);
+        }
+
+        private void Element_positionChanged(ISoundElement obj)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                foreach (var track in tracksContentStack.Children)
+                {
+                    if (track is Grid)
+                    {
+                        foreach (var elem in (track as Grid).Children)
+                        {
+                            if ((elem as Grid)?.Tag == obj)
+                            {
+                                (elem as Grid).Width = obj.Length*scaleX;
+                                (elem as Grid).Margin = new Thickness(obj.Offset*scaleX, 0, 0, 0);
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         private void Element_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -172,7 +238,7 @@ namespace JaebeMusicStudio.Widgets
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
                 scaleX *= Math.Pow(2, e.Delta / 200f);
-                scrollHorizontal.ScrollToHorizontalOffset((scrollHorizontal.HorizontalOffset + scrollHorizontal.ActualWidth/2) * Math.Pow(2, e.Delta / 200f) - scrollHorizontal.ActualWidth / 2);
+                scrollHorizontal.ScrollToHorizontalOffset((scrollHorizontal.HorizontalOffset + scrollHorizontal.ActualWidth / 2) * Math.Pow(2, e.Delta / 200f) - scrollHorizontal.ActualWidth / 2);
                 showContent();
             }
         }
@@ -237,7 +303,6 @@ namespace JaebeMusicStudio.Widgets
                     var newTime = editCalcNewTime(e);
 
                     editingElement.Offset = newTime;
-                    editingVisualElement.Margin = new Thickness(newTime * scaleX, 0, 0, 0);
                     editingVisualElement = null;
                     editingElement = null;
                 }
