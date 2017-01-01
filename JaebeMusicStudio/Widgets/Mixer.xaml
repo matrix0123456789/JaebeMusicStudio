@@ -24,7 +24,17 @@
             </Grid>
         </ScrollViewer>
         <Label Grid.Column="1" HorizontalContentAlignment="Center" VerticalAlignment="Top">Efekty</Label>
-        <ScrollViewer Name="EffectsListScroll" Grid.Column="1" Margin="0,26,0,0">
+        <ScrollViewer Name="EffectsListScroll" Grid.Column="1" Margin="0,26,0,0"
+      AllowDrop="True" Drop="EffectsListScroll_OnDrop">
+            <ScrollViewer.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Dodaj">
+                        <MenuItem Name="AddReverb" Header="Reverb" Click="AddReverb_Click"></MenuItem>
+                        <MenuItem Name="AddNonlinearDistortion" Header="Nonlinear" Click="AddNonlinearDistortion_Click"></MenuItem>
+                        <MenuItem Name="AddFlanger" Header="Flanger" Click="AddFlanger_Click"></MenuItem>
+                    </MenuItem>
+                </ContextMenu>
+            </ScrollViewer.ContextMenu>
             <Grid>
                 <StackPanel Name="EffectsList"/>
             </Grid>

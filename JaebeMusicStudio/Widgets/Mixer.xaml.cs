@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
@@ -30,19 +31,19 @@ namespace JaebeMusicStudio.Widgets
             InitializeComponent();
             showContent();
             Thread t2 = new Thread(delegate ()
-           {
-               while (true)
-               {
-                   Thread.Sleep(10);
-                   Dispatcher?.Invoke(() =>
-                   {
-                       foreach (var x in SoundLinesList.Children)
-                       {
-                           (x as SoundLineUI)?.Refresh();
-                       }
-                   });
-               }
-           });
+            {
+                while (true)
+                {
+                    Thread.Sleep(10);
+                    Dispatcher?.Invoke(() =>
+                    {
+                        foreach (var x in SoundLinesList.Children)
+                        {
+                            (x as SoundLineUI)?.Refresh();
+                        }
+                    });
+                }
+            });
             t2.Start();
         }
 
@@ -67,40 +68,99 @@ namespace JaebeMusicStudio.Widgets
         private void LineUI_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (selectedLine != null)
+            {
                 selectedLine.Background = Brushes.White;
+                selectedLine.Line.effectAdded -= Line_effectAdded;
+                selectedLine.Line.effectRemoved -= Line_effectRemoved;
+            }
             if (sender is SoundLineUI)
                 selectedLine = sender as SoundLineUI;
             selectedLine.Background = new SolidColorBrush(Color.FromRgb(230, 230, 255));
+            selectedLine.Line.effectAdded += Line_effectAdded;
+            selectedLine.Line.effectRemoved += Line_effectRemoved; ;
             ShowEffect();
+        }
+
+        private void Line_effectRemoved(int index)
+        {
+           // var removed = EffectsList.Children[index];
+            EffectsList.Children.RemoveAt(index);
+        }
+
+        private void Line_effectAdded(int index, Effect effect)
+        {
+
+            var ui = new EffectMini(effect);
+
+            EffectsList.Children.Insert(index, ui);
+            ui.MouseDown += Ui_MouseDown;
+        }
+
+        private void Ui_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            DragDrop.DoDragDrop((sender as EffectMini), (sender as EffectMini).effect as Effect, DragDropEffects.Copy | DragDropEffects.Move);
         }
 
         void ShowEffect()
         {
             EffectsList.Children.Clear();
+            int index = 0;
             foreach (var effect in selectedLine.Line.effects)
             {
-                var grid = new Grid();
-                grid.Background=Brushes.White;
-                var label = new Label() { Content = effect.ToString() };
-                grid.Children.Add(label);
-                EffectsList.Children.Add(grid);
-                grid.Tag = effect;
-                grid.MouseDown += EffectGrid_MouseDown;
+                Line_effectAdded(index, effect);
+                index++;
+            }
+            var button = new ButtonPretty() { Text = "Dodaj" };
+            button.Click += AddEffect_Click;
+            EffectsList.Children.Add(button);
+        }
+
+        private void AddEffect_Click(object sender, RoutedEventArgs e)
+        {
+            EffectsListScroll.ContextMenu.IsOpen = true;
+        }
+
+
+
+        private void AddReverb_Click(object sender, RoutedEventArgs e)
+        {
+            if (selectedLine?.Line != null)
+            {
+                var effect = new Reverb();
+                selectedLine.Line.AddEffect(effect);
             }
         }
 
-        private void EffectGrid_MouseDown(object sender, MouseButtonEventArgs e)
+        private void AddNonlinearDistortion_Click(object sender, RoutedEventArgs e)
         {
-            if ((sender as FrameworkElement).Tag is NonlinearDistortion)
+            if (selectedLine?.Line != null)
             {
-                var effect = (sender as FrameworkElement).Tag as NonlinearDistortion;
-                PseudoWindow.OpenWindow(() => new NonlinearDistortionUI(effect));
+                var effect = new NonlinearDistortion();
+                selectedLine.Line.AddEffect(effect);
             }
-            else if ((sender as FrameworkElement).Tag is Reverb)
+        }
+
+        private void AddFlanger_Click(object sender, RoutedEventArgs e)
+        {
+            if (selectedLine?.Line != null)
             {
-                var effect = (sender as FrameworkElement).Tag as Reverb;
-                PseudoWindow.OpenWindow(() => new ReverbUI(effect));
+                var effect = new Flanger();
+                selectedLine.Line.AddEffect(effect);
             }
+        }
+
+        private void EffectsListScroll_OnDrop(object sender, DragEventArgs e)
+        {
+            var newEffect = e.Data.GetData(e.Data.GetFormats()[0]) as Effect;
+            if ((e.Effects & DragDropEffects.Move) != 0)
+            {
+                // EffectsList.Children.Remove(e.Source as EffectMini);
+                selectedLine.Line.RemoveEffect(newEffect);
+            }
+            int index = 0;//todo dorobić sprawdzanie
+
+            // EffectsList.Children.Insert(index,e.Source as EffectMini);
+            selectedLine.Line.AddEffect(index, newEffect);
         }
     }
 }

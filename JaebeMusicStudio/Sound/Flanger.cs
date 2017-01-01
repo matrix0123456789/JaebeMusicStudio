@@ -12,7 +12,7 @@ namespace JaebeMusicStudio.Sound
         List<float> frequency = new List<float>(), amplitude = new List<float>();
         long counter = 0;
         List<float[,]> history = new List<float[,]>();
-
+        public Flanger() { }
         public Flanger(XmlElement xml)
         {
             foreach (XmlElement x in xml.ChildNodes)

@@ -12,6 +12,11 @@ namespace JaebeMusicStudio.Sound
         NonlinearDistortionType effectType = NonlinearDistortionType.Power;
         float powerExponentiation = 2;
         public float PowerExponentiation { get { return powerExponentiation; } set { powerExponentiation = value; } }
+
+        public NonlinearDistortion()
+        {
+        }
+
         public NonlinearDistortion(XmlElement x)
         {
             if (x.Attributes["exponentiation"] != null)

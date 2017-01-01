@@ -22,6 +22,9 @@ namespace JaebeMusicStudio.Sound
         private int connectedUIs;
         public float[] LastVolume = { 0, 0 };
 
+        public event Action<int, Effect> effectAdded;
+        public event Action<int> effectRemoved;
+
         public SoundLine()
         {
         }
@@ -183,6 +186,25 @@ namespace JaebeMusicStudio.Sound
         public void DisconnectUI()
         {
             connectedUIs--;
+        }
+
+        public void AddEffect(Effect e)
+        {
+            var index = effects.Count;
+            effects.Add(e);
+            effectAdded?.Invoke(index, e);
+        }
+        public void AddEffect(int index, Effect e)
+        {
+            effects.Insert(index,e);
+            effectAdded?.Invoke(index, e);
+        }
+
+        public void RemoveEffect(Effect e)
+        {
+            var index = effects.IndexOf(e);
+            effects.RemoveAt(index);
+            effectRemoved?.Invoke(index);
         }
     }
     public class SoundLineConnection

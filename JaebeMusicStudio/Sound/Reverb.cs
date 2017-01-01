@@ -21,6 +21,10 @@ namespace JaebeMusicStudio.Sound
         {
         }
 
+        public Reverb()
+        {
+        }
+
         public void CleanMemory()
         {
 

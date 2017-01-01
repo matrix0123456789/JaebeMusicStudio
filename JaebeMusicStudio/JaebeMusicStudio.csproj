@@ -102,6 +102,9 @@
     <Compile Include="UI\Slider.xaml.cs">
       <DependentUpon>Slider.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Widgets\EffectMini.xaml.cs">
+      <DependentUpon>EffectMini.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Widgets\Mixer.xaml.cs">
       <DependentUpon>Mixer.xaml</DependentUpon>
     </Compile>
@@ -137,6 +140,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Slider.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Widgets\EffectMini.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
