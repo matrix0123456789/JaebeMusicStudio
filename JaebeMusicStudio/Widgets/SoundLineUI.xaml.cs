@@ -23,6 +23,7 @@ namespace JaebeMusicStudio.Widgets
     public partial class SoundLineUI : UserControl, IDisposable
     {
         private SoundLine line;
+        public SoundLine Line { get { return line; } }
         public SoundLineUI(SoundLine line)
         {
             this.line = line;
@@ -33,7 +34,7 @@ namespace JaebeMusicStudio.Widgets
 
         public void Dispose()
         {
-           line.DisconnectUI();
+            line.DisconnectUI();
         }
 
         private void Volume_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -43,20 +44,20 @@ namespace JaebeMusicStudio.Widgets
 
         public void Refresh()
         {
-           
-
-                if (Sound.Player.LastVolume[0] <= 1)
-                    VolumeL.Width = line.LastVolume[0] * 100;
-                else
-                    VolumeL.Width = 100;
-
-                if (Sound.Player.LastVolume[1] <= 1)
-                    VolumeR.Width = line.LastVolume[1] * 100;
-                else
-                    VolumeR.Width = 100;
 
 
-            
+            if (Sound.Player.LastVolume[0] <= 1)
+                VolumeL.Width = line.LastVolume[0] * 100;
+            else
+                VolumeL.Width = 100;
+
+            if (Sound.Player.LastVolume[1] <= 1)
+                VolumeR.Width = line.LastVolume[1] * 100;
+            else
+                VolumeR.Width = 100;
+
+
+
         }
 
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,24 +23,25 @@ namespace JaebeMusicStudio.Widgets
     /// </summary>
     public partial class Mixer : Page
     {
+        SoundLineUI selectedLine = null;
         public Mixer()
         {
             InitializeComponent();
             showContent();
             Thread t2 = new Thread(delegate ()
-            {
-                while (true)
-                {
-                    Thread.Sleep(10);
-                    Dispatcher?.Invoke(() =>
-                    {
-                        foreach (var x in SoundLinesList.Children)
-                        {
-                            (x as SoundLineUI)?.Refresh();
-                        }
-                    });
-                }
-            });
+           {
+               while (true)
+               {
+                   Thread.Sleep(10);
+                   Dispatcher?.Invoke(() =>
+                   {
+                       foreach (var x in SoundLinesList.Children)
+                       {
+                           (x as SoundLineUI)?.Refresh();
+                       }
+                   });
+               }
+           });
             t2.Start();
         }
 
@@ -58,6 +60,29 @@ namespace JaebeMusicStudio.Widgets
         {
             var lineUI = new SoundLineUI(line);
             SoundLinesList.Children.Insert(index, lineUI);
+            lineUI.MouseDown += LineUI_MouseDown;
+        }
+
+        private void LineUI_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (selectedLine != null)
+                selectedLine.Background = Brushes.White;
+            if (sender is SoundLineUI)
+                selectedLine = sender as SoundLineUI;
+            selectedLine.Background = new SolidColorBrush(Color.FromRgb(230, 230, 255));
+            ShowEffect();
+        }
+
+        void ShowEffect()
+        {
+            EffectsList.Children.Clear();
+            foreach (var effect in selectedLine.Line.effects)
+            {
+                var grid = new Grid();
+                var label = new Label() { Content = effect.ToString() };
+                grid.Children.Add(label);
+                EffectsList.Children.Add(grid);
+            }
         }
     }
 }

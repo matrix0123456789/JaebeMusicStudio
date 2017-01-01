@@ -11,12 +11,22 @@
       >
 
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
 
         <ScrollViewer Name="SoundLinesListScroll" Margin="0">
             <Grid>
                 <StackPanel Name="SoundLinesList">
                     <Button>Dodaj</Button>
                 </StackPanel>
+            </Grid>
+        </ScrollViewer>
+        <Label Grid.Column="1" HorizontalContentAlignment="Center" VerticalAlignment="Top">Efekty</Label>
+        <ScrollViewer Name="EffectsListScroll" Grid.Column="1" Margin="0,26,0,0">
+            <Grid>
+                <StackPanel Name="EffectsList"/>
             </Grid>
         </ScrollViewer>
     </Grid>

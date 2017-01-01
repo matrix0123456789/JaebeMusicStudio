@@ -86,6 +86,7 @@
     <Compile Include="Exceptions\BadFileException.cs" />
     <Compile Include="Sound\Effect.cs" />
     <Compile Include="Sound\Flanger.cs" />
+    <Compile Include="Sound\NonlinearDistortion.cs" />
     <Compile Include="Sound\OneSample.cs" />
     <Compile Include="Sound\Player.cs" />
     <Compile Include="Sound\Project.cs" />
@@ -103,6 +104,9 @@
     </Compile>
     <Compile Include="Widgets\Mixer.xaml.cs">
       <DependentUpon>Mixer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\Oscilloscope.xaml.cs">
+      <DependentUpon>Oscilloscope.xaml</DependentUpon>
     </Compile>
     <Compile Include="Widgets\SoundLineUI.xaml.cs">
       <DependentUpon>SoundLineUI.xaml</DependentUpon>
@@ -133,6 +137,10 @@
     <Page Include="Widgets\Mixer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Widgets\Oscilloscope.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Widgets\SoundLineUI.xaml">
       <SubType>Designer</SubType>

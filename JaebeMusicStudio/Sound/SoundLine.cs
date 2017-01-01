@@ -18,7 +18,7 @@ namespace JaebeMusicStudio.Sound
         public List<Effect> effects = new List<Effect>();
         public int currentToRender = 0;
         public float[,] lastRendered;
-        public float volume=1;
+        public float volume = 1;
         private int connectedUIs;
         public float[] LastVolume = { 0, 0 };
 
@@ -36,9 +36,12 @@ namespace JaebeMusicStudio.Sound
                     case "Flanger":
                         effects.Add(new Flanger(x));
                         break;
-                        
+
                     case "Reverb":
                         effects.Add(new Reverb(x));
+                        break;
+                    case "NonlinearDistortion":
+                        effects.Add(new NonlinearDistortion(x));
                         break;
                 }
             }
@@ -62,7 +65,7 @@ namespace JaebeMusicStudio.Sound
             currentToRender = inputs.Count;
             lastRendered = new float[2, samples];
         }
-        public void rendered(int offset, float[,] data, float volumeChange=1)
+        public void rendered(int offset, float[,] data, float volumeChange = 1)
         {
             float vol = volumeChange;
             lock (this)
@@ -78,7 +81,7 @@ namespace JaebeMusicStudio.Sound
                         {
                             for (int i = 0; i < length; i++)
                             {
-                                lastRendered[0, i] += data[0, i]* vol;
+                                lastRendered[0, i] += data[0, i] * vol;
                                 lastRendered[1, i] += data[0, i] * vol;
                             }
                         }
@@ -145,7 +148,7 @@ namespace JaebeMusicStudio.Sound
                     {
                         Project.current.ReturnedSound(sound);
                     }
-                    if (connectedUIs!=0)
+                    if (connectedUIs != 0)
                     {
                         float minL = sound[0, 0];
                         float minR = sound[1, 0];
@@ -161,7 +164,7 @@ namespace JaebeMusicStudio.Sound
                                 minR = sound[1, i];
                             else if (sound[1, i] > maxR)
                                 maxR = sound[1, i];
-                            }
+                        }
                         minL = Math.Abs(minL);
                         maxL = Math.Abs(maxL);
                         minR = Math.Abs(minR);

@@ -20,6 +20,7 @@ namespace JaebeMusicStudio.Sound
         public static BufferedWaveProvider bufor = new BufferedWaveProvider(new WaveFormat((int)Sound.Project.current.sampleRate, 2));
         public static WasapiOut WasapiWyjście = new WasapiOut(AudioClientShareMode.Shared, false, 10);
         public static event Action<float> positionChanged;
+        public static event Action<float[,]> SoundPlayed; 
         static Player()
         {
             WasapiWyjście.Init(bufor);
@@ -112,6 +113,7 @@ namespace JaebeMusicStudio.Sound
             maxR = Math.Abs(maxR);
             LastVolume[0] = minL > maxL ? minL : maxL;
             LastVolume[1] = minR > maxR ? minR : maxR;
+            SoundPlayed?.Invoke(sound);
         }
     }
 }

@@ -132,5 +132,18 @@ namespace JaebeMusicStudio
             viewerThread.SetApartmentState(ApartmentState.STA); // needs to be STA or throws exception
             viewerThread.Start();
         }
+
+        private void openOscilloscopeButton_Click(object sender, RoutedEventArgs e)
+        {
+
+            Thread viewerThread = new Thread(delegate ()
+            {
+                var okno = new UI.PseudoWindow(new Widgets.Oscilloscope());
+                System.Windows.Threading.Dispatcher.Run();
+            });
+            viewerThread.Name = "PseudoWindow Thread";
+            viewerThread.SetApartmentState(ApartmentState.STA); // needs to be STA or throws exception
+            viewerThread.Start();
+        }
     }
 }
