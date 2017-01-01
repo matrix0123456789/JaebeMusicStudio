@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using JaebeMusicStudio.UI;
 
 namespace JaebeMusicStudio
 {
@@ -109,41 +110,17 @@ namespace JaebeMusicStudio
 
         private void openTimelineButton_Click(object sender, RoutedEventArgs e)
         {
-            Thread viewerThread = new Thread(delegate ()
-            {
-                var okno = new UI.PseudoWindow(new Widgets.Timeline());
-                System.Windows.Threading.Dispatcher.Run();
-            });
-            viewerThread.Name = "PseudoWindow Thread";
-            viewerThread.SetApartmentState(ApartmentState.STA); // needs to be STA or throws exception
-            viewerThread.Start();
-
-
+            PseudoWindow.OpenWindow(() => new Widgets.Timeline());
         }
 
         private void openMixerButton_Click(object sender, RoutedEventArgs e)
         {
-            Thread viewerThread = new Thread(delegate ()
-            {
-                var okno = new UI.PseudoWindow(new Widgets.Mixer());
-                System.Windows.Threading.Dispatcher.Run();
-            });
-            viewerThread.Name = "PseudoWindow Thread";
-            viewerThread.SetApartmentState(ApartmentState.STA); // needs to be STA or throws exception
-            viewerThread.Start();
+            PseudoWindow.OpenWindow(() => new Widgets.Mixer());
         }
 
         private void openOscilloscopeButton_Click(object sender, RoutedEventArgs e)
         {
-
-            Thread viewerThread = new Thread(delegate ()
-            {
-                var okno = new UI.PseudoWindow(new Widgets.Oscilloscope());
-                System.Windows.Threading.Dispatcher.Run();
-            });
-            viewerThread.Name = "PseudoWindow Thread";
-            viewerThread.SetApartmentState(ApartmentState.STA); // needs to be STA or throws exception
-            viewerThread.Start();
+            PseudoWindow.OpenWindow(() => new Widgets.Oscilloscope());
         }
     }
 }

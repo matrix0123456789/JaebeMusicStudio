@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using JaebeMusicStudio.Sound;
+using JaebeMusicStudio.UI;
 
 namespace JaebeMusicStudio.Widgets
 {
@@ -79,9 +80,21 @@ namespace JaebeMusicStudio.Widgets
             foreach (var effect in selectedLine.Line.effects)
             {
                 var grid = new Grid();
+                grid.Background=Brushes.White;
                 var label = new Label() { Content = effect.ToString() };
                 grid.Children.Add(label);
                 EffectsList.Children.Add(grid);
+                grid.Tag = effect;
+                grid.MouseDown += EffectGrid_MouseDown;
+            }
+        }
+
+        private void EffectGrid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if ((sender as FrameworkElement).Tag is NonlinearDistortion)
+            {
+                var effect= (sender as FrameworkElement).Tag as NonlinearDistortion;
+                PseudoWindow.OpenWindow(()=>new NonlinearDistortionUI(effect));
             }
         }
     }

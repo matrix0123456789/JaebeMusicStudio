@@ -7,10 +7,10 @@ using System.Xml;
 
 namespace JaebeMusicStudio.Sound
 {
-    class NonlinearDistortion : Effect
+    public class NonlinearDistortion : Effect
     {
         NonlinearDistortionType effectType = NonlinearDistortionType.Power;
-        private float PowerExponentiation = 2;
+        public float PowerExponentiation = 2;
 
         public NonlinearDistortion(XmlElement x)
         {

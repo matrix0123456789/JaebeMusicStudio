@@ -105,6 +105,9 @@
     <Compile Include="Widgets\Mixer.xaml.cs">
       <DependentUpon>Mixer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Widgets\NonlinearDistortionUI.xaml.cs">
+      <DependentUpon>NonlinearDistortionUI.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Widgets\Oscilloscope.xaml.cs">
       <DependentUpon>Oscilloscope.xaml</DependentUpon>
     </Compile>
@@ -137,6 +140,10 @@
     <Page Include="Widgets\Mixer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Widgets\NonlinearDistortionUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Widgets\Oscilloscope.xaml">
       <SubType>Designer</SubType>
