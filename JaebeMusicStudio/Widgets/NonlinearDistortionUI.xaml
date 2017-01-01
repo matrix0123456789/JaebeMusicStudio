@@ -11,6 +11,6 @@
 
     <Grid>
         <RadioButton HorizontalAlignment="Left" VerticalAlignment="Top">Funkcja potęgowa</RadioButton>
-        <UI:Slider VerticalAlignment="Top" Margin="121,0,10,0" x:Name="PowerExponentiation" ValueChanged="PowerExponentiation_OnValueChanged"/>
+        <UI:Slider VerticalAlignment="Top" Margin="121,0,10,0" x:Name="PowerExponentiation" ValueChanged="PowerExponentiation_OnValueChanged" Minimum="0" Maximum="10"/>
     </Grid>
 </Page>

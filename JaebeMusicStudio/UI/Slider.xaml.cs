@@ -28,15 +28,28 @@ namespace JaebeMusicStudio.UI
             InitializeComponent();
         }
 
+        [Bindable(true)]
         public double Value
         {
             get { return slider.Value; }
             set { slider.Value = value; }
         }
+        [Bindable(true)]
+        public double Minimum
+        {
+            get { return slider.Minimum; }
+            set { slider.Minimum = value; }
+        }
+        [Bindable(true)]
+        public double Maximum
+        {
+            get { return slider.Maximum; }
+            set { slider.Maximum = value; }
+        }
 
         private void Slider_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            ValueChanged?.Invoke(sender,e);
+            ValueChanged?.Invoke(sender, e);
         }
     }
 }

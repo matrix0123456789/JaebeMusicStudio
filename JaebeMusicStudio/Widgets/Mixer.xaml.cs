@@ -93,8 +93,13 @@ namespace JaebeMusicStudio.Widgets
         {
             if ((sender as FrameworkElement).Tag is NonlinearDistortion)
             {
-                var effect= (sender as FrameworkElement).Tag as NonlinearDistortion;
-                PseudoWindow.OpenWindow(()=>new NonlinearDistortionUI(effect));
+                var effect = (sender as FrameworkElement).Tag as NonlinearDistortion;
+                PseudoWindow.OpenWindow(() => new NonlinearDistortionUI(effect));
+            }
+            else if ((sender as FrameworkElement).Tag is Reverb)
+            {
+                var effect = (sender as FrameworkElement).Tag as Reverb;
+                PseudoWindow.OpenWindow(() => new ReverbUI(effect));
             }
         }
     }
