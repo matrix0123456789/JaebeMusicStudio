@@ -43,7 +43,7 @@ namespace JaebeMusicStudio.Widgets
             var pixels = (long)ActualWidth;
             if (pixels > 10000)
                 return;//todo wymyśl coś na to zwieszanie
-            var samples = (long)Project.current.CountSamples(element.Length);//how many samples you need on output
+            var samples = (long)(element.Length / Project.current.tempo * 60f * element.sample.sampleRate);//how many samples you need on output
             var levelOfDetails = (int)Math.Log(samples / ActualWidth, 64);
             if (levelOfDetails < 1)
                 levelOfDetails = 1;
