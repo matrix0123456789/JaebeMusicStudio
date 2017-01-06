@@ -119,7 +119,7 @@ namespace JaebeMusicStudio.Widgets
             {
                 foreach (var trackUI in tracksContentStack.Children)
                 {
-                    if ((trackUI as FrameworkElement)?.Tag==track)
+                    if ((trackUI as FrameworkElement)?.Tag == track)
                     {
                         foreach (var elem in (trackUI as Grid).Children)
                         {
@@ -140,8 +140,8 @@ namespace JaebeMusicStudio.Widgets
             Dispatcher.Invoke(() =>
             {
                 var index = Project.current.tracks.IndexOf(arg1);
-            var trackContainer = (Grid)tracksContentStack.Children[index];
-            project_soundElementAdded(trackContainer, arg2);
+                var trackContainer = (Grid)tracksContentStack.Children[index];
+                project_soundElementAdded(trackContainer, arg2);
             });
         }
 
@@ -159,6 +159,7 @@ namespace JaebeMusicStudio.Widgets
             }
             else
                 rect.Fill = Brushes.Blue;
+
             grid.Width = element.Length * scaleX;
             grid.Margin = new Thickness(element.Offset * scaleX, 0, 0, 0);
             grid.VerticalAlignment = VerticalAlignment.Stretch;
@@ -168,13 +169,36 @@ namespace JaebeMusicStudio.Widgets
             grid.MouseLeftButtonDown += Element_MouseLeftButtonDown;
             element.positionChanged += Element_positionChanged;
 
-            var menu=new ContextMenu();
-            var menu_delete = new MenuItem() {Header = "Usun"};
-            menu_delete.Tag = new Object []{element, trackContainer.Tag};
-            menu_delete.Click += element_delete_Click;
-            menu.Items.Add(menu_delete);
+            var menu = new ContextMenu();
+            var menuDelete = new MenuItem() { Header = "Usun" };
+            menuDelete.Tag = new Object[] { element, trackContainer.Tag };
+            menuDelete.Click += element_delete_Click;
+            menu.Items.Add(menuDelete);
+
+
+            var menuOutput = new MenuItem() { Header = "Wyjście dźwięku" };
+            menuOutput.Tag = new Object[] { element, trackContainer.Tag };
+            menu.Items.Add(menuOutput);
+            int i = 0;
+            foreach (var line in Project.current.lines)
+            {
+                var menuOutputLine = new MenuItem() { Header = "Linia " + (++i) };
+                menuOutputLine.Tag = new Object[] { element, line };
+                if (element.SoundLine == line)
+                {
+                    menuOutputLine.IsChecked = true;
+                }
+                menuOutputLine.Click += element_setOutput_Click;
+                menuOutput.Items.Add(menuOutputLine);
+            }
             grid.ContextMenu = menu;
 
+        }
+
+        private void element_setOutput_Click(object sender, RoutedEventArgs e)
+        {
+            var tag = ((sender as FrameworkElement).Tag as Object[]);
+            (tag[0] as ISoundElement).SoundLine = tag[1] as SoundLine;
         }
 
         private void element_delete_Click(object sender, RoutedEventArgs e)
@@ -195,8 +219,8 @@ namespace JaebeMusicStudio.Widgets
                         {
                             if ((elem as Grid)?.Tag == obj)
                             {
-                                (elem as Grid).Width = obj.Length*scaleX;
-                                (elem as Grid).Margin = new Thickness(obj.Offset*scaleX, 0, 0, 0);
+                                (elem as Grid).Width = obj.Length * scaleX;
+                                (elem as Grid).Margin = new Thickness(obj.Offset * scaleX, 0, 0, 0);
                             }
                         }
                     }
