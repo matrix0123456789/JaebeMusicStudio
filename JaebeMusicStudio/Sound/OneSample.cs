@@ -19,7 +19,6 @@ namespace JaebeMusicStudio.Sound
         public SoundLine SoundLine { get; set; }
         public OneSample(XmlNode element)
         {
-            //todo tymczasowo
             if (element.Attributes["soundLine"] != null)
             {
                 var number = uint.Parse(element.Attributes["soundLine"].Value);

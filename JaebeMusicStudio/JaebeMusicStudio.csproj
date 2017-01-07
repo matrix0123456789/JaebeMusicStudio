@@ -94,6 +94,7 @@
     <Compile Include="Sound\Notes.cs" />
     <Compile Include="Sound\NotesCollection.cs" />
     <Compile Include="Sound\OneSample.cs" />
+    <Compile Include="Sound\Oscillator.cs" />
     <Compile Include="Sound\Player.cs" />
     <Compile Include="Sound\Project.cs" />
     <Compile Include="Sound\Reverb.cs" />

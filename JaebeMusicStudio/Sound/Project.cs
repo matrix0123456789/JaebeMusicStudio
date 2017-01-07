@@ -23,6 +23,9 @@ namespace JaebeMusicStudio.Sound
         public float sampleRate { get { return _sampleRate; } }
         public static Project current = null;
         public List<SoundLine> lines = new List<SoundLine>() { };
+
+
+
         public List<Track> tracks = new List<Track>();
         public List<INoteSynth> NoteSynths = new List<INoteSynth>();
         // Queue<SoundElement> renderingQueue = new Queue<SoundElement>();
@@ -125,6 +128,7 @@ namespace JaebeMusicStudio.Sound
             {
                 foreach (var element in track.Elements)
                 {
+                    if (element.SoundLine == null) continue;//skup element without output
                     if (element.Offset < position + renderingLength && element.Offset + element.Length > position)
                     {
                         lock (element.SoundLine)
@@ -265,7 +269,10 @@ namespace JaebeMusicStudio.Sound
             }
             return AddEmptyTrack();
         }
-
+        public double waveTime(float pitch)
+        {
+            return sampleRate /( Math.Pow(2, (pitch - 69) / 12) * 440f);
+        }
         public bool checkNamedElement(string name) => NamedElements.ContainsKey(name);
         long generatedNamedElementNumber = 0;
         public void generateNamedElement(INamedElement el)
@@ -276,7 +283,7 @@ namespace JaebeMusicStudio.Sound
             } while (NamedElements.ContainsKey("element_" + generatedNamedElementNumber));
             el.Name = "element_" + generatedNamedElementNumber;
         }
-       public INamedElement this[string name]
+        public INamedElement this[string name]
         {
             get { return NamedElements[name]; }
             set

@@ -4,17 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using JaebeMusicStudio.Exceptions;
 
 namespace JaebeMusicStudio.Sound
 {
-    class BasicSynth:INoteSynth
+    class BasicSynth : INoteSynth
     {
         private string name;
         public string Name
         {
             get
             {
-                if(name==null)
+                if (name == null)
                     Project.current.generateNamedElement(this);
                 return name;
             }
@@ -24,16 +25,86 @@ namespace JaebeMusicStudio.Sound
                 name = value;
             }
         }
-
+        public List<Oscillator> oscillators = new List<Oscillator>() { new Oscillator() };
         public SoundLine SoundLine { get; set; }
 
         public BasicSynth(XmlNode element)
         {
             Name = element.Attributes["name"].Value;
+            if (element.Attributes["soundLine"] != null)
+            {
+                var number = uint.Parse(element.Attributes["soundLine"].Value);
+                if (number >= Project.current.lines.Count)
+                    throw new BadFileException();
+                SoundLine = Project.current.lines[(int)number];
+            }
+            else
+                SoundLine = Project.current.lines[0];
         }
         public float[,] GetSound(float start, float length, NotesCollection notes)
         {
-            throw new NotImplementedException();
+            long samples = (long)Project.current.CountSamples(length);//how many samples you need on output
+            var ret = new float[2, samples];//sound that will be returned
+
+            var tasks = new Task<float[,]>[notes.Count, oscillators.Count];
+
+            for (var i = 0; i < notes.Count; i++)
+            {
+                var note = notes[i];
+                for (var j = 0; j < oscillators.Count; j++)
+                {
+                    if (note.Offset < start + length && note.Offset + note.Length + oscillators[j].R > start)
+                    {
+                        var j_copy = j;
+                        tasks[i, j] = Task.Run(() =>
+                        {
+                            if (start > note.Offset)
+                                return oscillators[j_copy].GetSound(start - note.Offset, length, note);
+                            else
+                                return oscillators[j_copy].GetSound(0, length + start - note.Offset, note);
+                        });
+                    }
+                }
+            }
+
+            for (var i = 0; i < notes.Count; i++)
+            {
+                var note = notes[i];
+                if (start > note.Offset)
+                {
+                    for (var j = 0; j < oscillators.Count; j++)
+                    {
+                        if (tasks[i, j] != null)
+                        {
+                            var retTask = tasks[i, j].Result;
+
+                            for (long k = 0; k < retTask.LongLength / 2; k++)
+                            {
+                                ret[0, k] += retTask[0, k];
+                                ret[1, k] += retTask[1, k];
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    var notSamplesOffset = (long)Project.current.CountSamples(note.Offset - start);
+                    for (var j = 0; j < oscillators.Count; j++)
+                    {
+                        if (tasks[i, j] != null)
+                        {
+                            var retTask = tasks[i, j].Result;
+
+                            for (long k = 0; k < retTask.LongLength / 2; k++)
+                            {
+                                ret[0, k + notSamplesOffset] += retTask[0, k];
+                                ret[1, k + notSamplesOffset] += retTask[1, k];
+                            }
+                        }
+                    }
+                }
+            }
+            return ret;
         }
 
         public void Serialize(XmlNode node)
