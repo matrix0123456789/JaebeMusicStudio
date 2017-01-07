@@ -35,12 +35,22 @@ namespace JaebeMusicStudio.Sound
 
         void createSine(float[,] ret, double waveTime, double phase)
         {
-            double divider = waveTime/Math.PI/2;
-            for (int i = 0; i < ret.LongLength/2; i++)
+            double divider = waveTime / Math.PI / 2;
+            for (int i = 0; i < ret.LongLength / 2; i++)
             {
-                var sin = (float)Math.Sin((i + phase)/ divider);
+                var sin = (float)Math.Sin((i + phase) / divider);
                 ret[0, i] += sin;
                 ret[1, i] += sin;
+            }
+        }
+
+        void createSaw(float[,] ret, double waveTime, double phase)
+        {
+            for (int i = 0; i < ret.LongLength / 2; i++)
+            {
+                var val = (float)(((i + phase) / waveTime) % 1 * 2 - 1);
+                ret[0, i] += val;
+                ret[1, i] += val;
             }
         }
     }
