@@ -141,11 +141,11 @@ namespace JaebeMusicStudio.Widgets
                         double X, Y;
                         if (typX == 0)
                         {
-                            X = (-aktualniePrzetwarzane[0, pozycja] + 2f) / 4f * drawArea.ActualHeight;
+                            X = (-aktualniePrzetwarzane[0, pozycja] + 1f) / 2f * drawArea.ActualHeight;
                         }
                         else if (typX == 1)
                         {
-                            X = (-aktualniePrzetwarzane[1, pozycja] + 2f) / 4f * drawArea.ActualHeight;
+                            X = (-aktualniePrzetwarzane[1, pozycja] + 1f) / 2f * drawArea.ActualHeight;
                         }
                         else
                         {
@@ -153,11 +153,11 @@ namespace JaebeMusicStudio.Widgets
                         }
                         if (typY == 0)
                         {
-                            Y = (-aktualniePrzetwarzane[0, pozycja] + 2f) / 4f * drawArea.ActualHeight;
+                            Y = (-aktualniePrzetwarzane[0, pozycja] + 1f) / 2f * drawArea.ActualHeight;
                         }
                         else if (typY == 1)
                         {
-                            Y = (-aktualniePrzetwarzane[1, pozycja] + 2f) / 4f * drawArea.ActualHeight;
+                            Y = (-aktualniePrzetwarzane[1, pozycja] + 1f) / 2f * drawArea.ActualHeight;
                         }
                         else
                         {

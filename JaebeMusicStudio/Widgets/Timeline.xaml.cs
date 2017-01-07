@@ -198,7 +198,8 @@ namespace JaebeMusicStudio.Widgets
         private void element_setOutput_Click(object sender, RoutedEventArgs e)
         {
             var tag = ((sender as FrameworkElement).Tag as Object[]);
-            (tag[0] as ISoundElement).SoundLine = tag[1] as SoundLine;
+            if(tag[0] is ISoundElementDirectOutput)
+            (tag[0] as ISoundElementDirectOutput).SoundLine = tag[1] as SoundLine;
         }
 
         private void element_delete_Click(object sender, RoutedEventArgs e)

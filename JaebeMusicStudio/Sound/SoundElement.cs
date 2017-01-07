@@ -22,8 +22,14 @@ namespace JaebeMusicStudio.Sound
         float[,] GetSound(float start, float length);
         float Offset { get; set; }
         float Length { get; set; }
-        SoundLine SoundLine { get; set; }
+        SoundLine SoundLine { get;  }
         void Serialize(XmlNode node);
         event Action<ISoundElement> positionChanged;
+    }
+
+    public interface ISoundElementDirectOutput
+    {
+
+        SoundLine SoundLine { get; set; }
     }
 }

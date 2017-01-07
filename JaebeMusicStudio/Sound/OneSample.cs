@@ -9,7 +9,7 @@ using JaebeMusicStudio.Exceptions;
 
 namespace JaebeMusicStudio.Sound
 {
-    public class OneSample : ISoundElement
+    public class OneSample : ISoundElement, ISoundElementDirectOutput
     {
         public SampledSound sample;
         float innerOffset, speed = 1;

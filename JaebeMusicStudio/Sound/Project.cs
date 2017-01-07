@@ -1,6 +1,7 @@
 ﻿using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -23,10 +24,13 @@ namespace JaebeMusicStudio.Sound
         public static Project current = null;
         public List<SoundLine> lines = new List<SoundLine>() { };
         public List<Track> tracks = new List<Track>();
+        public List<INoteSynth> NoteSynths = new List<INoteSynth>();
         // Queue<SoundElement> renderingQueue = new Queue<SoundElement>();
         private float renderingStart;
         private float renderingLength;
         static Timer memoryCleaning;
+
+        Dictionary<string, INamedElement> NamedElements = new Dictionary<string, INamedElement>();
 
         static Project()
         {
@@ -209,6 +213,13 @@ namespace JaebeMusicStudio.Sound
                 }
                 count++;
             }
+            var basicSynths = document.GetElementsByTagName("BasicSynth");
+            foreach (XmlNode basicSynth in basicSynths)
+            {
+                this.NoteSynths.Add(new BasicSynth(basicSynth));
+            }
+
+
             var tracks = document.GetElementsByTagName("Track");
             foreach (XmlNode track in tracks)
             {
@@ -254,6 +265,34 @@ namespace JaebeMusicStudio.Sound
             }
             return AddEmptyTrack();
         }
+
+        public bool checkNamedElement(string name) => NamedElements.ContainsKey(name);
+        long generatedNamedElementNumber = 0;
+        public void generateNamedElement(INamedElement el)
+        {
+            do
+            {
+                generatedNamedElementNumber++;
+            } while (NamedElements.ContainsKey("element_" + generatedNamedElementNumber));
+            el.Name = "element_" + generatedNamedElementNumber;
+        }
+       public INamedElement this[string name]
+        {
+            get { return NamedElements[name]; }
+            set
+            {
+                if (NamedElements.ContainsKey(name))
+                {
+                    throw new DuplicateNameException();
+                }
+                if (NamedElements.ContainsValue(value))
+                {
+                    NamedElements.Remove(value.Name);
+                }
+                NamedElements[name] = value;
+            }
+        }
+
         class CustomStaticDataSource : IStaticDataSource
         {
             private Stream _stream;

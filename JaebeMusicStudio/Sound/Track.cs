@@ -26,6 +26,9 @@ namespace JaebeMusicStudio.Sound
                     case "OneSample":
                         soundElement = new OneSample(element);
                         break;
+                    case "Notes":
+                        soundElement = new Notes(element);
+                        break;
                     default: continue;
                 }
                 Elements.Add(soundElement);
@@ -43,8 +46,11 @@ namespace JaebeMusicStudio.Sound
 
         public void AddElement(ISoundElement ss)
         {
-            if (ss.SoundLine == null)
-                ss.SoundLine = Project.current.lines[0];
+            if (ss is ISoundElementDirectOutput)
+            {
+                if ((ss as ISoundElementDirectOutput).SoundLine == null)
+                    (ss as ISoundElementDirectOutput).SoundLine = Project.current.lines[0];
+            }
             Elements.Add(ss);
             SoundElementAdded?.Invoke(this, ss);
         }
