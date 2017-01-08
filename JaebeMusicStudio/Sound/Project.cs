@@ -24,6 +24,11 @@ namespace JaebeMusicStudio.Sound
         public static Project current = null;
         public List<SoundLine> lines = new List<SoundLine>() { };
 
+        /// <summary>
+        /// for EXAMPLE KEYBOARD OR MINI INPUT
+        /// </summary>
+        public static List<ILiveInput> live = new List<ILiveInput>();
+
 
 
         public List<Track> tracks = new List<Track>();
@@ -55,6 +60,7 @@ namespace JaebeMusicStudio.Sound
         public Project()
         {
             lines.Add(new SoundLine());
+
         }
         public Project(string path)
         {
@@ -150,6 +156,51 @@ namespace JaebeMusicStudio.Sound
                             }, element);
                         }
                     }
+                }
+            }
+            foreach (var liveElement in live)
+            {
+                liveElement.Synth = NoteSynths[0];
+                if (liveElement.Synth?.SoundLine == null) continue;
+                lock (liveElement.Synth.SoundLine)
+                {
+                    liveElement.Synth.SoundLine.currentToRender++;
+                    System.Threading.ThreadPool.QueueUserWorkItem((el) =>
+                    {
+                        var rendered = (el as ILiveInput).GetSound(0, renderingLength);
+                        (el as ILiveInput).Synth.SoundLine.rendered(0, rendered);
+
+                    }, liveElement);
+                }
+            }
+            //if (lines[0].currentToRender == 0)
+            //    returnedSound(lines[0].lastRendered);
+            foreach (var line in lines)
+            {
+                line.checkIfReady();
+            }
+        }
+
+        internal void RenderIdle(float renderLength)
+        {
+            this.renderingLength = renderLength;
+            foreach (var line in lines)
+            {
+                line.cleanToRender((int)CountSamples(renderingLength));
+            }
+            foreach (var liveElement in live)
+            {
+                liveElement.Synth = NoteSynths[0];
+                if (liveElement.Synth?.SoundLine == null) continue;
+                lock (liveElement.Synth.SoundLine)
+                {
+                    liveElement.Synth.SoundLine.currentToRender++;
+                    System.Threading.ThreadPool.QueueUserWorkItem((el) =>
+                    {
+                        var rendered = (el as ILiveInput).GetSound(0, renderingLength);
+                        (el as ILiveInput).Synth.SoundLine.rendered(0, rendered);
+
+                    }, liveElement);
                 }
             }
             //if (lines[0].currentToRender == 0)
@@ -271,7 +322,7 @@ namespace JaebeMusicStudio.Sound
         }
         public double waveTime(float pitch)
         {
-            return sampleRate /( Math.Pow(2, (pitch - 69) / 12) * 440f);
+            return sampleRate / (Math.Pow(2, (pitch - 69) / 12) * 440f);
         }
         public bool checkNamedElement(string name) => NamedElements.ContainsKey(name);
         long generatedNamedElementNumber = 0;

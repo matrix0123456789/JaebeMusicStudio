@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
+using JaebeMusicStudio.Sound;
 
 namespace JaebeMusicStudio.UI
 {
@@ -16,7 +18,19 @@ namespace JaebeMusicStudio.UI
             allOpened.Add(this);
             Content = page;
             Show();
+            KeyDown += PseudoWindow_KeyDown;
+            KeyUp += PseudoWindow_KeyUp;
         }
+
+        private void PseudoWindow_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            KeyboardInput.singleton.KeyDown(e);
+        }
+        private void PseudoWindow_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            KeyboardInput.singleton.KeyUp(e);
+        }
+
         static public void closeAll()
         {
             foreach (var window in allOpened)

@@ -15,6 +15,11 @@ namespace JaebeMusicStudio.Sound
         public float Length { get { return length; } set { length = value; } }
         public float Offset { get { return offset; } set { offset = value; } }
         public float Pitch { get { return pitch; } set { pitch = value; } }
+
+        public Note()
+        {
+        }
+
         public Note(XmlElement element)
         {
             length = float.Parse(element.Attributes["length"].Value, CultureInfo.InvariantCulture);
