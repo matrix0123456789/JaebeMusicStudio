@@ -226,6 +226,11 @@ namespace JaebeMusicStudio.Sound
                 x.Serialize(document);
             }
 
+            foreach (var x in NoteSynths)
+            {
+                x.Serialize(document.DocumentElement);
+            }
+
 
             var zip = ZipFile.Create(path);
             CustomStaticDataSource sds = new CustomStaticDataSource();

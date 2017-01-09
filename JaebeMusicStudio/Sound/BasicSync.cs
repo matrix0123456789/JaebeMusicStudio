@@ -25,8 +25,13 @@ namespace JaebeMusicStudio.Sound
                 name = value;
             }
         }
-        public List<Oscillator> oscillators = new List<Oscillator>() { new Oscillator() };
+        public List<Oscillator> oscillators = new List<Oscillator>();
         public SoundLine SoundLine { get; set; }
+
+        public BasicSynth()
+        {
+            oscillators.Add(new Oscillator());
+        }
 
         public BasicSynth(XmlNode element)
         {
@@ -40,6 +45,13 @@ namespace JaebeMusicStudio.Sound
             }
             else
                 SoundLine = Project.current.lines[0];
+            foreach (XmlNode ch in element.ChildNodes)
+            {
+                if (ch.Name== "Oscillator")
+                {
+                    oscillators.Add(new Oscillator(ch));
+                }
+            }
         }
         public float[,] GetSound(float start, float length, NotesCollection notes)
         {
@@ -109,7 +121,14 @@ namespace JaebeMusicStudio.Sound
 
         public void Serialize(XmlNode node)
         {
-            throw new NotImplementedException();
+            var node2 = node.OwnerDocument.CreateElement("BasicSynth");
+            node2.SetAttribute("name", name);
+            node2.SetAttribute("soundLine", Project.current.lines.IndexOf(SoundLine).ToString());
+            foreach (var osc in oscillators)
+            {
+                osc.Serialize(node2);
+            }
+            node.AppendChild(node2);
         }
     }
 }

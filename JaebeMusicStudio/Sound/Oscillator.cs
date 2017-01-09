@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace JaebeMusicStudio.Sound
 {
@@ -12,7 +14,30 @@ namespace JaebeMusicStudio.Sound
         public OscillatorType Type;
         public float A = 0, D = 0, S = 1, R = 0;
         private float squareRatio = .5f;
-        static Random rand=new Random();
+        private float volume = 1;
+        static Random rand = new Random();
+
+        public Oscillator()
+        {
+        }
+
+        public Oscillator(XmlNode x)
+        {
+            if (x.Attributes["a"] != null)
+                A = float.Parse(x.Attributes["a"].Value, CultureInfo.InvariantCulture);
+            if (x.Attributes["d"] != null)
+                D = float.Parse(x.Attributes["d"].Value, CultureInfo.InvariantCulture);
+            if (x.Attributes["s"] != null)
+                S = float.Parse(x.Attributes["s"].Value, CultureInfo.InvariantCulture);
+            if (x.Attributes["r"] != null)
+                R = float.Parse(x.Attributes["r"].Value, CultureInfo.InvariantCulture);
+
+            if (x.Attributes["squareRatio"] != null)
+                squareRatio = float.Parse(x.Attributes["squareRatio"].Value, CultureInfo.InvariantCulture);
+            if (x.Attributes["volume"] != null)
+                volume = float.Parse(x.Attributes["volume"].Value, CultureInfo.InvariantCulture);
+        }
+
         internal float[,] GetSound(float start, float length, Note note)
         {
             long samples = (long)Project.current.CountSamples(length); //how many samples you need on output
@@ -42,7 +67,11 @@ namespace JaebeMusicStudio.Sound
                 }
             }
 
-
+            for (int i = 0; i < samples; i++)
+            {
+                ret[0, i] *= volume;
+                ret[1, i] *= volume;
+            }
             return ret;
         }
 
@@ -120,6 +149,26 @@ namespace JaebeMusicStudio.Sound
                 ret[1, i] += (float)(rand.NextDouble() * 2 - 1);
             }
 
+        }
+
+        public void Serialize(XmlNode node)
+        {
+            var node2 = node.OwnerDocument.CreateElement("Oscillator");
+            node2.SetAttribute("type", Type.ToString());
+            node2.SetAttribute("squareRatio", squareRatio.ToString(CultureInfo.InvariantCulture));
+
+            node2.SetAttribute("a", A.ToString(CultureInfo.InvariantCulture));
+            node2.SetAttribute("d", D.ToString(CultureInfo.InvariantCulture));
+            node2.SetAttribute("s", S.ToString(CultureInfo.InvariantCulture));
+            node2.SetAttribute("r", R.ToString(CultureInfo.InvariantCulture));
+            node2.SetAttribute("volume", volume.ToString(CultureInfo.InvariantCulture));
+            foreach (var p in Pitchs)
+            {
+                var node3 = node.OwnerDocument.CreateElement("Pitch");
+                node3.SetAttribute("value", p.ToString(CultureInfo.InvariantCulture));
+                node2.AppendChild(node3);
+            }
+            node.AppendChild(node2);
         }
     }
 

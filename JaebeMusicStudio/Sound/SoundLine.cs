@@ -57,7 +57,7 @@ namespace JaebeMusicStudio.Sound
             foreach (var input in inputs)
             {
                 var node2 = document.CreateElement("SoundLineInput");
-                node2.SetAttribute("lineNumber", Project.current.lines.IndexOf(input.output).ToString());
+                node2.SetAttribute("lineNumber", Project.current.lines.IndexOf(input.input).ToString());
                 node2.SetAttribute("volume", input.volume.ToString(CultureInfo.InvariantCulture));
                 node.AppendChild(node2);
             }
