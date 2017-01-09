@@ -24,9 +24,9 @@ namespace JaebeMusicStudio.Sound
         static Player()
         {
             WasapiWyjście.Init(bufor);
-            ////renderingThread = new System.Threading.Thread(RenderIdle);
-            ////renderingThread.Name = "renderingThread";
-            ////renderingThread.Start();
+            renderingThread = new System.Threading.Thread(Render);
+            renderingThread.Name = "renderingThread";
+            renderingThread.Start();
             WasapiWyjście.Play();
 
         }
@@ -35,11 +35,6 @@ namespace JaebeMusicStudio.Sound
             if (status == Status.paused)
             {
                 status = Status.playing;
-                renderingThread?.Abort();
-                renderingThread = new System.Threading.Thread(Render);
-                renderingThread.Name = "renderingThread";
-                renderingThread.Start();
-                WasapiWyjście.Play();
             }
         }
         public static void Pause()
@@ -47,8 +42,6 @@ namespace JaebeMusicStudio.Sound
             if (status == Status.playing)
             {
                 status = Status.paused;
-                renderingThread.Abort();
-               // WasapiWyjście.Pause();
             }
         }
         public static void SetPosition(float position)
@@ -63,7 +56,7 @@ namespace JaebeMusicStudio.Sound
             while (true)
             {
                 lastRendered = DateTime.Now;
-                if (!rendering && bufor.BufferedDuration.TotalMilliseconds < renderPeriod * 2)
+                if (status == Status.playing&&!rendering && bufor.BufferedDuration.TotalMilliseconds < renderPeriod * 2)
                 {
                     rendering = true;
                     var renderLength = (((float)renderPeriod * 2 - bufor.BufferedDuration.TotalMilliseconds) * Project.current.tempo / 60f) / 1000f;
@@ -71,23 +64,6 @@ namespace JaebeMusicStudio.Sound
                     position += (float)renderLength;
                     if (positionChanged != null)
                         positionChanged(position);
-                }
-                var sleepTime = renderPeriod - (int)(DateTime.Now - lastRendered).TotalMilliseconds;
-                if (sleepTime > 0)
-                    System.Threading.Thread.Sleep(sleepTime);
-            }
-        }
-        static void RenderIdle(object a = null)
-        {
-            while (true)
-            {
-                lastRendered = DateTime.Now;
-                if (!rendering && bufor.BufferedDuration.TotalMilliseconds < renderPeriod * 2)
-                {
-                    rendering = true;
-                    var renderLength = (((float)renderPeriod * 2 - bufor.BufferedDuration.TotalMilliseconds) * Project.current.tempo / 60f) / 1000f;
-                    Project.current.RenderIdle((float)renderLength);
-                   
                 }
                 var sleepTime = renderPeriod - (int)(DateTime.Now - lastRendered).TotalMilliseconds;
                 if (sleepTime > 0)

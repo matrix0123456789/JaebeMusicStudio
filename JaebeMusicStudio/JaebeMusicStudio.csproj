@@ -115,6 +115,9 @@
       <DependentUpon>EffectMini.xaml</DependentUpon>
     </Compile>
     <Compile Include="Widgets\ILookInside.cs" />
+    <Compile Include="Widgets\Synths.xaml.cs">
+      <DependentUpon>Synths.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Widgets\Mixer.xaml.cs">
       <DependentUpon>Mixer.xaml</DependentUpon>
     </Compile>
@@ -159,6 +162,10 @@
     <Page Include="Widgets\EffectMini.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Widgets\Synths.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Widgets\Mixer.xaml">
       <Generator>MSBuild:Compile</Generator>

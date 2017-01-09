@@ -83,7 +83,7 @@ namespace JaebeMusicStudio.Sound
 
 
             } while (ent != null);
-
+            zis.Close();
         }
 
         public float length

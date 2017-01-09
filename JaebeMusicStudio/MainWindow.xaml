@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:JaebeMusicStudio"
         xmlns:UI="clr-namespace:JaebeMusicStudio.UI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Jaebe Music Studio" Height="350" Width="525">
     <Grid>
         <Grid Name="windowArea">
             <UI:ButtonPretty Height="20" Margin="10,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="20" Icon="e800" x:Name="saveButton" Click="saveButton_Click"></UI:ButtonPretty>
@@ -17,6 +17,7 @@
             <UI:ButtonPretty Height="20" Margin="10,35,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="20" Icon="e804" x:Name="openTimelineButton" Click="openTimelineButton_Click"/>
             <UI:ButtonPretty Height="20" Margin="35,35,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="20" Icon="e804" x:Name="openMixerButton" Click="openMixerButton_Click"/>
             <UI:ButtonPretty Height="20" Margin="60,35,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="20" Icon="e804" x:Name="openOscilloscopeButton" Click="openOscilloscopeButton_Click"/>
+            <UI:ButtonPretty Height="20" Margin="85,35,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="20" Icon="e804" x:Name="openSynthsButton" Click="OpenSynthsButton_OnClick"/>
             <Label x:Name="Time" Content="00:00/00:00" HorizontalAlignment="Left" Margin="135,6,0,0" VerticalAlignment="Top"/>
             <Grid Width="100" Height="40" Margin="0,10,10,0" VerticalAlignment="Top" HorizontalAlignment="Right">
                 <Rectangle Stroke="Black"></Rectangle>

@@ -105,7 +105,7 @@ namespace JaebeMusicStudio
 
         private void pauseButton_Click(object sender, RoutedEventArgs e)
         {
-
+            Sound.Player.Pause();
         }
 
         private void openTimelineButton_Click(object sender, RoutedEventArgs e)
@@ -121,6 +121,11 @@ namespace JaebeMusicStudio
         private void openOscilloscopeButton_Click(object sender, RoutedEventArgs e)
         {
             PseudoWindow.OpenWindow(() => new Widgets.Oscilloscope());
+        }
+
+        private void OpenSynthsButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            PseudoWindow.OpenWindow(() => new Widgets.Synths());
         }
     }
 }
