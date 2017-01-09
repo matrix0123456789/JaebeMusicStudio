@@ -8,7 +8,7 @@ using JaebeMusicStudio.Exceptions;
 
 namespace JaebeMusicStudio.Sound
 {
-    class BasicSynth : INoteSynth
+    public class BasicSynth : INoteSynth
     {
         private string name;
         public string Name

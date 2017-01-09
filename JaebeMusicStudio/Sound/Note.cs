@@ -8,7 +8,7 @@ using System.Xml;
 
 namespace JaebeMusicStudio.Sound
 {
-    class Note
+    public class Note
     {
         private float length, offset, pitch;
 

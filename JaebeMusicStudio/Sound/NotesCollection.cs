@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JaebeMusicStudio.Sound
 {
-    class NotesCollection:List<Note>
+    public class NotesCollection:List<Note>
     {
     }
 }

@@ -111,6 +111,12 @@
     <Compile Include="UI\Slider.xaml.cs">
       <DependentUpon>Slider.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Widgets\BasicSynthOscUi.xaml.cs">
+      <DependentUpon>BasicSynthOscUi.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\BasicSynthUi.xaml.cs">
+      <DependentUpon>BasicSynthUi.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Widgets\EffectMini.xaml.cs">
       <DependentUpon>EffectMini.xaml</DependentUpon>
     </Compile>
@@ -156,6 +162,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Slider.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Widgets\BasicSynthOscUi.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Widgets\BasicSynthUi.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

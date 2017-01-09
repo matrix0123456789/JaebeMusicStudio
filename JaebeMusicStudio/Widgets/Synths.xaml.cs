@@ -44,13 +44,32 @@ namespace JaebeMusicStudio.Widgets
 
         private void project_synthAdded(int index, INoteSynth synth)
         {
-            var grid=new Grid();
-            var button=new Button();
+            var grid = new Grid();
+            var button = new Button();
             button.Content = "Domyślny";
             button.Tag = synth;
+            button.VerticalAlignment=VerticalAlignment.Top;
+            button.Height = 40;
             button.Click += Default_Click;
             grid.Children.Add(button);
-            SynthList.Children.Insert(index,grid);
+            var button2 = new Button();
+            button2.Content = "Otwórz";
+            button2.Margin = new Thickness(0, 50, 0, 0);
+            button2.Height = 40;
+            button2.Tag = synth;
+            button2.VerticalAlignment = VerticalAlignment.Top;
+            button2.Click += Open_Click;
+            grid.Children.Add(button2);
+            SynthList.Children.Insert(index, grid);
+        }
+
+        private void Open_Click(object sender, RoutedEventArgs e)
+        {
+            var synth = (sender as Button).Tag as INoteSynth;
+            if (synth is BasicSynth)
+            {
+                PseudoWindow.OpenWindow(() => new Widgets.BasicSynthUi(synth as BasicSynth));
+            }
         }
 
         private void Default_Click(object sender, RoutedEventArgs e)
