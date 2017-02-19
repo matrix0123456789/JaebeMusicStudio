@@ -81,6 +81,12 @@ namespace JaebeMusicStudio.Sound
                 return ret;
             }
         }
+
+        internal void Add(float Frequency = 1,float Amplitude=0.001f)
+        {
+            items.Add(new FlangerItem(Frequency,Amplitude));
+        }
+
         public void CleanMemory()
         {
             lock (this)

@@ -39,14 +39,14 @@ namespace JaebeMusicStudio.Widgets
                 var grid = new Grid();
 
                 var amp = new JaebeMusicStudio.UI.Slider();
-                amp.Maximum = 1;
+                amp.Maximum = 0.01;
                 amp.Tag = i;
                 amp.Value = x.Amplitude;
                 amp.ValueChanged += Amp_ValueChanged;
                 grid.Children.Add(amp);
 
                 var fre = new JaebeMusicStudio.UI.Slider();
-                fre.Maximum = 0.01;
+                fre.Maximum = 4;
                 fre.Tag = i;
                 fre.Value = x.Frequency;
                 fre.ValueChanged += Fre_ValueChanged;
@@ -55,6 +55,14 @@ namespace JaebeMusicStudio.Widgets
 
                 Grids.Children.Add(grid);
             }
+            var but=new Button {Content = "Dodaj"};
+            but.Click += But_Click;
+            Grids.Children.Add(but);
+        }
+
+        private void But_Click(object sender, RoutedEventArgs e)
+        {
+            Effect.Add();
         }
 
         private void Fre_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
