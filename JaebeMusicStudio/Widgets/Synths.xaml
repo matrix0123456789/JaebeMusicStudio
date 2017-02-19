@@ -23,7 +23,7 @@
             </ScrollViewer.ContextMenu>
             <Grid>
                 <StackPanel Name="SynthList">
-                    <Button>Dodaj</Button>
+                    <Button Click="ButtonBase_OnClick">Dodaj</Button>
                 </StackPanel>
             </Grid>
         </ScrollViewer>

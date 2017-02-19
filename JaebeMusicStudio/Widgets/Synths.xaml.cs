@@ -59,8 +59,26 @@ namespace JaebeMusicStudio.Widgets
             button2.Tag = synth;
             button2.VerticalAlignment = VerticalAlignment.Top;
             button2.Click += Open_Click;
+
             grid.Children.Add(button2);
+
+
+            var slSelect = new SoundLineSelect();
+            slSelect.Margin = new Thickness(0, 10, 0, 0);
+            slSelect.Tag = synth;
+            slSelect.VerticalAlignment = VerticalAlignment.Top;
+            slSelect.Height = 20;
+            slSelect.Selected = synth.SoundLine;
+            slSelect.Changed += SlSelect_Changed;
+
+
+            grid.Children.Add(slSelect);
             SynthList.Children.Insert(index, grid);
+        }
+
+        private void SlSelect_Changed(SoundLineSelect sender, SoundLine obj)
+        {
+            (sender.Tag as INoteSynth).SoundLine = obj;
         }
 
         private void Open_Click(object sender, RoutedEventArgs e)
@@ -78,6 +96,11 @@ namespace JaebeMusicStudio.Widgets
         }
 
         private void AddStandard_Click(object sender, RoutedEventArgs e)
+        {
+           Project.current.NoteSynths.Add(new BasicSynth());
+        }
+
+        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
             SynthListScroll.ContextMenu.IsOpen = true;
         }

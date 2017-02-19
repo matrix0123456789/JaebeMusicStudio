@@ -265,9 +265,9 @@ namespace JaebeMusicStudio.Sound
                         if (input.Attributes["volume"] != null)
                             volume = float.Parse(input.Attributes["volume"].Value, CultureInfo.InvariantCulture);
                         var otherLineNumber = int.Parse(input.Attributes["lineNumber"].Value);
-                        var connection = new SoundLineConnection(otherLineNumber, this.lines[count], volume);
-                        this.lines[otherLineNumber].inputs.Add(connection);
-                        this.lines[count].outputs.Add(connection);
+                        var connection = new SoundLineConnection(count, this.lines[otherLineNumber], volume);
+                        this.lines[count].inputs.Add(connection);
+                        this.lines[otherLineNumber].outputs.Add(connection);
                     }
                     catch { }
                 }

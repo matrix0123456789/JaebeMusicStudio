@@ -49,7 +49,7 @@ namespace JaebeMusicStudio.UI
 
         private void Slider_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            ValueChanged?.Invoke(sender, e);
+            ValueChanged?.Invoke(this, e);
         }
     }
 }

@@ -8,23 +8,20 @@ using System.Xml;
 
 namespace JaebeMusicStudio.Sound
 {
-    class Flanger : Effect
+    public class Flanger : Effect
     {
-        List<float> frequency = new List<float>(), amplitude = new List<float>();
+        private List<FlangerItem> items = new List<FlangerItem>();
         long counter = 0;
         List<float[,]> history = new List<float[,]>();
-
         public Flanger()
         {
-            frequency.Add(1);
-            amplitude.Add(1);
+            items.Add(new FlangerItem(1, 0.001f));
         }
         public Flanger(XmlElement xml)
         {
             foreach (XmlElement x in xml.ChildNodes)
             {
-                frequency.Add(float.Parse(x.Attributes["frequency"].Value, System.Globalization.CultureInfo.InvariantCulture));
-                amplitude.Add(float.Parse(x.Attributes["amplitude"].Value, System.Globalization.CultureInfo.InvariantCulture));
+                items.Add(new FlangerItem(float.Parse(x.Attributes["frequency"].Value, System.Globalization.CultureInfo.InvariantCulture),float.Parse(x.Attributes["amplitude"].Value, System.Globalization.CultureInfo.InvariantCulture)));
             }
         }
 
@@ -35,10 +32,10 @@ namespace JaebeMusicStudio.Sound
                 history.Add(input);
                 var len1 = input.GetLength(1);
                 var ret = new float[input.GetLength(0), input.GetLength(1)];
-                for (int n = 0; n < frequency.Count; n++)
+                for (int n = 0; n < items.Count; n++)
                 {
-                    var amplitude_sample = amplitude[n] * Project.current.sampleRate;
-                    var ileNaCykl = 1 / frequency[n] * Project.current.sampleRate / Math.PI / 2;
+                    var amplitude_sample = items[n].Amplitude * Project.current.sampleRate;
+                    var ileNaCykl = 1 / items[n].Frequency * Project.current.sampleRate / Math.PI / 2;
                     for (int i = 0; i < len1; i++)
                     {
 
@@ -88,9 +85,9 @@ namespace JaebeMusicStudio.Sound
         {
             lock (this)
             {
-                var maxAmplitude = amplitude.Max();
-                if (maxAmplitude < -amplitude.Min())
-                    maxAmplitude = -amplitude.Min();
+                var maxAmplitude = items.Select(x=>x.Amplitude).Max();
+                if (maxAmplitude < -items.Select(x => x.Amplitude).Min())
+                    maxAmplitude = -items.Select(x => x.Amplitude).Min();
                 maxAmplitude *= 2;
                 var historyPosition = history.Count - 1;
                 do
@@ -110,15 +107,35 @@ namespace JaebeMusicStudio.Sound
         public void Serialize(XmlNode node)
         {
             var node2 = node.OwnerDocument.CreateElement("Flanger");
-            for (int i = 0; i < frequency.Count; i++)
+            for (int i = 0; i < items.Count; i++)
             {
 
                 var node3 = node.OwnerDocument.CreateElement("FlangerElement");
-                node3.SetAttribute("frequency", frequency[i].ToString(CultureInfo.InvariantCulture));
-                node3.SetAttribute("amplitude", amplitude[i].ToString(CultureInfo.InvariantCulture));
+                node3.SetAttribute("frequency", items[i].Frequency.ToString(CultureInfo.InvariantCulture));
+                node3.SetAttribute("amplitude", items[i].Amplitude.ToString(CultureInfo.InvariantCulture));
                 node2.AppendChild(node3);
             }
             node.AppendChild(node2);
+        }
+
+        public FlangerItem this[int i]
+        {
+            get { return items[i]; }
+            set { items[i] = value; }
+
+        }
+
+        public int Count { get { return items.Count; } }
+    }
+
+    public struct FlangerItem
+    {
+        public float Frequency, Amplitude;
+
+        public FlangerItem(float Frequency, float Amplitude)
+        {
+            this.Frequency = Frequency;
+            this.Amplitude = Amplitude;
         }
     }
 }

@@ -210,6 +210,14 @@ namespace JaebeMusicStudio.Sound
             effects.RemoveAt(index);
             effectRemoved?.Invoke(index);
         }
+
+        public override string ToString()
+        {
+            var number = Project.current.lines.IndexOf(this);
+            if (number == 0)
+                return "Linia główna";
+            return "Linia " + number;
+        }
     }
     public class SoundLineConnection
     {

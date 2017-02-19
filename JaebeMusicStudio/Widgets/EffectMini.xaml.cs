@@ -41,6 +41,10 @@ namespace JaebeMusicStudio.Widgets
             {
                 PseudoWindow.OpenWindow(() => new ReverbUI(effect as Reverb));
             }
+            else if (effect is Flanger)
+            {
+                PseudoWindow.OpenWindow(() => new FlangerUI(effect as Flanger));
+            }
         }
     }
 }
