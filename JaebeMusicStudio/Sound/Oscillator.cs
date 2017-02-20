@@ -31,6 +31,8 @@ namespace JaebeMusicStudio.Sound
                 S = float.Parse(x.Attributes["s"].Value, CultureInfo.InvariantCulture);
             if (x.Attributes["r"] != null)
                 R = float.Parse(x.Attributes["r"].Value, CultureInfo.InvariantCulture);
+            if (x.Attributes["type"] != null)
+                Type = (OscillatorType)Enum.Parse(typeof (OscillatorType), x.Attributes["type"].Value);
 
             if (x.Attributes["squareRatio"] != null)
                 squareRatio = float.Parse(x.Attributes["squareRatio"].Value, CultureInfo.InvariantCulture);
@@ -41,6 +43,7 @@ namespace JaebeMusicStudio.Sound
         internal float[,] GetSound(float start, float length, Note note)
         {
             long samples = (long)Project.current.CountSamples(length); //how many samples you need on output
+            float samplesTotal = Project.current.CountSamples(note.Length + R);
             var timeWaited = Project.current.CountSamples(start);
             var ret = new float[2, samples]; //sound that will be returned
 
@@ -66,11 +69,26 @@ namespace JaebeMusicStudio.Sound
                         break;
                 }
             }
-
+            var aLen = Project.current.CountSamples(A);
+            var dLen = Project.current.CountSamples(D);
+            var rLen = Project.current.CountSamples(R);
             for (int i = 0; i < samples; i++)
             {
-                ret[0, i] *= volume;
-                ret[1, i] *= volume;
+                float adsrVal;
+                var sumTime = i + timeWaited;
+                if (sumTime < dLen)
+                    adsrVal = S + (1 - S)*(dLen -sumTime)/dLen;
+                else
+                    adsrVal = S;
+                if(sumTime<aLen)
+                    adsrVal *= sumTime/aLen;
+                var toEnd = samplesTotal - sumTime;
+                if (toEnd < rLen)
+                    adsrVal *= toEnd/rLen;
+
+                adsrVal *= volume;
+                ret[0, i] *= adsrVal;
+                ret[1, i] *= adsrVal;
             }
             return ret;
         }

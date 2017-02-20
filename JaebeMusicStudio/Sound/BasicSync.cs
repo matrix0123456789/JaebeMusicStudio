@@ -57,13 +57,14 @@ namespace JaebeMusicStudio.Sound
         {
             long samples = (long)Project.current.CountSamples(length);//how many samples you need on output
             var ret = new float[2, samples];//sound that will be returned
+            var notesCount= notes.Count;
+            var oscillatorsCount = oscillators.Count;
+            var tasks = new Task<float[,]>[notesCount, oscillatorsCount];
 
-            var tasks = new Task<float[,]>[notes.Count, oscillators.Count];
-
-            for (var i = 0; i < notes.Count; i++)
+            for (var i = 0; i < notesCount; i++)
             {
                 var note = notes[i];
-                for (var j = 0; j < oscillators.Count; j++)
+                for (var j = 0; j < oscillatorsCount; j++)
                 {
                     if (note.Offset < start + length && note.Offset + note.Length + oscillators[j].R > start)
                     {
@@ -79,12 +80,12 @@ namespace JaebeMusicStudio.Sound
                 }
             }
 
-            for (var i = 0; i < notes.Count; i++)
+            for (var i = 0; i < notesCount; i++)
             {
                 var note = notes[i];
                 if (start > note.Offset)
                 {
-                    for (var j = 0; j < oscillators.Count; j++)
+                    for (var j = 0; j < oscillatorsCount; j++)
                     {
                         if (tasks[i, j] != null)
                         {

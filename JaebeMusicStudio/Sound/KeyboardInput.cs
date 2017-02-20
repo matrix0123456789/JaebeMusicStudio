@@ -61,7 +61,7 @@ namespace JaebeMusicStudio.Sound
                 case Key.S:
                     return 61;
 
-                case Key.X:
+                case Key.X:;
                     return 62;
 
                 case Key.D:
@@ -75,6 +75,78 @@ namespace JaebeMusicStudio.Sound
 
                 case Key.G:
                     return 66;
+
+                case Key.B:
+                    return 67;
+
+                case Key.H:
+                    return 68;
+
+                case Key.N:
+                    return 69;
+
+                case Key.J:
+                    return 70;
+
+                case Key.M:
+                    return 71;
+                case Key.OemComma:
+                    return 72;
+                case Key.L:
+                    return 73;
+                case Key.OemPeriod:
+                    return 74;
+                case Key.Oem1:
+                    return 75;
+                case Key.Oem2:
+                    return 76;
+                case Key.Oem7:
+                    return 77;
+                case Key.RightShift:
+                    return 78;
+                case Key.Enter:
+                    return 79;
+                case Key.Q:
+                    return 72;
+                case Key.D2:
+                    return 73;
+                case Key.W:
+                    return 74;
+                case Key.D3:
+                    return 75;
+                case Key.E:
+                    return 76;
+                case Key.R:
+                    return 77;
+                case Key.D5:
+                    return 78;
+                case Key.T:
+                    return 79;
+                case Key.D6:
+                    return 80;
+                case Key.Y:
+                    return 81;
+                case Key.D7:
+                    return 82;
+                case Key.U:
+                    return 83;
+                case Key.I:
+                    return 84;
+                case Key.D9:
+                    return 85;
+                case Key.O:
+                    return 86;
+                case Key.D0:
+                    return 87;
+                case Key.P:
+                    return 88;
+                case Key.Oem4:
+                    return 89;
+                case Key.OemPlus:
+                    return 90;
+                case Key.Oem6:
+                    return 91;
+
 
             }
             return -1;
