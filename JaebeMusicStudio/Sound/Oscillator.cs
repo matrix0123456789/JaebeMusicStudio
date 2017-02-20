@@ -15,6 +15,7 @@ namespace JaebeMusicStudio.Sound
         public float A = 0, D = 0, S = 1, R = 0;
         private float squareRatio = .5f;
         private float volume = 1;
+        public float Volume { get { return volume; } set { volume = value; } }
         static Random rand = new Random();
 
         public Oscillator()
@@ -38,6 +39,11 @@ namespace JaebeMusicStudio.Sound
                 squareRatio = float.Parse(x.Attributes["squareRatio"].Value, CultureInfo.InvariantCulture);
             if (x.Attributes["volume"] != null)
                 volume = float.Parse(x.Attributes["volume"].Value, CultureInfo.InvariantCulture);
+            Pitchs.Clear();
+            foreach (XmlElement pitch in x.ChildNodes)
+            {
+                Pitchs.Add(float.Parse(pitch.Attributes["value"].Value, CultureInfo.InvariantCulture));
+            }
         }
 
         internal float[,] GetSound(float start, float length, Note note)
@@ -193,5 +199,10 @@ namespace JaebeMusicStudio.Sound
     public enum OscillatorType
     {
         sine, triangle, saw, square, whiteNoise, pinkNoise
+    }
+
+    public struct Pitch
+    {
+        private float pitchNote, pitchHz;
     }
 }

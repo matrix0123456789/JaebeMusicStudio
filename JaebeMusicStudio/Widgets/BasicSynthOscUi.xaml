@@ -8,16 +8,18 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-            <StackPanel>
-                <Grid>
-                    <!--<UI:Slider></UI:Slider>-->
-                <RadioButton Name="TypeOscSin" Margin="0,0,0,0" Checked="TypeOscSin_Checked">Sinusoida</RadioButton>
-                <RadioButton Name="TypeOscTri" Margin="0,20,0,0" Checked="TypeOscTri_Checked">Trójkątna</RadioButton>
-                <RadioButton Name="TypeOscSq" Margin="0,40,0,0" Checked="TypeOscSq_Checked">Prostokątna</RadioButton>
-                <RadioButton Name="TypeOscSaw" Margin="0,60,0,0" Checked="TypeOscSaw_Checked">Piłokształtna</RadioButton>
-                <RadioButton Name="TypeOscWhite" Margin="0,80,0,0" Checked="TypeOscWhite_Checked">Szum biały</RadioButton>
-                <RadioButton Name="TypeOscPink" Margin="0,100,0,0" Checked="TypeOscPink_Checked">Szum różowy</RadioButton>
-                </Grid>
-            </StackPanel>
+        <Grid Margin="0,0,192,182">
+            <RadioButton Name="TypeOscSin" Margin="0,0,0,0" Checked="TypeOscSin_Checked" VerticalAlignment="Top">Sinusoida</RadioButton>
+            <RadioButton Name="TypeOscTri" Margin="0,20,0,0" Checked="TypeOscTri_Checked" VerticalAlignment="Top">Trójkątna</RadioButton>
+            <RadioButton Name="TypeOscSq" Margin="0,40,0,0" Checked="TypeOscSq_Checked" VerticalAlignment="Top">Prostokątna</RadioButton>
+            <RadioButton Name="TypeOscSaw" Margin="0,60,0,0" Checked="TypeOscSaw_Checked" VerticalAlignment="Top">Piłokształtna</RadioButton>
+            <RadioButton Name="TypeOscWhite" Margin="0,80,0,0" Checked="TypeOscWhite_Checked" VerticalAlignment="Top">Szum biały</RadioButton>
+            <RadioButton Name="TypeOscPink" Margin="0,100,0,0" Checked="TypeOscPink_Checked" VerticalAlignment="Top">Szum różowy</RadioButton>
+        </Grid>
+        <UI:Slider x:Name="A" Margin="113,10,0,0" VerticalAlignment="Top" ValueChanged="A_OnValueChanged"></UI:Slider>
+        <UI:Slider x:Name="D" Margin="113,33,0,0" VerticalAlignment="Top" ValueChanged="D_OnValueChanged"></UI:Slider>
+        <UI:Slider x:Name="S" Margin="113,56,0,0" VerticalAlignment="Top" ValueChanged="S_OnValueChanged"></UI:Slider>
+        <UI:Slider x:Name="R" Margin="113,79,0,0" VerticalAlignment="Top" ValueChanged="R_OnValueChanged"></UI:Slider>
+        <UI:Slider x:Name="Volume" Margin="113,102,0,0" VerticalAlignment="Top" ValueChanged="Volume_OnValueChanged"></UI:Slider>
     </Grid>
 </UserControl>
