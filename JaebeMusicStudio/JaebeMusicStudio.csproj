@@ -124,6 +124,9 @@
     <Compile Include="Widgets\FlangerIU.xaml.cs">
       <DependentUpon>FlangerIU.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Widgets\PitchUI.xaml.cs">
+      <DependentUpon>PitchUI.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Widgets\SoundLineSelect.xaml.cs">
       <DependentUpon>SoundLineSelect.xaml</DependentUpon>
     </Compile>
@@ -186,6 +189,10 @@
     <Page Include="Widgets\FlangerIU.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Widgets\PitchUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Widgets\SoundLineSelect.xaml">
       <SubType>Designer</SubType>

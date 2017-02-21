@@ -47,8 +47,25 @@ namespace JaebeMusicStudio.UI
             set { slider.Maximum = value; }
         }
 
+        private double step = 0;
+        [Bindable(true)]
+        public double Step
+        {
+            get { return step; }
+            set
+            {
+                step = value;
+                if (step > 0)
+                {
+                    Value = Minimum + Math.Round((Value - Minimum)/step)*step;
+                }
+            }
+        }
+
         private void Slider_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if(step>0)
+                Value = Minimum + Math.Round((e.NewValue - Minimum) / step) * step;
             ValueChanged?.Invoke(this, e);
         }
     }

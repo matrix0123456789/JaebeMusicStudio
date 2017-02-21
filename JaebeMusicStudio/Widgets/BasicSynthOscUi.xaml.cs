@@ -63,6 +63,20 @@ namespace JaebeMusicStudio.Widgets
                     TypeOscPink.IsChecked = true;
                     break;
             }
+            Pitchs.Children.Clear();
+            int i = 0;
+            foreach (var x in osc.Pitchs)
+            {
+                var pitchui=new PitchUI {Value = x};
+                pitchui.Tag = i++;
+                pitchui.ValueChanged += Pitchui_ValueChanged;
+                Pitchs.Children.Add(pitchui);
+            }
+        }
+
+        private void Pitchui_ValueChanged(PitchUI obj)
+        {
+            osc.Pitchs[(int) obj.Tag] = obj.Value;
         }
 
         private void TypeOscSin_Checked(object sender, RoutedEventArgs e)
