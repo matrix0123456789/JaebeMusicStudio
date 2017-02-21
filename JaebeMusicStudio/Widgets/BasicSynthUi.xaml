@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:JaebeMusicStudio.Widgets"
+      xmlns:ui="clr-namespace:JaebeMusicStudio.UI"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
       Title="BasicSynthUi">
@@ -11,7 +12,9 @@
     <Grid>
         <ScrollViewer>
             <Grid>
-                <StackPanel Name="OscillatorsList"></StackPanel>
+                <StackPanel Name="OscillatorsList">
+                    <ui:ButtonPretty x:Name="AddOsc" Text="Dodaj" Click="AddOsc_OnClick"></ui:ButtonPretty>
+                </StackPanel>
             </Grid>
         </ScrollViewer>
     </Grid>

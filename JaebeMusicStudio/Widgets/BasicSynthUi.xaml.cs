@@ -27,6 +27,7 @@ namespace JaebeMusicStudio.Widgets
             this.basic = basic;
             InitializeComponent();
             showContent();
+            basic.oscillatorAdded += basicSynth_oscillatorAdded;
         }
         void showContent()
         {
@@ -43,6 +44,11 @@ namespace JaebeMusicStudio.Widgets
         {
             var oscUI=new BasicSynthOscUi(osc);
             OscillatorsList.Children.Insert(index, oscUI);
+        }
+
+        private void AddOsc_OnClick(object sender, RoutedEventArgs e)
+        {
+            basic.oscillators.Add(new Oscillator());
         }
     }
 }

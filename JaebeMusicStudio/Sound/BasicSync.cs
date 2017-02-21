@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
+using System.Security.RightsManagement;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -25,12 +28,22 @@ namespace JaebeMusicStudio.Sound
                 name = value;
             }
         }
-        public List<Oscillator> oscillators = new List<Oscillator>();
+        public ObservableCollection<Oscillator> oscillators = new ObservableCollection<Oscillator>();
         public SoundLine SoundLine { get; set; }
 
         public BasicSynth()
         {
             oscillators.Add(new Oscillator());
+            oscillators.CollectionChanged += Oscillators_CollectionChanged;
+        }
+
+        public event Action<int,Oscillator> oscillatorAdded;
+        private void Oscillators_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                oscillatorAdded?.Invoke(e.NewStartingIndex,e.NewItems[0] as Oscillator);
+            }
         }
 
         public BasicSynth(XmlNode element)
@@ -52,6 +65,7 @@ namespace JaebeMusicStudio.Sound
                     oscillators.Add(new Oscillator(ch));
                 }
             }
+            oscillators.CollectionChanged += Oscillators_CollectionChanged;
         }
         public float[,] GetSound(float start, float length, NotesCollection notes)
         {

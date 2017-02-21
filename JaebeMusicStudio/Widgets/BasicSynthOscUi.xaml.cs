@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,7 +42,8 @@ namespace JaebeMusicStudio.Widgets
 
         private void Pitchs_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-           // Dispatcher.Invoke(Init);
+            if (e.Action != NotifyCollectionChangedAction.Replace)
+                Dispatcher.Invoke(Init);
         }
 
         private void Osc_TypeChanged(Oscillator obj)
@@ -86,12 +88,12 @@ namespace JaebeMusicStudio.Widgets
             int i = 0;
             foreach (var x in osc.Pitchs)
             {
-                var pitchui=new PitchUI {Value = x};
+                var pitchui = new PitchUI { Value = x };
                 pitchui.Tag = i++;
                 pitchui.ValueChanged += Pitchui_ValueChanged;
                 Pitchs.Children.Add(pitchui);
             }
-            var but=new ButtonPretty {Text = "Dodaj"};
+            var but = new ButtonPretty { Text = "Dodaj" };
             but.Click += But_Click;
             Pitchs.Children.Add(but);
         }
@@ -103,12 +105,12 @@ namespace JaebeMusicStudio.Widgets
 
         private void Pitchui_ValueChanged(PitchUI obj)
         {
-            osc.Pitchs[(int) obj.Tag] = obj.Value;
+            osc.Pitchs[(int)obj.Tag] = obj.Value;
         }
 
         private void TypeOscSin_Checked(object sender, RoutedEventArgs e)
         {
-            osc.Type=OscillatorType.sine;
+            osc.Type = OscillatorType.sine;
         }
 
         private void TypeOscTri_Checked(object sender, RoutedEventArgs e)
