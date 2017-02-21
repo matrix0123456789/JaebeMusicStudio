@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -10,19 +11,47 @@ namespace JaebeMusicStudio.Sound
 {
     public class Oscillator
     {
-        public List<float> Pitchs = new List<float>() { 0 };
+        public ObservableCollection<float> Pitchs { get; private set; }
         public OscillatorType Type;
-        public float A = 0, D = 0, S = 1, R = 0;
+        public float a = 0, d = 0, s = 1, r = 0;
         private float squareRatio = .5f;
         private float volume = 1;
         public float Volume { get { return volume; } set { volume = value; } }
         static Random rand = new Random();
-
+        public event Action<Oscillator> AdsrChanged;
+        public event Action<Oscillator> TypeChanged;
+        public float A
+        {
+            get { return a; }
+            set
+            {
+                if (a == value) return; a = value; AdsrChanged?.Invoke(this); }
+        }
+        public float D
+        {
+            get { return d; }
+            set { if (d == value) return; d = value; AdsrChanged?.Invoke(this); }
+        }
+        public float S
+        {
+            get { return s; }
+            set { if (s == value) return; s = value; AdsrChanged?.Invoke(this); }
+        }
+        public float R
+        {
+            get { return r; }
+            set { if (r == value) return; r = value; AdsrChanged?.Invoke(this); }
+        }
         public Oscillator()
         {
+            Pitchs = new ObservableCollection<float>() { 0 };
+            A = 0;
+            D = 0;
+            S = 1; R = 0;
         }
 
-        public Oscillator(XmlNode x)
+
+        public Oscillator(XmlNode x) : this()
         {
             if (x.Attributes["a"] != null)
                 A = float.Parse(x.Attributes["a"].Value, CultureInfo.InvariantCulture);
@@ -33,7 +62,7 @@ namespace JaebeMusicStudio.Sound
             if (x.Attributes["r"] != null)
                 R = float.Parse(x.Attributes["r"].Value, CultureInfo.InvariantCulture);
             if (x.Attributes["type"] != null)
-                Type = (OscillatorType)Enum.Parse(typeof (OscillatorType), x.Attributes["type"].Value);
+                Type = (OscillatorType)Enum.Parse(typeof(OscillatorType), x.Attributes["type"].Value);
 
             if (x.Attributes["squareRatio"] != null)
                 squareRatio = float.Parse(x.Attributes["squareRatio"].Value, CultureInfo.InvariantCulture);
@@ -83,14 +112,14 @@ namespace JaebeMusicStudio.Sound
                 float adsrVal;
                 var sumTime = i + timeWaited;
                 if (sumTime < dLen)
-                    adsrVal = S + (1 - S)*(dLen -sumTime)/dLen;
+                    adsrVal = S + (1 - S) * (dLen - sumTime) / dLen;
                 else
                     adsrVal = S;
-                if(sumTime<aLen)
-                    adsrVal *= sumTime/aLen;
+                if (sumTime < aLen)
+                    adsrVal *= sumTime / aLen;
                 var toEnd = samplesTotal - sumTime;
                 if (toEnd < rLen)
-                    adsrVal *= toEnd/rLen;
+                    adsrVal *= toEnd / rLen;
 
                 adsrVal *= volume;
                 ret[0, i] *= adsrVal;

@@ -13,8 +13,8 @@
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
-        <ui:Slider x:Name="Octave" Minimum="-4" Maximum="4" Grid.Column="0" ValueChanged="OnValueChanged"></ui:Slider>
-        <ui:Slider x:Name="Note" Minimum="0" Maximum="12" Step="1" Grid.Column="1" ValueChanged="OnValueChanged"></ui:Slider>
-        <ui:Slider x:Name="SubNote" Minimum="-1" Maximum="1" Grid.Column="2" ValueChanged="OnValueChanged"></ui:Slider>
+        <ui:Slider x:Name="Octave" Minimum="-4" Maximum="4" Step="1" Grid.Column="0" ValueChanged="OnValueChanged"></ui:Slider>
+        <ui:Slider x:Name="Note" Minimum="0" Maximum="11" Step="1" Grid.Column="1" ValueChanged="OnValueChanged"></ui:Slider>
+        <ui:Slider x:Name="SubNote" Minimum="-.5" Maximum=".49999" Grid.Column="2" ValueChanged="OnValueChanged"></ui:Slider>
     </Grid>
 </UserControl>

@@ -28,11 +28,14 @@ namespace JaebeMusicStudio.UI
             InitializeComponent();
         }
 
+        private double lastSetValue = Double.NaN;
         [Bindable(true)]
         public double Value
         {
-            get { return slider.Value; }
-            set { slider.Value = value; }
+            get { return stepCalc(slider.Value); }
+            set
+            {
+                value = stepCalc(value);lastSetValue = value; slider.Value = value;  }
         }
         [Bindable(true)]
         public double Minimum
@@ -64,9 +67,24 @@ namespace JaebeMusicStudio.UI
 
         private void Slider_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if(step>0)
-                Value = Minimum + Math.Round((e.NewValue - Minimum) / step) * step;
-            ValueChanged?.Invoke(this, e);
+            if (e.NewValue != lastSetValue)
+            {
+                if (step > 0)
+                    Value = stepCalc(e.NewValue);
+                ValueChanged?.Invoke(this, e);
+                lastSetValue = double.NaN;
+            }
+        }
+
+        double stepCalc(double input)
+        {
+
+            if (step > 0)
+                return Minimum + Math.Round((input - Minimum) / step) * step;
+            else
+            
+                return input;
+            
         }
     }
 }

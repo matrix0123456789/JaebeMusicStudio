@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using JaebeMusicStudio.Sound;
+using JaebeMusicStudio.UI;
 
 namespace JaebeMusicStudio.Widgets
 {
@@ -32,7 +33,25 @@ namespace JaebeMusicStudio.Widgets
         {
             this.osc = osc;
             InitializeComponent();
+            osc.AdsrChanged += Osc_AdsrChanged;
+            osc.TypeChanged += Osc_TypeChanged;
+            osc.Pitchs.CollectionChanged += Pitchs_CollectionChanged;
             Init();
+        }
+
+        private void Pitchs_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+           // Dispatcher.Invoke(Init);
+        }
+
+        private void Osc_TypeChanged(Oscillator obj)
+        {
+            Dispatcher.Invoke(Init);
+        }
+
+        private void Osc_AdsrChanged(Oscillator obj)
+        {
+            Dispatcher.Invoke(Init);
         }
 
         void Init()
@@ -72,6 +91,14 @@ namespace JaebeMusicStudio.Widgets
                 pitchui.ValueChanged += Pitchui_ValueChanged;
                 Pitchs.Children.Add(pitchui);
             }
+            var but=new ButtonPretty {Text = "Dodaj"};
+            but.Click += But_Click;
+            Pitchs.Children.Add(but);
+        }
+
+        private void But_Click(object sender, RoutedEventArgs e)
+        {
+            osc.Pitchs.Add(0);
         }
 
         private void Pitchui_ValueChanged(PitchUI obj)

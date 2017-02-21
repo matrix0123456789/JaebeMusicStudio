@@ -25,21 +25,27 @@ namespace JaebeMusicStudio.Widgets
             InitializeComponent();
         }
 
-        public event Action<PitchUI> ValueChanged; 
+        private float lastSetValue = float.NaN;
+        public event Action<PitchUI> ValueChanged;
         public float Value
         {
             get { return (float)(Octave.Value * 12 + Note.Value + SubNote.Value); }
             set
             {
-                Octave.Value = Math.Floor(value / 12);
-                Note.Value = Math.Floor(value) % 12;
-                SubNote.Value = value % 1;
+                lastSetValue = value;
+                Octave.Value = Math.Floor((value + .5) / 12);
+                Note.Value = Math.Floor(value + .5) % 12;
+                SubNote.Value = value - Note.Value - Octave.Value * 12;
             }
         }
-        
+
         private void OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            ValueChanged?.Invoke(this);
+            if (Value != lastSetValue)
+            {
+                ValueChanged?.Invoke(this);
+                lastSetValue = float.NaN;
+            }
         }
     }
 }
