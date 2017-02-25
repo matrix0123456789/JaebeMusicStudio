@@ -86,6 +86,8 @@
     <Compile Include="Exceptions\BadFileException.cs" />
     <Compile Include="Sound\BasicSync.cs" />
     <Compile Include="Sound\Effect.cs" />
+    <Compile Include="Sound\FileFormat\IFileFormat.cs" />
+    <Compile Include="Sound\FileFormat\Wave.cs" />
     <Compile Include="Sound\Flanger.cs" />
     <Compile Include="Sound\ILiveInput.cs" />
     <Compile Include="Sound\INamedElement.cs" />
@@ -101,6 +103,7 @@
     <Compile Include="Sound\Project.cs" />
     <Compile Include="Sound\Reverb.cs" />
     <Compile Include="Sound\SampledSound.cs" />
+    <Compile Include="Sound\SaveSound.cs" />
     <Compile Include="Sound\SoundElement.cs" />
     <Compile Include="Sound\SoundLine.cs" />
     <Compile Include="Sound\Track.cs" />

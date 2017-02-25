@@ -42,10 +42,6 @@ namespace JaebeMusicStudio.Sound
             else streamRaw = startWave();
             read(streamRaw);
         }
-        public enum soundFormat
-        {
-            mp3, wave
-        }
         BinaryReader startMP3()
         {
             var read = new Mp3FileReader(stream);
@@ -176,5 +172,9 @@ namespace JaebeMusicStudio.Sound
                 }
             }
         }
+    }
+    public enum soundFormat
+    {
+        mp3, wave
     }
 }

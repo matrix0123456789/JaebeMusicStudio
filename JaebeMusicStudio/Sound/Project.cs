@@ -20,8 +20,17 @@ namespace JaebeMusicStudio.Sound
     {
         float _tempo = 120;
         uint _sampleRate = 48000;
-        public float tempo { get { return _tempo; } }
-        public float sampleRate { get { return _sampleRate; } }
+
+        public float tempo
+        {
+            get { return _tempo; }
+        }
+
+        public float sampleRate
+        {
+            get { return _sampleRate; }
+        }
+
         public static Project current = null;
         public List<SoundLine> lines = new List<SoundLine>() { };
 
@@ -62,6 +71,7 @@ namespace JaebeMusicStudio.Sound
         {
             lines.Add(new SoundLine());
         }
+
         public Project(string path)
         {
             current = this;
@@ -113,6 +123,7 @@ namespace JaebeMusicStudio.Sound
         /// 
 
         public event Action<int, Track> trackAdded;
+
         public Track AddEmptyTrack()
         {
             var number = tracks.Count;
@@ -125,64 +136,68 @@ namespace JaebeMusicStudio.Sound
 
         internal void Render(float position, float renderLength)
         {
-            this.renderingStart = position;
-            this.renderingLength = renderLength;
-            foreach (var line in lines)
+            lock (this)
             {
-                line.cleanToRender((int)CountSamples(renderingLength));
-            }
-            if (Player.status != Player.Status.paused)
-            {
-                foreach (var track in tracks)
+                this.renderingStart = position;
+
+                this.renderingLength = renderLength;
+                foreach (var line in lines)
                 {
-                    foreach (var element in track.Elements)
+                    line.cleanToRender((int)CountSamples(renderingLength));
+                }
+                if (Player.status != Player.Status.paused)
+                {
+                    foreach (var track in tracks)
                     {
-                        if (element.SoundLine == null) continue; //skip element without output
-                        if (element.Offset < position + renderingLength && element.Offset + element.Length > position)
+                        foreach (var element in track.Elements)
                         {
-                            lock (element.SoundLine)
+                            if (element.SoundLine == null) continue; //skip element without output
+                            if (element.Offset < position + renderingLength && element.Offset + element.Length > position)
                             {
-                                element.SoundLine.currentToRender++;
-                                System.Threading.ThreadPool.QueueUserWorkItem((el) =>
+                                lock (element.SoundLine)
                                 {
-                                    var renderStart = (el as ISoundElement).Offset - position;
-                                    if (renderStart >= 0) //you must wait to start playing
+                                    element.SoundLine.currentToRender++;
+                                    System.Threading.ThreadPool.QueueUserWorkItem((el) =>
                                     {
-                                        var rendered = (el as ISoundElement).GetSound(0, renderingLength - renderStart);
-                                        (el as ISoundElement).SoundLine.rendered((int) CountSamples(renderingStart),
-                                            rendered);
-                                    }
-                                    else
+                                        var renderStart = (el as ISoundElement).Offset - position;
+                                        if (renderStart >= 0) //you must wait to start playing
                                     {
-                                        var rendered = (el as ISoundElement).GetSound(-renderStart, renderingLength);
-                                        (el as ISoundElement).SoundLine.rendered(0, rendered);
-                                    }
-                                }, element);
+                                            var rendered = (el as ISoundElement).GetSound(0, renderingLength - renderStart);
+                                            (el as ISoundElement).SoundLine.rendered((int)CountSamples(renderingStart),
+                                                rendered);
+                                        }
+                                        else
+                                        {
+                                            var rendered = (el as ISoundElement).GetSound(-renderStart, renderingLength);
+                                            (el as ISoundElement).SoundLine.rendered(0, rendered);
+                                        }
+                                    }, element);
+                                }
                             }
                         }
                     }
                 }
-            }
-            foreach (var liveElement in live)
-            {
-                liveElement.Synth = NoteSynths[0];
-                if (liveElement.Synth?.SoundLine == null) continue;
-                lock (liveElement.Synth.SoundLine)
+                foreach (var liveElement in live)
                 {
-                    liveElement.Synth.SoundLine.currentToRender++;
-                    System.Threading.ThreadPool.QueueUserWorkItem((el) =>
+                    liveElement.Synth = NoteSynths[0];
+                    if (liveElement.Synth?.SoundLine == null) continue;
+                    lock (liveElement.Synth.SoundLine)
                     {
-                        var rendered = (el as ILiveInput).GetSound(0, renderingLength);
-                        (el as ILiveInput).Synth.SoundLine.rendered(0, rendered);
+                        liveElement.Synth.SoundLine.currentToRender++;
+                        System.Threading.ThreadPool.QueueUserWorkItem((el) =>
+                        {
+                            var rendered = (el as ILiveInput).GetSound(0, renderingLength);
+                            (el as ILiveInput).Synth.SoundLine.rendered(0, rendered);
 
-                    }, liveElement);
+                        }, liveElement);
+                    }
                 }
-            }
-            //if (lines[0].currentToRender == 0)
-            //    returnedSound(lines[0].lastRendered);
-            foreach (var line in lines)
-            {
-                line.checkIfReady();
+                //if (lines[0].currentToRender == 0)
+                //    returnedSound(lines[0].lastRendered);
+                foreach (var line in lines)
+                {
+                    line.checkIfReady();
+                }
             }
         }
 
@@ -298,6 +313,10 @@ namespace JaebeMusicStudio.Sound
                 Player.ReturnedSound(data);
 
 
+            }
+            else if (Player.status == Player.Status.fileRendering)
+            {
+                SaveSound.SaveFileEnd(data);
             }
         }
         public float CountSamples(float input)

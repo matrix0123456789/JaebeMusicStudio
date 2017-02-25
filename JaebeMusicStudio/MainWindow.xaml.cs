@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -16,6 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using JaebeMusicStudio.Sound;
 using JaebeMusicStudio.UI;
+using Microsoft.Win32;
 
 namespace JaebeMusicStudio
 {
@@ -137,6 +139,14 @@ namespace JaebeMusicStudio
         private void MainWindow_OnKeyUp(object sender, KeyEventArgs e)
         {
             KeyboardInput.singleton.KeyUp(e);
+        }
+
+        private void RenderButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            var dialog=new SaveFileDialog() {Filter = "mp3|*.mp3|wave|*.wave"};
+            dialog.ShowDialog();
+            SaveSound.file = new FileInfo(dialog.FileName);
+            SaveSound.SaveFile();
         }
     }
 }
