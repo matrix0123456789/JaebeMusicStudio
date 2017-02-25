@@ -130,30 +130,34 @@ namespace JaebeMusicStudio.Sound
             {
                 line.cleanToRender((int)CountSamples(renderingLength));
             }
-            foreach (var track in tracks)
+            if (Player.status != Player.Status.paused)
             {
-                foreach (var element in track.Elements)
+                foreach (var track in tracks)
                 {
-                    if (element.SoundLine == null) continue;//skup element without output
-                    if (element.Offset < position + renderingLength && element.Offset + element.Length > position)
+                    foreach (var element in track.Elements)
                     {
-                        lock (element.SoundLine)
+                        if (element.SoundLine == null) continue; //skup element without output
+                        if (element.Offset < position + renderingLength && element.Offset + element.Length > position)
                         {
-                            element.SoundLine.currentToRender++;
-                            System.Threading.ThreadPool.QueueUserWorkItem((el) =>
+                            lock (element.SoundLine)
                             {
-                                var renderStart = (el as ISoundElement).Offset - position;
-                                if (renderStart >= 0)//you must wait to start playing
+                                element.SoundLine.currentToRender++;
+                                System.Threading.ThreadPool.QueueUserWorkItem((el) =>
                                 {
-                                    var rendered = (el as ISoundElement).GetSound(0, renderingLength - renderStart);
-                                    (el as ISoundElement).SoundLine.rendered((int)CountSamples(renderingStart), rendered);
-                                }
-                                else
-                                {
-                                    var rendered = (el as ISoundElement).GetSound(-renderStart, renderingLength);
-                                    (el as ISoundElement).SoundLine.rendered(0, rendered);
-                                }
-                            }, element);
+                                    var renderStart = (el as ISoundElement).Offset - position;
+                                    if (renderStart >= 0) //you must wait to start playing
+                                    {
+                                        var rendered = (el as ISoundElement).GetSound(0, renderingLength - renderStart);
+                                        (el as ISoundElement).SoundLine.rendered((int) CountSamples(renderingStart),
+                                            rendered);
+                                    }
+                                    else
+                                    {
+                                        var rendered = (el as ISoundElement).GetSound(-renderStart, renderingLength);
+                                        (el as ISoundElement).SoundLine.rendered(0, rendered);
+                                    }
+                                }, element);
+                            }
                         }
                     }
                 }
