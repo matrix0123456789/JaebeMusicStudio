@@ -7,7 +7,7 @@ using System.Xml;
 
 namespace JaebeMusicStudio.Sound
 {
-    interface INoteSynth: INamedElement
+    public interface INoteSynth: INamedElement
     {
         SoundLine SoundLine { get; set; }
         float[,] GetSound(float start, float length, NotesCollection notes);

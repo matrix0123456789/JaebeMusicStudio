@@ -16,11 +16,18 @@
             <RadioButton Name="TypeOscWhite" Margin="0,80,0,0" Checked="TypeOscWhite_Checked" VerticalAlignment="Top">Szum biały</RadioButton>
             <RadioButton Name="TypeOscPink" Margin="0,100,0,0" Checked="TypeOscPink_Checked" VerticalAlignment="Top">Szum różowy</RadioButton>
         </Grid>
-        <UI:Slider x:Name="A" Margin="113,10,0,0" VerticalAlignment="Top" ValueChanged="A_OnValueChanged"></UI:Slider>
-        <UI:Slider x:Name="D" Margin="113,33,0,0" VerticalAlignment="Top" ValueChanged="D_OnValueChanged"></UI:Slider>
-        <UI:Slider x:Name="S" Margin="113,56,0,0" VerticalAlignment="Top" ValueChanged="S_OnValueChanged"></UI:Slider>
-        <UI:Slider x:Name="R" Margin="113,79,0,0" VerticalAlignment="Top" ValueChanged="R_OnValueChanged"></UI:Slider>
-        <UI:Slider x:Name="Volume" Margin="113,102,0,0" VerticalAlignment="Top" ValueChanged="Volume_OnValueChanged"></UI:Slider>
-        <StackPanel Name="Pitchs" Margin="0,125,0,0"></StackPanel>
+        <Label Margin="108,5,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" >Attack</Label>
+        <Label Margin="108,31,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" >Delay</Label>
+        <Label Margin="108,57,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" >Sustain</Label>
+        <Label Margin="108,83,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" >Release</Label>
+        <Label Margin="108,109,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" >Głośność</Label>
+        <Label Margin="108,135,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" >Brzmienie</Label>
+        <UI:Slider x:Name="A" Margin="165,10,0,0" VerticalAlignment="Top" ValueChanged="A_OnValueChanged"></UI:Slider>
+        <UI:Slider x:Name="D" Margin="165,36,0,0" VerticalAlignment="Top" ValueChanged="D_OnValueChanged"></UI:Slider>
+        <UI:Slider x:Name="S" Margin="165,62,0,0" VerticalAlignment="Top" ValueChanged="S_OnValueChanged"></UI:Slider>
+        <UI:Slider x:Name="R" Margin="165,88,0,0" VerticalAlignment="Top" ValueChanged="R_OnValueChanged"></UI:Slider>
+        <UI:Slider x:Name="Volume" Margin="165,114,0,0" VerticalAlignment="Top" ValueChanged="Volume_OnValueChanged"></UI:Slider>
+        <UI:Slider x:Name="SquareRatio" Margin="165,140,0,0" VerticalAlignment="Top" ValueChanged="SquareRatio_OnValueChanged"></UI:Slider>
+        <StackPanel Name="Pitchs" Margin="0,161,0,0"></StackPanel>
     </Grid>
 </UserControl>

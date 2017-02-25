@@ -84,6 +84,7 @@ namespace JaebeMusicStudio.Widgets
                     TypeOscPink.IsChecked = true;
                     break;
             }
+            checkSquareRatio();
             Pitchs.Children.Clear();
             int i = 0;
             foreach (var x in osc.Pitchs)
@@ -96,6 +97,19 @@ namespace JaebeMusicStudio.Widgets
             var but = new ButtonPretty { Text = "Dodaj" };
             but.Click += But_Click;
             Pitchs.Children.Add(but);
+        }
+
+        void checkSquareRatio()
+        {
+
+            if (osc.Type == OscillatorType.square)
+            {
+                SquareRatio.IsEnabled = true;
+            }
+            else
+            {
+                SquareRatio.IsEnabled = false;
+            }
         }
 
         private void But_Click(object sender, RoutedEventArgs e)
@@ -111,31 +125,37 @@ namespace JaebeMusicStudio.Widgets
         private void TypeOscSin_Checked(object sender, RoutedEventArgs e)
         {
             osc.Type = OscillatorType.sine;
+            checkSquareRatio();
         }
 
         private void TypeOscTri_Checked(object sender, RoutedEventArgs e)
         {
             osc.Type = OscillatorType.triangle;
+            checkSquareRatio();
         }
 
         private void TypeOscSq_Checked(object sender, RoutedEventArgs e)
         {
             osc.Type = OscillatorType.square;
+            checkSquareRatio();
         }
 
         private void TypeOscSaw_Checked(object sender, RoutedEventArgs e)
         {
             osc.Type = OscillatorType.saw;
+            checkSquareRatio();
         }
 
         private void TypeOscWhite_Checked(object sender, RoutedEventArgs e)
         {
             osc.Type = OscillatorType.whiteNoise;
+            checkSquareRatio();
         }
 
         private void TypeOscPink_Checked(object sender, RoutedEventArgs e)
         {
             osc.Type = OscillatorType.pinkNoise;
+            checkSquareRatio();
         }
 
         private void A_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -161,6 +181,11 @@ namespace JaebeMusicStudio.Widgets
         private void Volume_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             osc.Volume = (float)e.NewValue;
+        }
+
+        private void SquareRatio_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            osc.SquareRatio = (float)e.NewValue;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Globalization;
 using System.IO;
@@ -32,7 +33,7 @@ namespace JaebeMusicStudio.Sound
 
 
         public List<Track> tracks = new List<Track>();
-        public List<INoteSynth> NoteSynths = new List<INoteSynth>();
+        public ObservableCollection<INoteSynth> NoteSynths = new ObservableCollection<INoteSynth>();
         // Queue<SoundElement> renderingQueue = new Queue<SoundElement>();
         private float renderingStart;
         private float renderingLength;
@@ -60,7 +61,6 @@ namespace JaebeMusicStudio.Sound
         public Project()
         {
             lines.Add(new SoundLine());
-
         }
         public Project(string path)
         {

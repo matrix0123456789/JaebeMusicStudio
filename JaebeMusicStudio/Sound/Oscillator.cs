@@ -17,6 +17,7 @@ namespace JaebeMusicStudio.Sound
         private float squareRatio = .5f;
         private float volume = 1;
         public float Volume { get { return volume; } set { volume = value; } }
+        public float SquareRatio { get { return squareRatio; } set { squareRatio = value; } }
         static Random rand = new Random();
         public event Action<Oscillator> AdsrChanged;
         public event Action<Oscillator> TypeChanged;

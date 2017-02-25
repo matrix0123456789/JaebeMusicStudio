@@ -26,9 +26,12 @@ namespace JaebeMusicStudio.Sound
             if (!pressedNotes.ContainsKey(e.Key))
             {
                 var pitch = getPitchBykey(e.Key);
-                var newNote = new Note() {Offset = (float) curentPositon, Length = float.MaxValue, Pitch = pitch};
-                pressedNotes.Add(e.Key, newNote);
-                Items.Add(newNote);
+                if (pitch.HasValue)
+                {
+                    var newNote = new Note() {Offset = (float) curentPositon, Length = float.MaxValue, Pitch = pitch.Value};
+                    pressedNotes.Add(e.Key, newNote);
+                    Items.Add(newNote);
+                }
             }
         }
 
@@ -51,7 +54,7 @@ namespace JaebeMusicStudio.Sound
             return ret;
         }
 
-        int getPitchBykey(Key k)
+        int? getPitchBykey(Key k)
         {
             switch (k)
             {
@@ -149,7 +152,7 @@ namespace JaebeMusicStudio.Sound
 
 
             }
-            return -1;
+            return null;
         }
     }
 }

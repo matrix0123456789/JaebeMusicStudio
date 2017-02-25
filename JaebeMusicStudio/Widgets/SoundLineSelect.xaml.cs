@@ -26,7 +26,6 @@ namespace JaebeMusicStudio.Widgets
         public SoundLineSelect()
         {
             InitializeComponent();
-            Generate();
         }
 
         public SoundLine Selected
@@ -40,7 +39,7 @@ namespace JaebeMusicStudio.Widgets
 
         }
 
-        void Generate()
+        public void Generate()
         {
            MainSelect.Items.Clear();
             foreach (var x in Project.current.lines)

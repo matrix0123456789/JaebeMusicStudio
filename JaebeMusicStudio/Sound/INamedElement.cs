@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JaebeMusicStudio.Sound
 {
-    interface INamedElement
+    public interface INamedElement
     {
         string Name { get; set; }
     }
