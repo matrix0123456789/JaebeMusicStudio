@@ -8,13 +8,18 @@ using System.Xml;
 
 namespace JaebeMusicStudio.Sound
 {
-    class Notes : ISoundElement
+    public class Notes : ISoundElement
     {
         public INoteSynth Sound { get; set; }
         public NotesCollection Items { get; set; }
 
         private float length, offset;
 
+        public Notes()
+        {
+            Items = new NotesCollection();
+            Length = 1;
+        }
         public Notes(XmlNode element)
         {
             Items=new NotesCollection();

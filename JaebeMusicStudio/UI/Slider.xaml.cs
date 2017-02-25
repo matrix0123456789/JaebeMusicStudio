@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -23,6 +24,8 @@ namespace JaebeMusicStudio.UI
     {
         [Bindable(true)]
         public event RoutedPropertyChangedEventHandler<double> ValueChanged;
+        [Bindable(true)]
+        public string Unit { get; set; }
         public Slider()
         {
             InitializeComponent();
@@ -35,7 +38,9 @@ namespace JaebeMusicStudio.UI
             get { return stepCalc(slider.Value); }
             set
             {
-                value = stepCalc(value);lastSetValue = value; slider.Value = value;  }
+                value = stepCalc(value);lastSetValue = value; slider.Value = value;
+                slider.ToolTip = getToolTip();
+            }
         }
         [Bindable(true)]
         public double Minimum
@@ -67,6 +72,7 @@ namespace JaebeMusicStudio.UI
 
         private void Slider_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            slider.ToolTip = getToolTip();
             if (e.NewValue != lastSetValue)
             {
                 if (step > 0)
@@ -85,6 +91,16 @@ namespace JaebeMusicStudio.UI
             
                 return input;
             
+        }
+
+        string getToolTip()
+        {
+            string ret = Value.ToString();
+            if (ToolTip?.ToString() != "")
+                ret = ToolTip + ": " + ret;
+            if (Unit != null)
+                ret += " " + Unit;
+            return ret;
         }
     }
 }

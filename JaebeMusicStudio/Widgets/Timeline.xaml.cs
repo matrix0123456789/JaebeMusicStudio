@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using JaebeMusicStudio.Sound;
+using JaebeMusicStudio.UI;
 
 namespace JaebeMusicStudio.Widgets
 {
@@ -170,36 +171,52 @@ namespace JaebeMusicStudio.Widgets
             element.positionChanged += Element_positionChanged;
 
             var menu = new ContextMenu();
+            if (element is Notes)
+            {
+                var menuOpen = new MenuItem() { Header = "Otwórz" };
+                menuOpen.Tag = new Object[] { element, trackContainer.Tag };
+                menuOpen.Click += element_open_Click;
+                menu.Items.Add(menuOpen);
+            }
             var menuDelete = new MenuItem() { Header = "Usun" };
             menuDelete.Tag = new Object[] { element, trackContainer.Tag };
             menuDelete.Click += element_delete_Click;
             menu.Items.Add(menuDelete);
 
-
-            var menuOutput = new MenuItem() { Header = "Wyjście dźwięku" };
-            menuOutput.Tag = new Object[] { element, trackContainer.Tag };
-            menu.Items.Add(menuOutput);
-            int i = 0;
-            foreach (var line in Project.current.lines)
+            if (element is ISoundElementDirectOutput)
             {
-                var menuOutputLine = new MenuItem() { Header = "Linia " + (++i) };
-                menuOutputLine.Tag = new Object[] { element, line };
-                if (element.SoundLine == line)
+                var menuOutput = new MenuItem() { Header = "Wyjście dźwięku" };
+                menuOutput.Tag = new Object[] { element, trackContainer.Tag };
+                menu.Items.Add(menuOutput);
+                int i = 0;
+                foreach (var line in Project.current.lines)
                 {
-                    menuOutputLine.IsChecked = true;
+                    var menuOutputLine = new MenuItem() { Header = "Linia " + (++i) };
+                    menuOutputLine.Tag = new Object[] { element, line };
+                    if (element.SoundLine == line)
+                    {
+                        menuOutputLine.IsChecked = true;
+                    }
+                    menuOutputLine.Click += element_setOutput_Click;
+                    menuOutput.Items.Add(menuOutputLine);
                 }
-                menuOutputLine.Click += element_setOutput_Click;
-                menuOutput.Items.Add(menuOutputLine);
             }
             grid.ContextMenu = menu;
 
         }
 
+        private void element_open_Click(object sender, RoutedEventArgs e)
+        {
+            var tag = ((sender as FrameworkElement).Tag as Object[]);
+            if (tag[0] is Notes)
+                PseudoWindow.OpenWindow(() => new Widgets.NotesEdit(tag[0] as Notes));
+        }
+
         private void element_setOutput_Click(object sender, RoutedEventArgs e)
         {
             var tag = ((sender as FrameworkElement).Tag as Object[]);
-            if(tag[0] is ISoundElementDirectOutput)
-            (tag[0] as ISoundElementDirectOutput).SoundLine = tag[1] as SoundLine;
+            if (tag[0] is ISoundElementDirectOutput)
+                (tag[0] as ISoundElementDirectOutput).SoundLine = tag[1] as SoundLine;
         }
 
         private void element_delete_Click(object sender, RoutedEventArgs e)
@@ -335,6 +352,12 @@ namespace JaebeMusicStudio.Widgets
                     editingElement = null;
                 }
             }
+        }
+
+        private void NewNotesButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            var notes = new Notes();
+            Project.current.FindTrackWithSpace(notes.Offset, notes.Offset + notes.Length).AddElement(notes);
         }
     }
 }

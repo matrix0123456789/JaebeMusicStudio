@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using JaebeMusicStudio.Sound;
 using JaebeMusicStudio.UI;
 
 namespace JaebeMusicStudio
@@ -126,6 +127,16 @@ namespace JaebeMusicStudio
         private void OpenSynthsButton_OnClick(object sender, RoutedEventArgs e)
         {
             PseudoWindow.OpenWindow(() => new Widgets.Synths());
+        }
+
+        private void MainWindow_OnKeyDown(object sender, KeyEventArgs e)
+        {
+            KeyboardInput.singleton.KeyDown(e);
+        }
+
+        private void MainWindow_OnKeyUp(object sender, KeyEventArgs e)
+        {
+            KeyboardInput.singleton.KeyUp(e);
         }
     }
 }

@@ -84,6 +84,7 @@ namespace JaebeMusicStudio.Sound
 
             } while (ent != null);
             zis.Close();
+            Player.rendering = false;
         }
 
         public float length
@@ -136,7 +137,7 @@ namespace JaebeMusicStudio.Sound
                 {
                     foreach (var element in track.Elements)
                     {
-                        if (element.SoundLine == null) continue; //skup element without output
+                        if (element.SoundLine == null) continue; //skip element without output
                         if (element.Offset < position + renderingLength && element.Offset + element.Length > position)
                         {
                             lock (element.SoundLine)

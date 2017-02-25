@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:JaebeMusicStudio"
         xmlns:UI="clr-namespace:JaebeMusicStudio.UI"
         mc:Ignorable="d"
-        Title="Jaebe Music Studio" Height="350" Width="525">
+        Title="Jaebe Music Studio" Height="350" Width="525" KeyDown="MainWindow_OnKeyDown" KeyUp="MainWindow_OnKeyUp">
     <Grid>
         <Grid Name="windowArea">
             <UI:ButtonPretty Height="20" Margin="10,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="20" Icon="e800" x:Name="saveButton" Click="saveButton_Click" ToolTip="Zapisz"></UI:ButtonPretty>

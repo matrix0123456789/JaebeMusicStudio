@@ -27,6 +27,7 @@ namespace JaebeMusicStudio.Widgets
         {
             this.synth=synth;
             InitializeComponent();
+            slSelect.Selected = synth.SoundLine;
             slSelect.Generate();
         }
 

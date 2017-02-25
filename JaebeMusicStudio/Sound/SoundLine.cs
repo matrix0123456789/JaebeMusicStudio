@@ -27,9 +27,11 @@ namespace JaebeMusicStudio.Sound
 
         public SoundLine()
         {
+            cleanToRender(16);
         }
         public SoundLine(XmlElement xml)
         {
+            cleanToRender(16);
             if (xml.Attributes["volume"] != null)
                 volume = float.Parse(xml.Attributes["volume"].Value, CultureInfo.InvariantCulture);
             foreach (XmlElement x in xml.ChildNodes)
