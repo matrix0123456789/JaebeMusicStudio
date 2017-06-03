@@ -3,4 +3,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <StartArguments>C:\Users\matri\Downloads\testy1\14.jms</StartArguments>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <StartArguments>C:\Users\matri\Downloads\testy1\14.jms</StartArguments>
+  </PropertyGroup>
 </Project>

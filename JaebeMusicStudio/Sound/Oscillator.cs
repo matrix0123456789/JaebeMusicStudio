@@ -26,7 +26,8 @@ namespace JaebeMusicStudio.Sound
             get { return a; }
             set
             {
-                if (a == value) return; a = value; AdsrChanged?.Invoke(this); }
+                if (a == value) return; a = value; AdsrChanged?.Invoke(this);
+            }
         }
         public float D
         {
@@ -169,17 +170,10 @@ namespace JaebeMusicStudio.Sound
         void createSquare(float[,] ret, double waveTime, double phase)
         {
             float val1, val2;
-            if (squareRatio < .5)
-            {
-                val1 = 1;
-                val2 = 1 - squareRatio - squareRatio;
-            }
-            else
-            {
 
-                val1 = -1 + squareRatio + squareRatio;
-                val2 = -1;
-            }
+            val1 = squareRatio - 1;
+            val2 = squareRatio;
+
             for (int i = 0; i < ret.LongLength / 2; i++)
             {
                 if (((i + phase) % waveTime) / waveTime < squareRatio)

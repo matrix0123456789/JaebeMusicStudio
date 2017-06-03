@@ -143,7 +143,7 @@ namespace JaebeMusicStudio
 
         private void RenderButton_OnClick(object sender, RoutedEventArgs e)
         {
-            var dialog=new SaveFileDialog() {Filter = "mp3|*.mp3|wave|*.wave"};
+            var dialog=new SaveFileDialog() {Filter = "mp3|*.mp3|wave|*.wav"};
             dialog.ShowDialog();
             SaveSound.file = new FileInfo(dialog.FileName);
             SaveSound.SaveFile();

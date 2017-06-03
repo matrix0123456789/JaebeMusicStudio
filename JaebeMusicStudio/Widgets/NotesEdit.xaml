@@ -9,6 +9,6 @@
       Title="NotesEdit">
 
     <Grid>
-       <local:SynthSelect x:Name="synthSelect" Changed="SynthSelect_OnChanged"></local:SynthSelect> 
+       <local:SynthSelect x:Name="synthSelect" Changed="SynthSelect_OnChanged" VerticalAlignment="Top"/>
     </Grid>
 </Page>

@@ -37,12 +37,12 @@ namespace JaebeMusicStudio.Sound
             oscillators.CollectionChanged += Oscillators_CollectionChanged;
         }
 
-        public event Action<int,Oscillator> oscillatorAdded;
+        public event Action<int, Oscillator> oscillatorAdded;
         private void Oscillators_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                oscillatorAdded?.Invoke(e.NewStartingIndex,e.NewItems[0] as Oscillator);
+                oscillatorAdded?.Invoke(e.NewStartingIndex, e.NewItems[0] as Oscillator);
             }
         }
 
@@ -60,7 +60,7 @@ namespace JaebeMusicStudio.Sound
                 SoundLine = Project.current.lines[0];
             foreach (XmlNode ch in element.ChildNodes)
             {
-                if (ch.Name== "Oscillator")
+                if (ch.Name == "Oscillator")
                 {
                     oscillators.Add(new Oscillator(ch));
                 }
@@ -71,7 +71,7 @@ namespace JaebeMusicStudio.Sound
         {
             long samples = (long)Project.current.CountSamples(length);//how many samples you need on output
             var ret = new float[2, samples];//sound that will be returned
-            var notesCount= notes.Count;
+            var notesCount = notes.Count;
             var oscillatorsCount = oscillators.Count;
             var tasks = new Task<float[,]>[notesCount, oscillatorsCount];
 
@@ -86,9 +86,20 @@ namespace JaebeMusicStudio.Sound
                         tasks[i, j] = Task.Run(() =>
                         {
                             if (start > note.Offset)
-                                return oscillators[j_copy].GetSound(start - note.Offset, length, note);
-                            else
-                                return oscillators[j_copy].GetSound(0, length + start - note.Offset, note);
+                            {
+                                var l1 = note.Length - start - note.Offset;
+                                if (length < l1)
+                                {
+                                    l1 = length;
+                                }
+                                return oscillators[j_copy].GetSound(start - note.Offset, l1, note);
+                            }
+                            else {
+                                var l1 = length + start - note.Offset;
+                                if (note.Length < l1)
+                                    l1 = note.Length;
+                                return oscillators[j_copy].GetSound(0, l1, note);
+                            }
                         });
                     }
                 }
