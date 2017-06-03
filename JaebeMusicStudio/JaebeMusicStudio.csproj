@@ -126,6 +126,7 @@
     <Compile Include="Sound\SampledSound.cs" />
     <Compile Include="Sound\SaveSound.cs" />
     <Compile Include="Sound\SoundElement.cs" />
+    <Compile Include="Sound\SoundElementClone.cs" />
     <Compile Include="Sound\SoundLine.cs" />
     <Compile Include="Sound\Track.cs" />
     <Compile Include="UI\ButtonPretty.xaml.cs">

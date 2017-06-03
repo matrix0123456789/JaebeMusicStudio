@@ -34,6 +34,8 @@ namespace JaebeMusicStudio.Sound
             offset = float.Parse(element.Attributes["offset"].Value, CultureInfo.InvariantCulture);
             innerOffset = float.Parse(element.Attributes["innerOffset"].Value, CultureInfo.InvariantCulture);
             speed = float.Parse(element.Attributes["speed"].Value, CultureInfo.InvariantCulture);
+            if (element.Attributes["name"] != null)
+                Name = element.Attributes["name"].Value;
             sample = SampledSound.FindByUrl(element.Attributes["src"].Value);
         }
 
@@ -74,11 +76,34 @@ namespace JaebeMusicStudio.Sound
             node2.SetAttribute("innerOffset", innerOffset.ToString(CultureInfo.InvariantCulture));
             node2.SetAttribute("length", Length.ToString(CultureInfo.InvariantCulture));
             node2.SetAttribute("speed", speed.ToString(CultureInfo.InvariantCulture));
+            node2.SetAttribute("name", Name);
             if (sample.path != null)
                 node2.SetAttribute("src", sample.path);
             node.AppendChild(node2);
         }
 
+        public ISoundElement Duplicate()
+        {
+            var newElem = MemberwiseClone() as OneSample;
+            return newElem;
+        }
+
         public event Action<ISoundElement> positionChanged;
+
+        private string name;
+        public string Name
+        {
+            get
+            {
+                if (name == null)
+                    Project.current.generateNamedElement(this);
+                return name;
+            }
+            set
+            {
+                Project.current[value] = this;
+                name = value;
+            }
+        }
     }
 }

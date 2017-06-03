@@ -25,6 +25,8 @@ namespace JaebeMusicStudio.Sound
             Items=new NotesCollection();
             length = float.Parse(element.Attributes["length"].Value, CultureInfo.InvariantCulture);
             offset = float.Parse(element.Attributes["offset"].Value, CultureInfo.InvariantCulture);
+            if (element.Attributes["name"] != null)
+                Name = element.Attributes["name"].Value;
             if (element.Attributes["sound"].Value != "")
             {
                 Sound = Project.current[element.Attributes["sound"].Value] as INoteSynth;
@@ -54,12 +56,35 @@ namespace JaebeMusicStudio.Sound
             var node2 = node.OwnerDocument.CreateElement("Notes");
             node2.SetAttribute("offset", Offset.ToString(CultureInfo.InvariantCulture));
             node2.SetAttribute("length", Length.ToString(CultureInfo.InvariantCulture));
+            node2.SetAttribute("name", Name);
             node2.SetAttribute("sound", Sound==null?"":Sound.Name);
             foreach (Note item in Items)
             {
                 item.Serialize(node2);
             }
             node.AppendChild(node2);
+        }
+
+        public ISoundElement Duplicate()
+        {
+            var newElem = this.MemberwiseClone() as Notes;
+           
+            return newElem;
+        }
+        private string name;
+        public string Name
+        {
+            get
+            {
+                if (name == null)
+                    Project.current.generateNamedElement(this);
+                return name;
+            }
+            set
+            {
+                Project.current[value] = this;
+                name = value;
+            }
         }
     }
 }

@@ -158,6 +158,9 @@ namespace JaebeMusicStudio.Widgets
                 rect.Fill = Brushes.Red;
                 grid.Children.Add(new OneSampleLookInside(element as OneSample));
             }
+            if (element is Sound.SoundElementClone) {
+                rect.Fill = Brushes.Orange;
+            }
             else
                 rect.Fill = Brushes.Blue;
 
@@ -178,6 +181,17 @@ namespace JaebeMusicStudio.Widgets
                 menuOpen.Click += element_open_Click;
                 menu.Items.Add(menuOpen);
             }
+
+            var menuDuplicate = new MenuItem() { Header = "Duplikuj" };
+            menuDuplicate.Tag = new Object[] { element, trackContainer.Tag };
+            menuDuplicate.Click += element_duplicate_Click;
+            menu.Items.Add(menuDuplicate);
+
+            var menuClone = new MenuItem() { Header = "Klonuj" };
+            menuClone.Tag = new Object[] { element, trackContainer.Tag };
+            menuClone.Click += element_clone_Click;
+            menu.Items.Add(menuClone);
+        
             var menuDelete = new MenuItem() { Header = "Usun" };
             menuDelete.Tag = new Object[] { element, trackContainer.Tag };
             menuDelete.Click += element_delete_Click;
@@ -203,6 +217,21 @@ namespace JaebeMusicStudio.Widgets
             }
             grid.ContextMenu = menu;
 
+        }
+
+        private void element_clone_Click(object sender, RoutedEventArgs e)
+        {
+
+            var data = (sender as FrameworkElement).Tag as Object[];
+            var newElem = new SoundElementClone((data[0] as ISoundElement));
+            Project.current.FindTrackWithSpace(newElem.Offset, newElem.Offset + newElem.Length).AddElement(newElem);
+        }
+
+        private void element_duplicate_Click(object sender, RoutedEventArgs e)
+        {
+            var data = (sender as FrameworkElement).Tag as Object[];
+            var newElem=(data[0] as ISoundElement).Duplicate();
+            Project.current.FindTrackWithSpace(newElem.Offset, newElem.Offset + newElem.Length).AddElement(newElem);
         }
 
         private void element_open_Click(object sender, RoutedEventArgs e)
