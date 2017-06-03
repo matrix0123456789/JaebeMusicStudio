@@ -87,7 +87,7 @@ namespace JaebeMusicStudio.Sound
                         {
                             if (start > note.Offset)
                             {
-                                var l1 = note.Length - start - note.Offset;
+                                var l1 = note.Length - (start - note.Offset);
                                 if (length < l1)
                                 {
                                     l1 = length;
