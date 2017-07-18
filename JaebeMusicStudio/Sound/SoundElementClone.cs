@@ -23,7 +23,16 @@ namespace JaebeMusicStudio.Sound
                 this.original = soundElement;
             }
         }
-
+        public SoundElementClone(XmlNode element)
+        {
+            this.original = Project.current[element.Attributes["original"].Value] as ISoundElement;
+            if (this?.original == null)
+            {
+                throw new Exception("Bad File");
+            }
+            
+            offset = float.Parse(element.Attributes["offset"].Value, CultureInfo.InvariantCulture);
+        }
         public float Length { get { return original.Length; } set { } }
         public float Offset { get { return offset; } set { offset = value; positionChanged?.Invoke(this); } }
 

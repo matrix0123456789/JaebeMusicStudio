@@ -33,6 +33,18 @@ namespace JaebeMusicStudio.Sound
                 }
                 Elements.Add(soundElement);
             }
+            foreach (XmlNode element in xml.ChildNodes)
+            {
+                ISoundElement soundElement;
+                switch (element.Name)
+                {
+                    case "SoundElementClone":
+                        soundElement = new SoundElementClone(element);
+                        break;
+                    default: continue;
+                }
+                Elements.Add(soundElement);
+            }
         }
         internal void Serialize(XmlDocument document)
         {
