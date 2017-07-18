@@ -39,14 +39,16 @@ namespace JmsVstHost
                     ShowWindow();
                     break;
                 case Commands.GetSoundNoteSynth:
-                    var blockSize = reader.ReadInt32();
-                    GetSound(blockSize);
+                    GetSound(reader);
                     break;
             }
         }
 
-        private void GetSound(int blockSize)
+        private void GetSound(BinaryReader reader)
         {
+            var blockSize = reader.ReadInt32();
+            var eventsCount = reader.ReadInt32();
+
             int inputCount = ctx.PluginInfo.AudioInputCount;
             int outputCount = ctx.PluginInfo.AudioOutputCount;
 
@@ -57,6 +59,12 @@ namespace JmsVstHost
             VstAudioBuffer[] outputBuffers = outputMgr.ToArray();
 
             ctx.PluginCommandStub.MainsChanged(true);
+
+            for (var i = 0; i < eventsCount; i++)
+            {
+                SetEvent(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32(), new byte[] { reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte() }, reader.ReadInt16(), reader.ReadByte());
+            }
+
             ctx.PluginCommandStub.StartProcess();
             ctx.PluginCommandStub.ProcessReplacing(inputBuffers, outputBuffers);
 
@@ -77,6 +85,19 @@ namespace JmsVstHost
                     stream.Write(outputBuffers[1][i]);
                 }
             }
+        }
+        private void SetEvent(int deltaFrames, int noteLength, int noteOffset, byte[] midiData, short detune, byte noteOffVelocity)
+        {// Reserved, unused
+
+            VstMidiEvent vse = new VstMidiEvent(/*DeltaFrames*/ 	deltaFrames,
+                /*NoteLength*/    noteLength,
+                /*NoteOffset*/    noteOffset,
+                                                midiData,
+                /*Detune*/            detune,
+                /*NoteOffVelocity*/ noteOffVelocity); // previously 0
+
+
+            ctx.PluginCommandStub.ProcessEvents(new VstEvent[] { vse });
         }
 
         private void HostCmdStub_PluginCalled(object sender, PluginCalledEventArgs e)
