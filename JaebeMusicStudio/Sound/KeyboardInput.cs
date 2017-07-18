@@ -28,7 +28,7 @@ namespace JaebeMusicStudio.Sound
                 var pitch = getPitchBykey(e.Key);
                 if (pitch.HasValue)
                 {
-                    var newNote = new Note() {Offset = (float) curentPositon, Length = float.MaxValue, Pitch = pitch.Value};
+                    var newNote = new Note() { Offset = (float)curentPositon, Length = float.MaxValue, Pitch = pitch.Value };
                     pressedNotes.Add(e.Key, newNote);
                     Items.Add(newNote);
                 }
@@ -41,7 +41,7 @@ namespace JaebeMusicStudio.Sound
             {
                 var endingNote = pressedNotes[e.Key];
                 pressedNotes.Remove(e.Key);
-                endingNote.Length = (float) (curentPositon - endingNote.Offset);
+                endingNote.Length = (float)(curentPositon - endingNote.Offset);
             }
 
 
@@ -49,7 +49,7 @@ namespace JaebeMusicStudio.Sound
 
         public float[,] GetSound(float start, float length)
         {
-            var ret= Synth.GetSound((float)curentPositon, length, Items);
+            var ret = Synth.GetSound((float)curentPositon, length, Items);
             curentPositon += length;
             return ret;
         }
@@ -64,7 +64,8 @@ namespace JaebeMusicStudio.Sound
                 case Key.S:
                     return 61;
 
-                case Key.X:;
+                case Key.X:
+                    ;
                     return 62;
 
                 case Key.D:

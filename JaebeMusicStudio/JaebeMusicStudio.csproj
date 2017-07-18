@@ -129,6 +129,7 @@
     <Compile Include="Sound\SoundElementClone.cs" />
     <Compile Include="Sound\SoundLine.cs" />
     <Compile Include="Sound\Track.cs" />
+    <Compile Include="Sound\VSTi.cs" />
     <Compile Include="UI\ButtonPretty.xaml.cs">
       <DependentUpon>ButtonPretty.xaml</DependentUpon>
     </Compile>
@@ -311,7 +312,12 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\JmsVstHost\JmsVstHost.csproj">
+      <Project>{5df6c774-d747-464c-b985-2d239a3cfb20}</Project>
+      <Name>JmsVstHost</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

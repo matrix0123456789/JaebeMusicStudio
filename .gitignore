@@ -2,3 +2,6 @@ JaebeMusicStudio/obj/
 JaebeMusicStudio/bin/Debug/JaebeMusicStudio.vshost.exe
 JaebeMusicStudio/bin/
 .vs/JaebeMusicStudio/v14/.suo
+/JmsVstHost/bin/Debug
+/JmsVstHost/obj/Debug
+/packages/VST.NET.x86.1.1/lib/net40

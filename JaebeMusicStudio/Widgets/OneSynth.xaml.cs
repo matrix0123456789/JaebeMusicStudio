@@ -36,6 +36,9 @@ namespace JaebeMusicStudio.Widgets
             if (synth is BasicSynth)
             {
                 PseudoWindow.OpenWindow(() => new Widgets.BasicSynthUi(synth as BasicSynth));
+            }else if (synth is VSTi)
+            {
+                (synth as VSTi).ShowWindow();
             }
         }
 

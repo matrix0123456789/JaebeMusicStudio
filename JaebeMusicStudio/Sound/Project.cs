@@ -161,7 +161,7 @@ namespace JaebeMusicStudio.Sound
                                     {
                                         var renderStart = (el as ISoundElement).Offset - position;
                                         if (renderStart >= 0) //you must wait to start playing
-                                    {
+                                        {
                                             var rendered = (el as ISoundElement).GetSound(0, renderingLength - renderStart);
                                             (el as ISoundElement).SoundLine.rendered((int)CountSamples(renderingStart),
                                                 rendered);
@@ -179,7 +179,8 @@ namespace JaebeMusicStudio.Sound
                 }
                 foreach (var liveElement in live)
                 {
-                    liveElement.Synth = NoteSynths[0];
+                    if (liveElement.Synth == null)
+                        liveElement.Synth = NoteSynths[0];
                     if (liveElement.Synth?.SoundLine == null) continue;
                     lock (liveElement.Synth.SoundLine)
                     {
@@ -297,6 +298,11 @@ namespace JaebeMusicStudio.Sound
             foreach (XmlNode basicSynth in basicSynths)
             {
                 this.NoteSynths.Add(new BasicSynth(basicSynth));
+            }
+            var VSTis = document.GetElementsByTagName("VSTi");
+            foreach (XmlNode VSTi in VSTis)
+            {
+                this.NoteSynths.Add(new VSTi(VSTi));
             }
 
 
