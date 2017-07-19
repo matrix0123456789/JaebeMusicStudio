@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JaebeMusicStudio.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -15,7 +16,8 @@ namespace JaebeMusicStudio.Sound
         BinaryWriter writer;
         private string filename;
         private string name;
-        private List<Note> startedNotes = new List<Note>(0);
+        private List<Note> startedNotes = new List<Note>();
+        private List<Note> endedNotes = new List<Note>();
         public string Name
         {
             get
@@ -34,6 +36,17 @@ namespace JaebeMusicStudio.Sound
 
         public VSTi(XmlNode xml)
         {
+            Name = xml.Attributes["name"].Value;
+            if (xml.Attributes["soundLine"] != null)
+            {
+                var number = uint.Parse(xml.Attributes["soundLine"].Value);
+                if (number >= Project.current.lines.Count)
+                    throw new BadFileException();
+                SoundLine = Project.current.lines[(int)number];
+            }
+            else
+                SoundLine = Project.current.lines[0];
+
             filename = xml.Attributes["filename"].Value;
             var startInfo = new ProcessStartInfo("JmsVstHost.exe", "JmsVstHost.exe \"" + filename + "\"");
             startInfo.UseShellExecute = false;
@@ -53,34 +66,73 @@ namespace JaebeMusicStudio.Sound
         {
 
 
-            writer.Write((int)JmsVstHost.Commands.GetSoundNoteSynth);
             int samples = (int)Project.current.CountSamples(length);//how many samples you need on output
-            writer.Write((int)samples);
 
+            Note[] startNotes, endNotes;
+            List<float> timeBreaks;
+            //lock (notes)
+            // {
             //todo dokładna dłuość nuty
-            var startNotes = notes.Where(x => x.Offset >= start && x.Offset < start + length);
-            var endNotes = startedNotes.Where(x => x.Offset + x.Length < start || !notes.Contains(x));
-            writer.Write((int)startNotes.Count() + (int)endNotes.Count());
-            foreach (var note in startNotes)
+            startNotes = notes.Where(note => (note.Offset < start + length && !startedNotes.Contains(note) && !endedNotes.Contains(note))).ToArray();
+            endNotes = notes.Where(note => (note.Offset + note.Length < start + length && !endedNotes.Contains(note))).ToArray();
+            timeBreaks = new List<float> { start, start + length };
+
+            foreach (var x in startedNotes)
             {
-                SendNote(note);
-                startedNotes.Add(note);
+                if (!timeBreaks.Contains(x.Offset))
+                {
+                    timeBreaks.Add(x.Offset);
+                }
             }
-            foreach (var note in endNotes)
+            foreach (var x in endNotes)
             {
-                SendEndNote(note);
+                if (!timeBreaks.Contains(x.Offset + x.Length))
+                {
+                    timeBreaks.Add(x.Offset + x.Length);
+                }
             }
+            //}
+            timeBreaks.Sort();
+            int sumSamples = 0;
+            for (var i = 0; i < timeBreaks.Count - 1; i++)
+            {
+                writer.Write((int)JmsVstHost.Commands.GetSoundNoteSynth);
+                var nowSamples = (int)Project.current.CountSamples(timeBreaks[i + 1] - start);
+                if (i == timeBreaks.Count - 2)
+                    nowSamples = samples;//to provide errors of float incorrection
+                if (nowSamples - sumSamples <= 0)
+                    nowSamples = sumSamples + 1;//todo niebezpieczeńswo ze przekroczymy wartość samples
+                writer.Write(nowSamples - sumSamples);
+                sumSamples = nowSamples;
+                //writer.Write(0);
+                var startNotes2 = startNotes.Where(note => (note.Offset < timeBreaks[i + 1] && !startedNotes.Contains(note) && !endedNotes.Contains(note))).ToArray();
+                var endNotes2 = endNotes.Where(note => (note.Offset + note.Length < timeBreaks[i + 1] && !endedNotes.Contains(note))).ToArray();
+                writer.Write((int)startNotes2.Count() + (int)endNotes2.Count());
+                foreach (var note in startNotes2)
+                {
+                    SendNote(note);
+                    startedNotes.Add(note);
+                }
+                foreach (var note in endNotes2)
+                {
+                    SendEndNote(note);
+                    startedNotes.Remove(note);
+                    endedNotes.Add(note);
+                }
+            }
+
 
             writer.Flush();
             var ret = new float[2, samples];//sound that will be returned
 
             var reader = new BinaryReader(process.StandardOutput.BaseStream);
-
+            Debug.WriteLine("startRching " + samples);
             for (var i = 0; i < samples; i++)
             {
                 ret[0, i] = reader.ReadSingle();
                 ret[1, i] = reader.ReadSingle();
             }
+            Debug.WriteLine("endRching " + samples);
 
             return ret;
         }

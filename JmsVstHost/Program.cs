@@ -13,9 +13,14 @@ namespace JmsVstHost
             var Plugin = new VSTiInterface(pluginPath);
 
             var stream = Console.OpenStandardInput();
-            while (true)
+            try
             {
-                Plugin.ReadCommand(stream);
+                while (true)
+                {
+                    Plugin.ReadCommand(stream);
+                }
+            }
+            catch (Exception e) {
             }
         }
     }
