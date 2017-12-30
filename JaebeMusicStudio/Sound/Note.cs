@@ -34,5 +34,10 @@ namespace JaebeMusicStudio.Sound
             node2.SetAttribute("pitch", Pitch.ToString(CultureInfo.InvariantCulture));
             node.AppendChild(node2);
         }
+
+        internal Note Clone()
+        {
+            return MemberwiseClone() as Note;
+        }
     }
 }

@@ -77,7 +77,7 @@ namespace JaebeMusicStudio.Sound
 
             for (var i = 0; i < notesCount; i++)
             {
-                var note = notes[i];
+                var note = notes[i].Clone();
                 for (var j = 0; j < oscillatorsCount; j++)
                 {
                     if (note.Offset < start + length && note.Offset + note.Length + oscillators[j].R > start)
@@ -87,7 +87,7 @@ namespace JaebeMusicStudio.Sound
                         {
                             if (start > note.Offset)
                             {
-                                var l1 = note.Length - (start - note.Offset);
+                                var l1 = note.Length + oscillators[j_copy].R - (start - note.Offset);
                                 if (length < l1)
                                 {
                                     l1 = length;
@@ -95,9 +95,9 @@ namespace JaebeMusicStudio.Sound
                                 return oscillators[j_copy].GetSound(start - note.Offset, l1, note);
                             }
                             else {
-                                var l1 = length + start - note.Offset;
-                                if (note.Length < l1)
-                                    l1 = note.Length;
+                                var l1 = length +  start - note.Offset;
+                                if (note.Length+ oscillators[j_copy].R  < l1)
+                                    l1 = note.Length+ oscillators[j_copy].R ;
                                 return oscillators[j_copy].GetSound(0, l1, note);
                             }
                         });

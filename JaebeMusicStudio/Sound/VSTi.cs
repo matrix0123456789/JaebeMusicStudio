@@ -18,6 +18,8 @@ namespace JaebeMusicStudio.Sound
         private string name;
         private List<Note> startedNotes = new List<Note>();
         private List<Note> endedNotes = new List<Note>();
+        private float lastPlayedStart;
+
         public string Name
         {
             get
@@ -64,7 +66,11 @@ namespace JaebeMusicStudio.Sound
 
         public float[,] GetSound(float start, float length, NotesCollection notes)
         {
-
+            if (lastPlayedStart > start)
+            {
+                endedNotes.Clear();
+            }
+            lastPlayedStart = start;
 
             int samples = (int)Project.current.CountSamples(length);//how many samples you need on output
 
@@ -75,6 +81,8 @@ namespace JaebeMusicStudio.Sound
             //todo dokładna dłuość nuty
             startNotes = notes.Where(note => (note.Offset < start + length && !startedNotes.Contains(note) && !endedNotes.Contains(note))).ToArray();
             endNotes = notes.Where(note => (note.Offset + note.Length < start + length && !endedNotes.Contains(note))).ToArray();
+            startNotes = notes.Where(note => (note.Offset < start + length)).ToArray();
+            endNotes = notes.Where(note => (note.Offset + note.Length < start + length)).ToArray();
             timeBreaks = new List<float> { start, start + length };
 
             foreach (var x in startedNotes)
@@ -160,7 +168,11 @@ namespace JaebeMusicStudio.Sound
 
         public void Serialize(XmlNode node)
         {
-            throw new NotImplementedException();
+            var node2 = node.OwnerDocument.CreateElement("VSTi");
+            node2.SetAttribute("name", name);
+            node2.SetAttribute("soundLine", Project.current.lines.IndexOf(SoundLine).ToString());
+            node2.SetAttribute("filename", filename);
+            node.AppendChild(node2);
         }
         public void ShowWindow()
         {
