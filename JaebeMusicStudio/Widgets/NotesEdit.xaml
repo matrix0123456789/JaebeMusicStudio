@@ -4,11 +4,27 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:JaebeMusicStudio.Widgets"
+      xmlns:UI="clr-namespace:JaebeMusicStudio.UI"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
       Title="NotesEdit">
 
     <Grid>
-       <local:SynthSelect x:Name="synthSelect" Changed="SynthSelect_OnChanged" VerticalAlignment="Top"/>
+        <local:SynthSelect x:Name="synthSelect" Changed="SynthSelect_OnChanged" VerticalAlignment="Top"/>
+        <Grid Name="TimeLabels" Height="20" VerticalAlignment="Top" Margin="0,35,0,0"></Grid>
+        <ScrollViewer Name="WholeScrollable" Margin="0,55,0,0">
+            <Grid 
+      MouseWheel="Page_MouseWheel" Background="#fff">
+                <StackPanel Width="200"  HorizontalAlignment="left" Name="tracksStack">
+                    <!--<UI:ButtonPretty Text="Nowa ścierzka" x:Name="addNewTrackButton" Click="addNewTrackButton_Click"></UI:ButtonPretty>-->
+                </StackPanel>
+                <ScrollViewer Margin="200,0,0,0" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Visible" Name="scrollHorizontal">
+                    <Grid 
+      MouseWheel="Page_MouseWheel" Background="#fff" Name="tracksContentStackGrid">
+                        <Rectangle Width="3" Fill="Black" Stroke="white" HorizontalAlignment="Left" Name="playingPosition"></Rectangle>
+                    </Grid>
+                </ScrollViewer>
+            </Grid>
+        </ScrollViewer>
     </Grid>
 </Page>
