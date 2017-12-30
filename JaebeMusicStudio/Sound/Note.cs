@@ -39,5 +39,12 @@ namespace JaebeMusicStudio.Sound
         {
             return MemberwiseClone() as Note;
         }
+        static string[] pitchesNames= new string[] { "C","C#","D","D#","E","F", "F#","G","H","A","A#","B"};
+        public static string GetName(int pitch)
+        {
+            int octave = (pitch - 24) / 12;
+            int note = pitch % 12;
+            return pitchesNames[note] + octave;
+        }
     }
 }

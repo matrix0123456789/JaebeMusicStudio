@@ -15,9 +15,9 @@
         <ScrollViewer Name="WholeScrollable" Margin="0,55,0,0">
             <Grid 
       MouseWheel="Page_MouseWheel" Background="#fff">
-                <StackPanel Width="200"  HorizontalAlignment="left" Name="tracksStack">
+                <Grid Width="200"  HorizontalAlignment="left" Name="tracksGrid">
                     <!--<UI:ButtonPretty Text="Nowa ścierzka" x:Name="addNewTrackButton" Click="addNewTrackButton_Click"></UI:ButtonPretty>-->
-                </StackPanel>
+                </Grid>
                 <ScrollViewer Margin="200,0,0,0" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Visible" Name="scrollHorizontal">
                     <Grid 
       MouseWheel="Page_MouseWheel" Background="#fff" Name="tracksContentStackGrid">

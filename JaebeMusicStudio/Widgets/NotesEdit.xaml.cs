@@ -25,9 +25,9 @@ namespace JaebeMusicStudio.Widgets
         /// <summary>
         /// how many pixels represents one note
         /// </summary>
-        double scaleX = 10;
-        double scaleY = 10;
-        int offsetY = 60;
+        double scaleX = 20;
+        double scaleY = 20;
+        int offsetY = 80;
 
         public NotesEdit(Notes notes)
         {
@@ -48,18 +48,19 @@ namespace JaebeMusicStudio.Widgets
         void showContent()
         {
             showTimeLabels();
-            tracksStack.Children.RemoveRange(0, tracksStack.Children.Count - 2);
+            tracksGrid.Children.Clear();
             tracksContentStackGrid.Children.Clear();
             foreach (var note in notes.Items)
             {
                 noteAdded(note);
             }
             Player_positionChanged();
+            showNotePitches();
         }
         void showTimeLabels(object a = null, object b = null)
         {
             TimeLabels.Children.Clear();
-            double pixelOffset = -scrollHorizontal.HorizontalOffset + tracksStack.ActualWidth;
+            double pixelOffset = -scrollHorizontal.HorizontalOffset + tracksGrid.ActualWidth;
             var scale = 1 / scaleX * 50;
             var scale1 = Math.Pow(10, Math.Ceiling(Math.Log10(scale)));
             if (scale1 / 5 > scale)
@@ -80,6 +81,22 @@ namespace JaebeMusicStudio.Widgets
 
             }
         }
+        void showNotePitches(object a = null, object b = null)
+        {
+            tracksGrid.Children.Clear();
+
+            for (int i = 0; i < offsetY; i++)
+            {
+                var text = new TextBlock();
+                text.Margin = new Thickness(0, (offsetY - i) * scaleY, 0, 0);
+                text.HorizontalAlignment = HorizontalAlignment.Left;
+                text.VerticalAlignment = VerticalAlignment.Top;
+                text.TextAlignment = TextAlignment.Left;
+                text.Text = Note.GetName(i);
+                tracksGrid.Children.Add(text);
+
+            }
+        }
         private void Player_positionChanged(float obj = 0)
         {
             Dispatcher.Invoke(() =>
@@ -94,13 +111,14 @@ namespace JaebeMusicStudio.Widgets
                 if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightCtrl))
                 {
                     scaleY *= Math.Pow(2, e.Delta / 200f);
-                    WholeScrollable.ScrollToVerticalOffset((WholeScrollable.VerticalOffset + WholeScrollable.ActualHeight / 2) * Math.Pow(2, e.Delta / 200f) - WholeScrollable.ActualHeight / 2);
+                    WholeScrollable.ScrollToVerticalOffset((WholeScrollable.VerticalOffset) * Math.Pow(2, e.Delta / 200f));
                 }
                 else
                 {
                     scaleX *= Math.Pow(2, e.Delta / 200f);
                     scrollHorizontal.ScrollToHorizontalOffset((scrollHorizontal.HorizontalOffset + scrollHorizontal.ActualWidth / 2) * Math.Pow(2, e.Delta / 200f) - scrollHorizontal.ActualWidth / 2);
-                } showContent();
+                }
+                showContent();
             }
         }
 
@@ -143,7 +161,7 @@ namespace JaebeMusicStudio.Widgets
             grid.Width = element.Length * scaleX;
             grid.Height = scaleY;
             grid.Margin = new Thickness(element.Offset * scaleX, (offsetY - element.Pitch) * scaleY, 0, 0);
-            grid.VerticalAlignment = VerticalAlignment.Stretch;
+            grid.VerticalAlignment = VerticalAlignment.Top;
             grid.HorizontalAlignment = HorizontalAlignment.Left;
             tracksContentStackGrid.Children.Add(grid);
             grid.Tag = element;
