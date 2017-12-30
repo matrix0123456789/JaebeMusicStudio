@@ -73,5 +73,17 @@ namespace JaebeMusicStudio.Widgets
         {
             SynthListScroll.ContextMenu.IsOpen = true;
         }
+
+        private void AddVSTi_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog();
+            dialog.Filter = "pliki VSTi|*.dll";
+            dialog.ShowDialog();
+
+            if (dialog.FileName != "")
+            {
+                Project.current.NoteSynths.Add(new VSTi(dialog.FileName));
+            }
+        }
     }
 }

@@ -50,6 +50,15 @@ namespace JaebeMusicStudio.Sound
                 SoundLine = Project.current.lines[0];
 
             filename = xml.Attributes["filename"].Value;
+            startProcess();
+        }
+        public VSTi(string filename)
+        {
+            this.filename = filename;
+            startProcess();
+        }
+        private void startProcess()
+        {
             var startInfo = new ProcessStartInfo("JmsVstHost.exe", "JmsVstHost.exe \"" + filename + "\"");
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardOutput = true;
@@ -58,7 +67,6 @@ namespace JaebeMusicStudio.Sound
             process.OutputDataReceived += Process_OutputDataReceived;
             writer = new BinaryWriter(process.StandardInput.BaseStream);
         }
-
         private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
 

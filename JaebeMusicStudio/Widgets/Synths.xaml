@@ -18,6 +18,7 @@
                 <ContextMenu>
                     <MenuItem Header="Dodaj">
                         <MenuItem Name="AddStandard" Header="Standardowy syntezator" Click="AddStandard_Click"></MenuItem>
+                        <MenuItem Name="AddVSTi" Header="VSTi" Click="AddVSTi_Click"></MenuItem>
                     </MenuItem>
                 </ContextMenu>
             </ScrollViewer.ContextMenu>
