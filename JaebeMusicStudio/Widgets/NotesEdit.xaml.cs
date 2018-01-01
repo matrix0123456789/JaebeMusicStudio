@@ -95,7 +95,7 @@ namespace JaebeMusicStudio.Widgets
         void showTimeLabels(object a = null, object b = null)
         {
             TimeLabels.Children.Clear();
-            double pixelOffset = -scrollHorizontal.HorizontalOffset + tracksGrid.ActualWidth;
+            double pixelOffset = -scrollHorizontal.HorizontalOffset + scrollHorizontal.Margin.Left;
             var scale = 1 / scaleX * 50;
             var scale1 = Math.Pow(10, Math.Ceiling(Math.Log10(scale)));
             if (scale1 / 5 > scale)
@@ -124,10 +124,19 @@ namespace JaebeMusicStudio.Widgets
             {
                 var text = new TextBlock();
                 text.Margin = new Thickness(0, (offsetY - i) * scaleY, 0, 0);
-                text.HorizontalAlignment = HorizontalAlignment.Left;
+                text.HorizontalAlignment = HorizontalAlignment.Stretch;
                 text.VerticalAlignment = VerticalAlignment.Top;
                 text.TextAlignment = TextAlignment.Left;
+                text.Height = scaleY;
                 text.Text = Note.GetName(i);
+                if (Note.IsPitchBlack(i))
+                {
+                    text.Background = new SolidColorBrush(Color.FromRgb(200,200,200));
+                }
+                else
+                {
+                    text.Background = new SolidColorBrush(Color.FromRgb(240, 240, 240));
+                }
                 tracksGrid.Children.Add(text);
 
             }

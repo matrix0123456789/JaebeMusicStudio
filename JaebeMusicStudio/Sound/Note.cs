@@ -40,11 +40,18 @@ namespace JaebeMusicStudio.Sound
             return MemberwiseClone() as Note;
         }
         static string[] pitchesNames= new string[] { "C","C#","D","D#","E","F", "F#","G","H","A","A#","B"};
+        static bool[] pitchesBlack = new bool[] { false, true, false, true, false, false, true, false, true, false, true, false };
         public static string GetName(int pitch)
         {
             int octave = (pitch - 24) / 12;
             int note = pitch % 12;
             return pitchesNames[note] + octave;
+        }
+
+        internal static bool IsPitchBlack(int pitch)
+        {
+            int note = pitch % 12;
+            return pitchesBlack[note];
         }
     }
 }

@@ -17,12 +17,12 @@
         <ScrollViewer Name="WholeScrollable" Margin="0,55,0,0">
             <Grid 
       MouseWheel="Page_MouseWheel" Background="#fff">
-                <Grid Width="200"  HorizontalAlignment="left" Name="tracksGrid">
+                <Grid HorizontalAlignment="Stretch" Name="tracksGrid">
                     <!--<UI:ButtonPretty Text="Nowa ścierzka" x:Name="addNewTrackButton" Click="addNewTrackButton_Click"></UI:ButtonPretty>-->
                 </Grid>
-                <ScrollViewer Margin="200,0,0,0" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Visible" Name="scrollHorizontal">
+                <ScrollViewer Margin="100,0,0,0" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Visible" Name="scrollHorizontal">
                     <Grid 
-      MouseWheel="Page_MouseWheel" Background="#fff" Name="tracksContentStackGrid" MouseDown="tracksContentStackGrid_MouseDown">
+      MouseWheel="Page_MouseWheel" Background="#22ffffff" Name="tracksContentStackGrid" MouseDown="tracksContentStackGrid_MouseDown">
                         <Rectangle Width="3" Fill="Black" Stroke="white" HorizontalAlignment="Left" Name="playingPosition"></Rectangle>
                     </Grid>
                 </ScrollViewer>
