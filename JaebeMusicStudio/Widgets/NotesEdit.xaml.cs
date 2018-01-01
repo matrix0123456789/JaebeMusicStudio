@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,7 +43,38 @@ namespace JaebeMusicStudio.Widgets
             Sound.Player.positionChanged += Player_positionChanged;
             showContent();
             scrollHorizontal.ScrollChanged += showTimeLabels;
+            notes.Items.CollectionChanged += NotesChanged;
         }
+
+        private void NotesChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    foreach (var note in e.NewItems)
+                    {
+                        noteAdded(note as Note);
+                    }
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    foreach (var note in e.OldItems)
+                    {
+                        noteRemoved(note as Note);
+                    }
+                    break;
+                case NotifyCollectionChangedAction.Replace:
+                    foreach (var note in e.NewItems)
+                    {
+                        noteAdded(note as Note);
+                    }
+                    foreach (var note in e.OldItems)
+                    {
+                        noteRemoved(note as Note);
+                    }
+                    break;
+            }
+        }
+
 
         private void SynthSelect_OnChanged(SynthSelect arg1, INoteSynth sound)
         {
@@ -153,51 +185,70 @@ namespace JaebeMusicStudio.Widgets
 
         void noteAdded(Note element)
         {
-            var grid = new Grid();
-            var rect = new Rectangle();
-            grid.Children.Add(rect);
-            rect.Stroke = Brushes.Black;
-            rect.StrokeThickness = 1;
+            Dispatcher.Invoke(() =>
+            {
+                var grid = new Grid();
+                var rect = new Rectangle();
+                grid.Children.Add(rect);
+                rect.Stroke = Brushes.Black;
+                rect.StrokeThickness = 1;
 
-            rect.Fill = Brushes.Green;
+                rect.Fill = Brushes.Green;
 
-            grid.Width = element.Length * scaleX;
-            grid.Height = scaleY;
-            grid.Margin = new Thickness(element.Offset * scaleX, (offsetY - element.Pitch) * scaleY, 0, 0);
-            grid.VerticalAlignment = VerticalAlignment.Top;
-            grid.HorizontalAlignment = HorizontalAlignment.Left;
-            tracksContentStackGrid.Children.Add(grid);
-            grid.Tag = element;
-            grid.MouseLeftButtonDown += Element_MouseLeftButtonDown;
-            //element.positionChanged += Element_positionChanged;
+                grid.Width = element.Length * scaleX;
+                grid.Height = scaleY;
+                grid.Margin = new Thickness(element.Offset * scaleX, (offsetY - element.Pitch) * scaleY, 0, 0);
+                grid.VerticalAlignment = VerticalAlignment.Top;
+                grid.HorizontalAlignment = HorizontalAlignment.Left;
 
-            var menu = new ContextMenu();
-            //if (element is Notes)
-            //{
-            //    var menuOpen = new MenuItem() { Header = "Otwórz" };
-            //    menuOpen.Tag = new Object[] { element, trackContainer.Tag };
-            //    menuOpen.Click += element_open_Click;
-            //    menu.Items.Add(menuOpen);
-            //}
+                grid.Tag = element;
+                grid.MouseLeftButtonDown += Element_MouseLeftButtonDown;
+                //element.positionChanged += Element_positionChanged;
 
-            //var menuDuplicate = new MenuItem() { Header = "Duplikuj" };
-            //menuDuplicate.Tag = new Object[] { element, trackContainer.Tag };
-            //menuDuplicate.Click += element_duplicate_Click;
-            //menu.Items.Add(menuDuplicate);
+                var menu = new ContextMenu();
+                //if (element is Notes)
+                //{
+                //    var menuOpen = new MenuItem() { Header = "Otwórz" };
+                //    menuOpen.Tag = new Object[] { element, trackContainer.Tag };
+                //    menuOpen.Click += element_open_Click;
+                //    menu.Items.Add(menuOpen);
+                //}
 
-            //var menuClone = new MenuItem() { Header = "Klonuj" };
-            //menuClone.Tag = new Object[] { element, trackContainer.Tag };
-            //menuClone.Click += element_clone_Click;
-            //menu.Items.Add(menuClone);
+                //var menuDuplicate = new MenuItem() { Header = "Duplikuj" };
+                //menuDuplicate.Tag = new Object[] { element, trackContainer.Tag };
+                //menuDuplicate.Click += element_duplicate_Click;
+                //menu.Items.Add(menuDuplicate);
 
-            //var menuDelete = new MenuItem() { Header = "Usun" };
-            //menuDelete.Tag = new Object[] { element, trackContainer.Tag };
-            //menuDelete.Click += element_delete_Click;
-            //menu.Items.Add(menuDelete);
+                //var menuClone = new MenuItem() { Header = "Klonuj" };
+                //menuClone.Tag = new Object[] { element, trackContainer.Tag };
+                //menuClone.Click += element_clone_Click;
+                //menu.Items.Add(menuClone);
+
+                var menuDelete = new MenuItem() { Header = "Usun" };
+                menuDelete.Tag = element;
+                menuDelete.Click += element_delete_Click;
+                menu.Items.Add(menuDelete);
 
 
-            grid.ContextMenu = menu;
+                grid.ContextMenu = menu;
 
+                tracksContentStackGrid.Children.Add(grid);
+            });
+        }
+
+        private void element_delete_Click(object sender, RoutedEventArgs e)
+        {
+            notes.Items.Remove((sender as FrameworkElement).Tag as Note);
+        }
+
+        private void noteRemoved(Note note)
+        {
+            foreach (var grid in tracksContentStackGrid.Children)
+            {
+                if ((grid as FrameworkElement)?.Tag == note)
+                    tracksContentStackGrid.Children.Remove(grid as FrameworkElement);
+                return;
+            }
         }
         private void Element_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -227,6 +278,30 @@ namespace JaebeMusicStudio.Widgets
         {
             var timeDifference = -(editingStartposition.Y - e.GetPosition(this).Y) / scaleY;
             var newPitch = editingElement.Pitch - timeDifference;
+            return (int)Math.Round(newPitch);
+        }
+        float AddCalcNewTime(MouseEventArgs e)
+        {
+            var timeDifference = e.GetPosition(tracksContentStackGrid).X / scaleX;
+            var newTime = timeDifference;
+            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+            {
+                var scale = 1 / scaleX * 20;
+                var scale1 = Math.Pow(10, Math.Ceiling(Math.Log10(scale)));
+                if (scale1 / 5 > scale)
+                    scale = scale1 / 5;
+                else if (scale1 / 2 > scale)
+                    scale = scale1 / 2;
+                else
+                    scale = scale1;
+                newTime = Math.Round(newTime / scale) * scale;
+            }
+            return (float)newTime;
+        }
+        int AddCalcNewPitch(MouseEventArgs e)
+        {
+            var timeDifference = e.GetPosition(tracksContentStackGrid).Y / scaleY;
+            var newPitch = offsetY - timeDifference;
             return (int)newPitch;
         }
 
@@ -257,6 +332,25 @@ namespace JaebeMusicStudio.Widgets
                     editingVisualElement = null;
                     editingElement = null;
                 }
+            }
+        }
+        static MouseButtonEventArgs lastClick;
+        static DateTime lastClickTime;
+        private void tracksContentStackGrid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (lastClick != null && (DateTime.Now - lastClickTime).TotalSeconds < 1 && (lastClick.GetPosition(this) - lastClick.GetPosition(this)).Length < 100)
+            {
+                var newNote = new Note();
+                newNote.Offset = AddCalcNewTime(e);
+                newNote.Pitch = AddCalcNewPitch(e);
+                newNote.Length = 1;
+                notes.Items.Add(newNote);
+                lastClick = null;
+            }
+            else
+            {
+                lastClick = e;
+                lastClickTime = DateTime.Now;
             }
         }
     }

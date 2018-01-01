@@ -22,7 +22,7 @@
                 </Grid>
                 <ScrollViewer Margin="200,0,0,0" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Visible" Name="scrollHorizontal">
                     <Grid 
-      MouseWheel="Page_MouseWheel" Background="#fff" Name="tracksContentStackGrid">
+      MouseWheel="Page_MouseWheel" Background="#fff" Name="tracksContentStackGrid" MouseDown="tracksContentStackGrid_MouseDown">
                         <Rectangle Width="3" Fill="Black" Stroke="white" HorizontalAlignment="Left" Name="playingPosition"></Rectangle>
                     </Grid>
                 </ScrollViewer>

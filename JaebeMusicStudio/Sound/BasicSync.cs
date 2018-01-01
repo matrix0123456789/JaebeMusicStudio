@@ -148,7 +148,7 @@ namespace JaebeMusicStudio.Sound
         public void Serialize(XmlNode node)
         {
             var node2 = node.OwnerDocument.CreateElement("BasicSynth");
-            node2.SetAttribute("name", name);
+            node2.SetAttribute("name", Name);
             node2.SetAttribute("soundLine", Project.current.lines.IndexOf(SoundLine).ToString());
             foreach (var osc in oscillators)
             {
