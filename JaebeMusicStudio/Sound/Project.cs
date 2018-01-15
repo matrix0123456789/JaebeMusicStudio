@@ -303,6 +303,11 @@ namespace JaebeMusicStudio.Sound
             {
                 this.NoteSynths.Add(new BasicSynth(basicSynth));
             }
+            var basicPercussions = document.GetElementsByTagName("BasicPercussion");
+            foreach (XmlNode basicPercussion in basicPercussions)
+            {
+                this.NoteSynths.Add(new BasicPercussion(basicPercussion));
+            }
             var VSTis = document.GetElementsByTagName("VSTi");
             foreach (XmlNode VSTi in VSTis)
             {

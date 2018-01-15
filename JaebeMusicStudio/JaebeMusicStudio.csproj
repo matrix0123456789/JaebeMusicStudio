@@ -105,6 +105,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Exceptions\BadFileException.cs" />
+    <Compile Include="Sound\BasicPercussion.cs" />
+    <Compile Include="Sound\BasicPercussionElement.cs" />
     <Compile Include="Sound\BasicSync.cs" />
     <Compile Include="Sound\Effect.cs" />
     <Compile Include="Sound\FileFormat\IFileFormat.cs" />
