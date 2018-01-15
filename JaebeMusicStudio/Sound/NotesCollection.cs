@@ -7,7 +7,12 @@ using System.Threading.Tasks;
 
 namespace JaebeMusicStudio.Sound
 {
-    public class NotesCollection: ObservableCollection<Note>
+    public class NotesCollection : ObservableCollection<Note>
     {
+       public float CalcLength()
+        {
+            var max = this.Max(x=>x.Offset+x.Length);
+            return max;
+        }
     }
 }

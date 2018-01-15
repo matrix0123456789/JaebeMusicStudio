@@ -114,13 +114,17 @@ namespace JaebeMusicStudio.Sound
                     {
                         if (tasks[i, j] != null)
                         {
-                            var retTask = tasks[i, j].Result;
-
-                            for (long k = 0; k < retTask.LongLength / 2; k++)
+                            try
                             {
-                                ret[0, k] += retTask[0, k];
-                                ret[1, k] += retTask[1, k];
+                                var retTask = tasks[i, j].Result;
+
+                                for (long k = 0; k < retTask.LongLength / 2; k++)
+                                {
+                                    ret[0, k] += retTask[0, k];
+                                    ret[1, k] += retTask[1, k];
+                                }
                             }
+                            catch(Exception e) { Console.Write(e); }
                         }
                     }
                 }

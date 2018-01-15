@@ -180,7 +180,11 @@ namespace JaebeMusicStudio.Sound
                 foreach (var liveElement in live)
                 {
                     if (liveElement.Synth == null)
+                    {
+                        if (NoteSynths.Count == 0)
+                            break;
                         liveElement.Synth = NoteSynths[0];
+                    }
                     if (liveElement.Synth?.SoundLine == null) continue;
                     lock (liveElement.Synth.SoundLine)
                     {
