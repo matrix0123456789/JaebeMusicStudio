@@ -58,7 +58,7 @@ namespace JaebeMusicStudio.Sound
                 if (!pitchesToElement.ContainsKey((int)note.Pitch))
                     continue;
                 var BPElement = pitchesToElement[(int)note.Pitch];
-                if (note.Offset < start + length && note.Offset + note.Length > start)
+                if (note.Offset < start + length && note.Offset + BPElement.SoundLength > start)
                 {
                     tasks[i] = Task.Run(() =>
                     {
@@ -116,8 +116,12 @@ namespace JaebeMusicStudio.Sound
                         var retTask = tasks[i].Result;
                         if (retTask == null)
                             continue;
-
-                        for (long k = 0; k < retTask.LongLength / 2; k++)
+                        var lengthToCopy = retTask.GetLongLength(1);
+                        if (ret.GetLongLength(1) - notSamplesOffset < lengthToCopy)
+                        {
+                            lengthToCopy = ret.GetLongLength(1) - notSamplesOffset;
+                        }
+                        for (long k = 0; k < lengthToCopy; k++)
                         {
                             ret[0, k + notSamplesOffset] += retTask[0, k];
                             ret[1, k + notSamplesOffset] += retTask[1, k];
