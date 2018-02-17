@@ -8,6 +8,7 @@ namespace JaebeMusicStudio.Sound
 {
    abstract public class SoundLineAbstract
     {
+        public List<SoundLineConnection> outputs = new List<SoundLineConnection>();
         public float volume = 1;
         public float[] LastVolume = { 0, 0 };
         public void ConnectUI()

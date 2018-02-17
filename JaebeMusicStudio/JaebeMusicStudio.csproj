@@ -117,6 +117,7 @@
     <Compile Include="Sound\INoteSynth.cs" />
     <Compile Include="Sound\LiveSoundLine.cs" />
     <Compile Include="Sound\KeyboardInput.cs" />
+    <Compile Include="Sound\LiveSoundLineCollection.cs" />
     <Compile Include="Sound\NonlinearDistortion.cs" />
     <Compile Include="Sound\Note.cs" />
     <Compile Include="Sound\Notes.cs" />

@@ -58,8 +58,8 @@ namespace JaebeMusicStudio.Widgets
                 index++;
             }
 
-           var liveLines= LiveSoundLine.getAvaibleInputs();
-            foreach (var line in liveLines)
+           var liveLinesList= Project.current.liveLines.getAvaibleInputs();
+            foreach (var line in liveLinesList)
             {
                 project_liveLineAdded(index, line);
                 index++;

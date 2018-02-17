@@ -10,34 +10,20 @@ namespace JaebeMusicStudio.Sound
 {
     public class LiveSoundLine : SoundLineAbstract
     {
-        static Dictionary<int, LiveSoundLine> activeLines = new Dictionary<int, LiveSoundLine>();
+
+        public int DeviceID { get; }
+
         private WaveInCapabilities Capabilities;
         private WaveIn input = null;
+        private float[,] lastRendered = new float[2, 0];
+        private List<float[,]> buffer = new List<float[,]>();
+        int bufferPosition = 0;
+        int bufferAvalible = 0;
 
-        public static List<LiveSoundLine> getAvaibleInputs()
-        {
-            var ret = new List<LiveSoundLine>();
-            for (var i = 0; i < WaveIn.DeviceCount; i++)
-            {
-                ret.Add(GetByDeviceID(i));
-            }
-            return ret;
-        }
 
-        private static LiveSoundLine GetByDeviceID(int deviceID)
+        internal LiveSoundLine(int DeviceID)
         {
-            if (activeLines.ContainsKey(deviceID))
-            {
-                return activeLines[deviceID];
-            }
-            else
-            {
-                return activeLines[deviceID] = new LiveSoundLine(deviceID);
-            }
-        }
-
-        private LiveSoundLine(int DeviceID)
-        {
+            this.DeviceID = DeviceID;
             Capabilities = WaveIn.GetCapabilities(DeviceID);
             input = new WaveIn(WaveCallbackInfo.FunctionCallback());
             input.DataAvailable += Wave_DataAvailable;
@@ -50,7 +36,11 @@ namespace JaebeMusicStudio.Sound
         {
             var reader = new BinaryReader(new MemoryStream(e.Buffer));
             var sound = read(reader, input.WaveFormat.BitsPerSample, input.WaveFormat.Channels);
-
+            lock (this)
+            {
+                buffer.Add(sound);
+                bufferAvalible += sound.GetLength(1);
+            }
             if (connectedUIs != 0)
             {
                 float minL = sound[0, 0];
@@ -114,6 +104,43 @@ namespace JaebeMusicStudio.Sound
                 throw new NotImplementedException();
             }
             return wave;
+        }
+        public void checkIfReady()
+        {
+            lock (this)
+            {
+                var length = lastRendered.GetLength(1);
+
+                if (buffer.Count > 0)
+                {
+                    for (var i = 0; i < length; i++)
+                    {
+                        lastRendered[0, i] = buffer[0][0, bufferPosition];
+                        lastRendered[1, i] = buffer[0][1, bufferPosition];
+                        bufferPosition++;
+                        if (bufferPosition >= buffer[0].GetLength(1))
+                        {
+                            bufferAvalible -= buffer[0].GetLength(1);
+                            buffer.RemoveAt(0);
+                            bufferPosition = 0;
+                            if (buffer.Count == 0)
+                                break;
+                        }
+                    }
+                }
+
+
+                foreach (var output in outputs)
+                {
+                    output.output.rendered(0, lastRendered, output.volume);
+                }
+
+
+            }
+        }
+        public void cleanToRender(int samples)
+        {
+            lastRendered = new float[2, samples];
         }
     }
 }

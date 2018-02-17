@@ -33,6 +33,7 @@ namespace JaebeMusicStudio.Sound
 
         public static Project current = null;
         public List<SoundLine> lines = new List<SoundLine>() { };
+        public LiveSoundLineCollection liveLines = new LiveSoundLineCollection();
 
         /// <summary>
         /// for EXAMPLE KEYBOARD OR MINI INPUT
@@ -139,9 +140,14 @@ namespace JaebeMusicStudio.Sound
             lock (this)
             {
                 this.renderingStart = position;
+                var liveLinesList = liveLines.getAvaibleInputs();
 
                 this.renderingLength = renderLength;
                 foreach (var line in lines)
+                {
+                    line.cleanToRender((int)CountSamples(renderingLength));
+                }
+                foreach (var line in liveLinesList)
                 {
                     line.cleanToRender((int)CountSamples(renderingLength));
                 }
@@ -203,6 +209,10 @@ namespace JaebeMusicStudio.Sound
                 {
                     line.checkIfReady();
                 }
+                foreach (var line in liveLinesList)
+                {
+                    line.checkIfReady();
+                }
             }
         }
 
@@ -231,6 +241,11 @@ namespace JaebeMusicStudio.Sound
             //if (lines[0].currentToRender == 0)
             //    returnedSound(lines[0].lastRendered);
             foreach (var line in lines)
+            {
+                line.checkIfReady();
+            }
+            var liveLinesList = liveLines.getAvaibleInputs();
+            foreach (var line in liveLinesList)
             {
                 line.checkIfReady();
             }
@@ -289,10 +304,21 @@ namespace JaebeMusicStudio.Sound
                         var volume = 1f;
                         if (input.Attributes["volume"] != null)
                             volume = float.Parse(input.Attributes["volume"].Value, CultureInfo.InvariantCulture);
-                        var otherLineNumber = int.Parse(input.Attributes["lineNumber"].Value);
-                        var connection = new SoundLineConnection(count, this.lines[otherLineNumber], volume);
-                        this.lines[count].inputs.Add(connection);
-                        this.lines[otherLineNumber].outputs.Add(connection);
+                        if (input.Attributes["lineNumber"] != null)
+                        {
+                            var otherLineNumber = int.Parse(input.Attributes["lineNumber"].Value);
+                            var connection = new SoundLineConnection(count, this.lines[otherLineNumber], volume);
+                            this.lines[count].inputs.Add(connection);
+                            this.lines[otherLineNumber].outputs.Add(connection);
+                        }
+                        else if (input.Attributes["liveLineNumber"] != null)
+                        {
+                            var liveLineNumber = int.Parse(input.Attributes["liveLineNumber"].Value);
+                            var liveLine = liveLines.GetByDeviceID(liveLineNumber);
+                            var connection = new SoundLineConnection(count, liveLine, volume);
+                            this.lines[count].inputs.Add(connection);
+                            liveLine.outputs.Add(connection);
+                        }
                     }
                     catch { }
                 }

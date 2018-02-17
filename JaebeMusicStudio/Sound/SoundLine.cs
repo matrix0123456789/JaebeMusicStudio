@@ -14,7 +14,6 @@ namespace JaebeMusicStudio.Sound
         /// other lines, that are connected to this
         /// </summary>
         public List<SoundLineConnection> inputs = new List<SoundLineConnection>();
-        public List<SoundLineConnection> outputs = new List<SoundLineConnection>();
         public List<Effect> effects = new List<Effect>();
         public int currentToRender = 0;
         public float[,] lastRendered;
@@ -56,7 +55,14 @@ namespace JaebeMusicStudio.Sound
             foreach (var input in inputs)
             {
                 var node2 = document.CreateElement("SoundLineInput");
-                node2.SetAttribute("lineNumber", Project.current.lines.IndexOf(input.input).ToString());
+                if (input.input is SoundLine)
+                {
+                    node2.SetAttribute("lineNumber", Project.current.lines.IndexOf(input.input as SoundLine).ToString());
+                }
+                else
+                {
+                    node2.SetAttribute("liveLineNumber", (input.input as LiveSoundLine).DeviceID.ToString());
+                }
                 node2.SetAttribute("volume", input.volume.ToString(CultureInfo.InvariantCulture));
                 node.AppendChild(node2);
             }
@@ -215,10 +221,10 @@ namespace JaebeMusicStudio.Sound
     public class SoundLineConnection
     {
         public SoundLine output;
-        public SoundLine input;
+        public SoundLineAbstract input;
         public float volume;
 
-        public SoundLineConnection(int lineNumberOutput, SoundLine input, float volume)
+        public SoundLineConnection(int lineNumberOutput, SoundLineAbstract input, float volume)
         {
             this.output = Project.current.lines[lineNumberOutput];
             this.input = input;
