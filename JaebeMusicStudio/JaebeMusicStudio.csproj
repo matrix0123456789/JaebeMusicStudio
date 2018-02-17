@@ -115,6 +115,7 @@
     <Compile Include="Sound\ILiveInput.cs" />
     <Compile Include="Sound\INamedElement.cs" />
     <Compile Include="Sound\INoteSynth.cs" />
+    <Compile Include="Sound\LiveSoundLine.cs" />
     <Compile Include="Sound\KeyboardInput.cs" />
     <Compile Include="Sound\NonlinearDistortion.cs" />
     <Compile Include="Sound\Note.cs" />
@@ -130,6 +131,7 @@
     <Compile Include="Sound\SoundElement.cs" />
     <Compile Include="Sound\SoundElementClone.cs" />
     <Compile Include="Sound\SoundLine.cs" />
+    <Compile Include="Sound\SoundLineAbstract.cs" />
     <Compile Include="Sound\Track.cs" />
     <Compile Include="Sound\VSTi.cs" />
     <Compile Include="UI\ButtonPretty.xaml.cs">
@@ -160,6 +162,9 @@
     </Compile>
     <Compile Include="Widgets\PitchUI.xaml.cs">
       <DependentUpon>PitchUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\LiveSoundLineUI.xaml.cs">
+      <DependentUpon>LiveSoundLineUI.xaml</DependentUpon>
     </Compile>
     <Compile Include="Widgets\SynthSelect.xaml.cs">
       <DependentUpon>SynthSelect.xaml</DependentUpon>
@@ -238,6 +243,10 @@
     <Page Include="Widgets\PitchUI.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Widgets\LiveSoundLineUI.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Widgets\SynthSelect.xaml">
       <Generator>MSBuild:Compile</Generator>

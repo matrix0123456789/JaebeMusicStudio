@@ -8,7 +8,7 @@ using System.Xml;
 
 namespace JaebeMusicStudio.Sound
 {
-    public class SoundLine
+    public class SoundLine : SoundLineAbstract
     {
         /// <summary>
         /// other lines, that are connected to this
@@ -18,9 +18,6 @@ namespace JaebeMusicStudio.Sound
         public List<Effect> effects = new List<Effect>();
         public int currentToRender = 0;
         public float[,] lastRendered;
-        public float volume = 1;
-        private int connectedUIs;
-        public float[] LastVolume = { 0, 0 };
 
         public event Action<int, Effect> effectAdded;
         public event Action<int> effectRemoved;
@@ -94,7 +91,8 @@ namespace JaebeMusicStudio.Sound
                                 lastRendered[1, i] += data[0, i] * vol;
                             }
                         }
-                        else {
+                        else
+                        {
                             for (int i = 0; i < length; i++)
                             {
                                 lastRendered[0, i] += data[0, i] * vol;
@@ -112,7 +110,8 @@ namespace JaebeMusicStudio.Sound
                                 lastRendered[1, i + offset] += data[0, i] * vol;
                             }
                         }
-                        else {
+                        else
+                        {
                             for (int i = 0; i < length; i++)
                             {
                                 lastRendered[0, i + offset] += data[0, i] * vol;
@@ -185,14 +184,6 @@ namespace JaebeMusicStudio.Sound
             }
         }
 
-        public void ConnectUI()
-        {
-            connectedUIs++;
-        }
-        public void DisconnectUI()
-        {
-            connectedUIs--;
-        }
 
         public void AddEffect(Effect e)
         {
@@ -202,7 +193,7 @@ namespace JaebeMusicStudio.Sound
         }
         public void AddEffect(int index, Effect e)
         {
-            effects.Insert(index,e);
+            effects.Insert(index, e);
             effectAdded?.Invoke(index, e);
         }
 

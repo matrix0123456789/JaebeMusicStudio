@@ -56,11 +56,25 @@ namespace JaebeMusicStudio.Widgets
                 project_lineAdded(index, line);
                 index++;
             }
+
+           var liveLines= LiveSoundLine.getAvaibleInputs();
+            foreach (var line in liveLines)
+            {
+                project_liveLineAdded(index, line);
+                index++;
+            }
+
         }
 
         private void project_lineAdded(int index, SoundLine line)
         {
             var lineUI = new SoundLineUI(line);
+            SoundLinesList.Children.Insert(index, lineUI);
+            lineUI.MouseDown += LineUI_MouseDown;
+        }
+        private void project_liveLineAdded(int index, LiveSoundLine line)
+        {
+            var lineUI = new LiveSoundLineUI(line);
             SoundLinesList.Children.Insert(index, lineUI);
             lineUI.MouseDown += LineUI_MouseDown;
         }
