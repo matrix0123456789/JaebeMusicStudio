@@ -46,12 +46,12 @@ namespace JaebeMusicStudio.Widgets
         {
 
 
-            if (Sound.Player.LastVolume[0] <= 1)
+            if (line.LastVolume[0] <= 1)
                 VolumeL.Width = line.LastVolume[0] * 100;
             else
                 VolumeL.Width = 100;
 
-            if (Sound.Player.LastVolume[1] <= 1)
+            if (line.LastVolume[1] <= 1)
                 VolumeR.Width = line.LastVolume[1] * 100;
             else
                 VolumeR.Width = 100;

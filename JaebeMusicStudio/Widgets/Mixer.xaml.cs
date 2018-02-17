@@ -40,6 +40,7 @@ namespace JaebeMusicStudio.Widgets
                         foreach (var x in SoundLinesList.Children)
                         {
                             (x as SoundLineUI)?.Refresh();
+                            (x as LiveSoundLineUI)?.Refresh();
                         }
                     });
                 }
@@ -76,7 +77,6 @@ namespace JaebeMusicStudio.Widgets
         {
             var lineUI = new LiveSoundLineUI(line);
             SoundLinesList.Children.Insert(index, lineUI);
-            lineUI.MouseDown += LineUI_MouseDown;
         }
 
         private void LineUI_MouseDown(object sender, MouseButtonEventArgs e)
