@@ -21,7 +21,7 @@ namespace JaebeMusicStudio.Sound
             return ret;
         }
 
-        public  LiveSoundLine GetByDeviceID(int deviceID)
+        public LiveSoundLine GetByDeviceID(int deviceID)
         {
             if (activeLines.ContainsKey(deviceID))
             {
@@ -30,6 +30,14 @@ namespace JaebeMusicStudio.Sound
             else
             {
                 return activeLines[deviceID] = new LiveSoundLine(deviceID);
+            }
+        }
+
+        internal void stop()
+        {
+            foreach(var line in activeLines.Values)
+            {
+                line.Stop();
             }
         }
     }

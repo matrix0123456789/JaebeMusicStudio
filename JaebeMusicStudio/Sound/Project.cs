@@ -70,11 +70,13 @@ namespace JaebeMusicStudio.Sound
 
         public Project()
         {
+            current?.stopOldProject();
             lines.Add(new SoundLine());
         }
 
         public Project(string path)
         {
+            current?.stopOldProject();
             current = this;
             var read = new System.IO.FileStream(path, FileMode.Open);
 
@@ -97,7 +99,10 @@ namespace JaebeMusicStudio.Sound
             zis.Close();
             Player.rendering = false;
         }
-
+        public void stopOldProject()
+        {
+            liveLines.stop();
+        }
         public float length
         {
             get

@@ -32,38 +32,46 @@ namespace JaebeMusicStudio.Sound
             input.StartRecording();
         }
 
+        internal void Stop()
+        {
+            input.StopRecording();
+        }
+
         private void Wave_DataAvailable(object sender, WaveInEventArgs e)
         {
-            var reader = new BinaryReader(new MemoryStream(e.Buffer));
-            var sound = read(reader, input.WaveFormat.BitsPerSample, input.WaveFormat.Channels);
+            float[,] sound;
             lock (this)
             {
+                Console.WriteLine("Wave_DataAvailable " + bufferAvalible);
+                var reader = new BinaryReader(new MemoryStream(e.Buffer));
+                sound = read(reader, input.WaveFormat.BitsPerSample, input.WaveFormat.Channels);
                 buffer.Add(sound);
                 bufferAvalible += sound.GetLength(1);
-            }
-            if (connectedUIs != 0)
-            {
-                float minL = sound[0, 0];
-                float minR = sound[1, 0];
-                float maxL = sound[0, 0];
-                float maxR = sound[1, 0];
-                for (var i = 0; i < sound.GetLength(1); i++)
+
+                if (connectedUIs != 0)
                 {
-                    if (sound[0, i] < minL)
-                        minL = sound[0, i];
-                    else if (sound[0, i] > maxL)
-                        maxL = sound[0, i];
-                    if (sound[1, i] < minR)
-                        minR = sound[1, i];
-                    else if (sound[1, i] > maxR)
-                        maxR = sound[1, i];
+                    float minL = sound[0, 0];
+                    float minR = sound[1, 0];
+                    float maxL = sound[0, 0];
+                    float maxR = sound[1, 0];
+                    for (var i = 0; i < sound.GetLength(1); i++)
+                    {
+                        if (sound[0, i] < minL)
+                            minL = sound[0, i];
+                        else if (sound[0, i] > maxL)
+                            maxL = sound[0, i];
+                        if (sound[1, i] < minR)
+                            minR = sound[1, i];
+                        else if (sound[1, i] > maxR)
+                            maxR = sound[1, i];
+                    }
+                    minL = Math.Abs(minL);
+                    maxL = Math.Abs(maxL);
+                    minR = Math.Abs(minR);
+                    maxR = Math.Abs(maxR);
+                    LastVolume[0] = minL > maxL ? minL : maxL;
+                    LastVolume[1] = minR > maxR ? minR : maxR;
                 }
-                minL = Math.Abs(minL);
-                maxL = Math.Abs(maxL);
-                minR = Math.Abs(minR);
-                maxR = Math.Abs(maxR);
-                LastVolume[0] = minL > maxL ? minL : maxL;
-                LastVolume[1] = minR > maxR ? minR : maxR;
             }
         }
         float[,] read(BinaryReader data, int bitrate, int channels)
@@ -109,6 +117,7 @@ namespace JaebeMusicStudio.Sound
         {
             lock (this)
             {
+                Console.WriteLine("checkIfReady " + bufferAvalible);
                 var length = lastRendered.GetLength(1);
 
                 if (buffer.Count > 0)
@@ -132,6 +141,7 @@ namespace JaebeMusicStudio.Sound
 
                 foreach (var output in outputs)
                 {
+                    Console.WriteLine("output " + lastRendered.GetLength(1));
                     output.output.rendered(0, lastRendered, output.volume);
                 }
 
