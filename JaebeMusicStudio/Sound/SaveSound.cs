@@ -25,6 +25,14 @@ namespace JaebeMusicStudio.Sound
         {
 
             var str = file.OpenWrite();
+            if (file.Extension == "mp3")
+            {
+               // format = new Mp3();
+            }
+            else
+            {
+                format = new Wave();
+            }
             format.Write(str, data);
             str.Close();
         }

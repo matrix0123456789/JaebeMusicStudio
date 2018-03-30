@@ -9,9 +9,13 @@ namespace JaebeMusicStudio.Sound
 {
     public class NotesCollection : ObservableCollection<Note>
     {
-       public float CalcLength()
+        public float CalcLength()
         {
-            var max = this.Max(x=>x.Offset+x.Length);
+            float max;
+            if (this.Count == 0)
+                max = 0;
+            else
+                max = this.Max(x => x.Offset + x.Length);
             return max;
         }
     }
