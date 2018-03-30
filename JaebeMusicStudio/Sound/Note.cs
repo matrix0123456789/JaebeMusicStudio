@@ -12,9 +12,9 @@ namespace JaebeMusicStudio.Sound
     {
         private float length, offset, pitch;
 
-        public float Length { get { return length; } set { length = value; } }
-        public float Offset { get { return offset; } set { offset = value; } }
-        public float Pitch { get { return pitch; } set { pitch = value; } }
+        public float Length { get { return length; } set { if (length != value) { length = value; Changed?.Invoke(this); } } }
+        public float Offset { get { return offset; } set { if (offset != value) { offset = value; Changed?.Invoke(this); } } }
+        public float Pitch { get { return pitch; } set { if (pitch != value) { pitch = value; Changed?.Invoke(this); } } }
 
         public Note()
         {
@@ -39,8 +39,10 @@ namespace JaebeMusicStudio.Sound
         {
             return MemberwiseClone() as Note;
         }
-        static string[] pitchesNames= new string[] { "C","C#","D","D#","E","F", "F#","G","H","A","A#","B"};
+        static string[] pitchesNames = new string[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "H", "A", "A#", "B" };
         static bool[] pitchesBlack = new bool[] { false, true, false, true, false, false, true, false, true, false, true, false };
+        public event Action<Note> Changed;
+
         public static string GetName(int pitch)
         {
             int octave = (pitch - 24) / 12;

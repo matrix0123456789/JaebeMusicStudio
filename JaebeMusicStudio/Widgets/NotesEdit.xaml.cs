@@ -46,6 +46,7 @@ namespace JaebeMusicStudio.Widgets
             scrollHorizontal.ScrollChanged += showTimeLabels;
             notes.Items.CollectionChanged += NotesChanged;
         }
+        Dictionary<Notes, Grid> generatedNotes = new Dictionary<Notes, Grid>();
 
         private void NotesChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -205,15 +206,11 @@ namespace JaebeMusicStudio.Widgets
 
                 rect.Fill = Brushes.Green;
 
-                grid.Width = element.Length * scaleX;
-                grid.Height = scaleY;
-                grid.Margin = new Thickness(element.Offset * scaleX, (offsetY - element.Pitch) * scaleY, 0, 0);
-                grid.VerticalAlignment = VerticalAlignment.Top;
-                grid.HorizontalAlignment = HorizontalAlignment.Left;
+                setNoteUiParams(grid, element);
 
                 grid.Tag = element;
                 grid.MouseLeftButtonDown += Element_MouseLeftButtonDown;
-                //element.positionChanged += Element_positionChanged;
+                element.Changed += Note_Changed;
 
                 var menu = new ContextMenu();
                 //if (element is Notes)
@@ -256,6 +253,23 @@ namespace JaebeMusicStudio.Widgets
             });
         }
 
+        private void Note_Changed(Note note)
+        {
+            Dispatcher.BeginInvoke((Action)(() =>
+            {
+                var noteElement = findNoteUi(note);
+                if (noteElement != null)
+                    setNoteUiParams(noteElement as Grid, note);
+            }));
+        }
+        void setNoteUiParams(Grid grid, Note note)
+        {
+            grid.Width = note.Length * scaleX;
+            grid.Height = scaleY;
+            grid.Margin = new Thickness(note.Offset * scaleX, (offsetY - note.Pitch) * scaleY, 0, 0);
+            grid.VerticalAlignment = VerticalAlignment.Top;
+            grid.HorizontalAlignment = HorizontalAlignment.Left;
+        }
         private void element_delete_Click(object sender, RoutedEventArgs e)
         {
             notes.Items.Remove((sender as FrameworkElement).Tag as Note);
@@ -263,12 +277,18 @@ namespace JaebeMusicStudio.Widgets
 
         private void noteRemoved(Note note)
         {
+            var noteElement = findNoteUi(note);
+            if (noteElement != null)
+                tracksContentStackGrid.Children.Remove(noteElement);
+        }
+        FrameworkElement findNoteUi(Note note)
+        {
             foreach (var grid in tracksContentStackGrid.Children)
             {
                 if ((grid as FrameworkElement)?.Tag == note)
-                    tracksContentStackGrid.Children.Remove(grid as FrameworkElement);
-                return;
+                    return grid as FrameworkElement;
             }
+            return null;
         }
         private void Element_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {

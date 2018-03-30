@@ -35,6 +35,14 @@ namespace JaebeMusicStudio.Sound
         {
             oscillators.Add(new Oscillator());
             oscillators.CollectionChanged += Oscillators_CollectionChanged;
+            try
+            {
+                SoundLine = Project.current.lines[0];
+            }
+            catch
+            {
+                SoundLine = null;
+            }
         }
 
         public event Action<int, Oscillator> oscillatorAdded;
@@ -94,10 +102,11 @@ namespace JaebeMusicStudio.Sound
                                 }
                                 return oscillators[j_copy].GetSound(start - note.Offset, l1, note);
                             }
-                            else {
-                                var l1 = length +  start - note.Offset;
-                                if (note.Length+ oscillators[j_copy].R  < l1)
-                                    l1 = note.Length+ oscillators[j_copy].R ;
+                            else
+                            {
+                                var l1 = length + start - note.Offset;
+                                if (note.Length + oscillators[j_copy].R < l1)
+                                    l1 = note.Length + oscillators[j_copy].R;
                                 return oscillators[j_copy].GetSound(0, l1, note);
                             }
                         });
@@ -124,7 +133,7 @@ namespace JaebeMusicStudio.Sound
                                     ret[1, k] += retTask[1, k];
                                 }
                             }
-                            catch(Exception e) { Console.Write(e); }
+                            catch (Exception e) { Console.Write(e); }
                         }
                     }
                 }
