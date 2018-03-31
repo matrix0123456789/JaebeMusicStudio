@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using JaebeMusicStudio.addons;
 using JaebeMusicStudio.Sound.FileFormat;
 
 namespace JaebeMusicStudio.Sound
@@ -12,12 +13,12 @@ namespace JaebeMusicStudio.Sound
     {
         public static IFileFormat format = new Wave();
         public static FileInfo file;
-        public static void SaveFile()
+        public static async Task SaveFileAsync()
         {
             Player.rendering = true;
             Player.status = Player.Status.fileRendering;
-            Project.current.Render(0, Project.current.length);
-
+            var rendering = new Rendering() { renderingStart = 0, renderingLength = Project.current.length };
+            Project.current.Render(rendering);
 
         }
 

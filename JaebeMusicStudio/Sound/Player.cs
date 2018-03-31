@@ -13,7 +13,7 @@ namespace JaebeMusicStudio.Sound
         public static float[] LastVolume = { 0, 0 };
         public static Status status = Status.paused;
         public static float position;
-       public static bool rendering = false;
+        public static bool rendering = false;
         static int renderPeriod = 15;
         static System.Threading.Thread renderingThread;
         public enum Status { fileRendering, playing, paused }
@@ -21,6 +21,7 @@ namespace JaebeMusicStudio.Sound
         public static WasapiOut WasapiWyjście = new WasapiOut(AudioClientShareMode.Shared, false, 10);
         public static event Action<float> positionChanged;
         public static event Action<float[,]> SoundPlayed;
+        static Rendering liveRenderingObject = new Rendering();
         static Player()
         {
             WasapiWyjście.Init(bufor);
@@ -61,7 +62,7 @@ namespace JaebeMusicStudio.Sound
                     rendering = true;
                     var renderLength = (((float)renderPeriod * 2 - bufor.BufferedDuration.TotalMilliseconds) *
                                         Project.current.tempo / 60f) / 1000f;
-                    Project.current.Render(position, (float)renderLength);
+                    Project.current.Render(new Rendering() { renderingStart = position, renderingLength = (float)renderLength });
                     if (status == Status.playing)
                     {
                         position += (float)renderLength;
