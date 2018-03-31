@@ -72,14 +72,17 @@ namespace JaebeMusicStudio.Sound
         public SoundLineRendering getByRendering(Rendering r)
         {
             if (!renderings.ContainsKey(r))
+            {
                 renderings[r] = new SoundLineRendering();
+                prepareToRender(r);
+            }
             return renderings[r];
         }
         public void prepareToRender(Rendering rendering)
         {
             var slRend = getByRendering(rendering);
             slRend.currentToRender = inputs.Count;
-            slRend.data = new float[2, (int)Project.current.CountSamples(rendering.renderingLength)];
+            slRend.data = new float[2, (int)rendering.project.CountSamples(rendering.renderingLength)];
         }
         public void rendered(int offset, float[,] data, Rendering rendering, float volumeChange = 1)
         {

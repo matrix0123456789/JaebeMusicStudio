@@ -35,7 +35,8 @@ namespace JaebeMusicStudio.UI
         {
             foreach (var window in allOpened)
             {
-                window.Dispatcher.Invoke(()=>{
+                window.Dispatcher.Invoke(() =>
+                {
                     window.Close();
                 });
             }
@@ -44,14 +45,18 @@ namespace JaebeMusicStudio.UI
 
         static public void OpenWindow(Func<object> method)
         {
-            Thread viewerThread = new Thread(delegate ()
+            try
             {
-                var okno = new UI.PseudoWindow(method());
-                System.Windows.Threading.Dispatcher.Run();
-            });
-            viewerThread.Name = "PseudoWindow Thread";
-            viewerThread.SetApartmentState(ApartmentState.STA); // needs to be STA or throws exception
-            viewerThread.Start();
+                Thread viewerThread = new Thread(delegate ()
+                {
+                    var okno = new UI.PseudoWindow(method());
+                    System.Windows.Threading.Dispatcher.Run();
+                });
+                viewerThread.Name = "PseudoWindow Thread";
+                viewerThread.SetApartmentState(ApartmentState.STA); // needs to be STA or throws exception
+                viewerThread.Start();
+            }
+            catch { }
         }
 
     }
