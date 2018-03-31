@@ -225,11 +225,18 @@ namespace JaebeMusicStudio.Sound
             lock (this)
             {
                 prepareToRender(rendering);
-                if (Player.status != Player.Status.paused)
+                if (rendering.type == RenderngType.live)
+                {
+                    if (Player.status != Player.Status.paused)
+                    {
+                        playTracks(rendering);
+                    }
+                    playLive(rendering);
+                }
+                else
                 {
                     playTracks(rendering);
                 }
-                playLive(rendering);
                 rendering.canHarvest = true;
                 foreach (var line in lines)
                 {

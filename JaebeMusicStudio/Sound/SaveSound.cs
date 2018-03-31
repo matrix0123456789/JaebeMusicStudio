@@ -15,9 +15,13 @@ namespace JaebeMusicStudio.Sound
         public static FileInfo file;
         public static async Task SaveFileAsync()
         {
-            Player.status = Player.Status.fileRendering;
-            var rendering = new Rendering() { renderingStart = 0, renderingLength = Project.current.length };
-            Project.current.Render(rendering);
+            
+            var rendering = new Rendering() { renderingStart = 0, renderingLength = Project.current.length, project = Project.current, type=RenderngType.block };
+            var soundReady = rendering.project.lines[0].getByRendering(rendering);
+            rendering.project.Render(rendering);
+            var sound = await soundReady;
+            SaveFileEnd(sound);
+            rendering.project.Clear(rendering);
 
         }
 

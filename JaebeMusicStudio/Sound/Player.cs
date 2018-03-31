@@ -64,7 +64,7 @@ namespace JaebeMusicStudio.Sound
                         liveRenderingNow = true;
                         var renderLength = (((float)renderPeriod * 2 - bufor.BufferedDuration.TotalMilliseconds) *
                                             Project.current.tempo / 60f) / 1000f;
-                        var rendering = new Rendering() { renderingStart = position, renderingLength = (float)renderLength, project = Project.current };
+                        var rendering = new Rendering() { renderingStart = position, renderingLength = (float)renderLength, project = Project.current, type=RenderngType.live };
                         var soundReady = rendering.project.lines[0].getByRendering(rendering);
                         rendering.project.Render(rendering);
                         var sound = await soundReady;
