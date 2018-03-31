@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JaebeMusicStudio.Sound
 {
-    class Rendering
+    public class Rendering
     {
         internal float renderingStart;
         internal float renderingLength;

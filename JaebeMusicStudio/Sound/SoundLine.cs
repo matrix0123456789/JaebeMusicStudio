@@ -77,7 +77,7 @@ namespace JaebeMusicStudio.Sound
             currentToRender = inputs.Count;
             lastRendered = new float[2, samples];
         }
-        public void rendered(int offset, float[,] data, float volumeChange = 1)
+        public void rendered(int offset, float[,] data, Rendering rendering, float volumeChange = 1)
         {
             float vol = volumeChange;
             lock (this)

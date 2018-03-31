@@ -171,14 +171,14 @@ namespace JaebeMusicStudio.Sound
                                 var renderStart = (el as ISoundElement).Offset - position;
                                 if (renderStart >= 0) //you must wait to start playing
                                 {
-                                    var rendered = (el as ISoundElement).GetSound(0, renderingLength - renderStart);
+                                    var rendered = (el as ISoundElement).GetSound(0, renderingLength - renderStart, rendering);
                                     (el as ISoundElement).SoundLine.rendered((int)CountSamples(renderingStart),
-                                        rendered);
+                                        rendered, rendering);
                                 }
                                 else
                                 {
-                                    var rendered = (el as ISoundElement).GetSound(-renderStart, renderingLength);
-                                    (el as ISoundElement).SoundLine.rendered(0, rendered);
+                                    var rendered = (el as ISoundElement).GetSound(-renderStart, renderingLength, rendering);
+                                    (el as ISoundElement).SoundLine.rendered(0, rendered, rendering);
                                 }
                             }, element);
                         }
