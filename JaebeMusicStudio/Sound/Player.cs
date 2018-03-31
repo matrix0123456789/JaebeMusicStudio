@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace JaebeMusicStudio.Sound
@@ -22,6 +23,7 @@ namespace JaebeMusicStudio.Sound
         public static event Action<float> positionChanged;
         public static event Action<float[,]> SoundPlayed;
         static Rendering liveRenderingObject = new Rendering();
+        static Timer renderFallbackTimer;
         static Player()
         {
             WasapiWyjście.Init(bufor);
@@ -29,6 +31,7 @@ namespace JaebeMusicStudio.Sound
             renderingThread.Name = "renderingThread";
             renderingThread.Start();
             WasapiWyjście.Play();
+            renderFallbackTimer = new Timer(Render, null, 0, 10);
 
         }
         public static void Play()
@@ -54,36 +57,40 @@ namespace JaebeMusicStudio.Sound
         static DateTime lastRendered;
         static async void Render(object a = null)
         {
-            while (true)
+            RenderOnce();
+            //var sleepTime = renderPeriod - (int)(DateTime.Now - lastRendered).TotalMilliseconds;
+            //if (sleepTime > 0)
+            //    System.Threading.Thread.Sleep(sleepTime);
+        }
+        static async void RenderOnce()
+        {
+            try
             {
-                try
+                lastRendered = DateTime.Now;
+                if (bufor.BufferedDuration.TotalMilliseconds < renderPeriod * 2)
                 {
-                    lastRendered = DateTime.Now;
-                    if (!liveRenderingNow && bufor.BufferedDuration.TotalMilliseconds < renderPeriod * 2)
+                    var renderLength = (((float)renderPeriod * 2 - bufor.BufferedDuration.TotalMilliseconds) *
+                                        Project.current.tempo / 60f) / 1000f;
+                    liveRenderingNow = true;
+                    var rendering = new Rendering() { renderingStart = position, renderingLength = (float)renderLength, project = Project.current, type = RenderngType.live };
+                    var soundReady = rendering.project.lines[0].getByRendering(rendering);
+                    rendering.project.Render(rendering);
+                    var sound = await soundReady;
+                    ReturnedSound(sound);
+                    rendering.project.Clear(rendering);
+                    if (status == Status.playing)
                     {
-                        liveRenderingNow = true;
-                        var renderLength = (((float)renderPeriod * 2 - bufor.BufferedDuration.TotalMilliseconds) *
-                                            Project.current.tempo / 60f) / 1000f;
-                        var rendering = new Rendering() { renderingStart = position, renderingLength = (float)renderLength, project = Project.current, type=RenderngType.live };
-                        var soundReady = rendering.project.lines[0].getByRendering(rendering);
-                        rendering.project.Render(rendering);
-                        var sound = await soundReady;
-                        ReturnedSound(sound);
-                        rendering.project.Clear(rendering);
-                        if (status == Status.playing)
-                        {
-                            position += (float)renderLength;
-                            positionChanged?.Invoke(position);
-                        }
+                        position += (float)renderLength;
+                        positionChanged?.Invoke(position);
                     }
-                    var sleepTime = renderPeriod - (int)(DateTime.Now - lastRendered).TotalMilliseconds;
-                    if (sleepTime > 0)
-                        System.Threading.Thread.Sleep(sleepTime);
+                    ThreadPool.QueueUserWorkItem(o => RenderOnce());
                 }
-                catch
-                {
+                
+            }
+            catch
+            {
+                ThreadPool.QueueUserWorkItem(o => RenderOnce());
 
-                }
             }
         }
         static public void ReturnedSound(float[,] sound)
