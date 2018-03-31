@@ -11,7 +11,7 @@ namespace JaebeMusicStudio.Sound
     {
         INoteSynth Synth { get; set; }
 
-        float[,] GetSound(float start, float length);
+        float[,] GetSound(float start, float length, Rendering rendering);
         
     }
 }

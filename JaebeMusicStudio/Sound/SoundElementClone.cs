@@ -53,9 +53,9 @@ namespace JaebeMusicStudio.Sound
             return newElem;
         }
 
-        public float[,] GetSound(float start, float length)
+        public float[,] GetSound(float start, float length, Rendering rendering)
         {
-            return original.GetSound(start, length);
+            return original.GetSound(start, length, rendering);
         }
 
         public void Serialize(XmlNode node)

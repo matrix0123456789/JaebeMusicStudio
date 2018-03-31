@@ -72,7 +72,7 @@ namespace JaebeMusicStudio.Sound
 
         }
 
-        public float[,] GetSound(float start, float length, NotesCollection notes)
+        public float[,] GetSound(float start, float length,Rendering rendering, NotesCollection notes)
         {
             if (lastPlayedStart > start)
             {

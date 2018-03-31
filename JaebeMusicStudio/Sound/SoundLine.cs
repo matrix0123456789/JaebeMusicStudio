@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -15,19 +16,15 @@ namespace JaebeMusicStudio.Sound
         /// </summary>
         public List<SoundLineConnection> inputs = new List<SoundLineConnection>();
         public List<Effect> effects = new List<Effect>();
-        public int currentToRender = 0;
-        public float[,] lastRendered;
-
+        
         public event Action<int, Effect> effectAdded;
         public event Action<int> effectRemoved;
-
+        Dictionary<Rendering, SoundLineRendering> renderings = new Dictionary<Rendering, SoundLineRendering>();
         public SoundLine()
         {
-            cleanToRender(16);
         }
         public SoundLine(XmlElement xml)
         {
-            cleanToRender(16);
             if (xml.Attributes["volume"] != null)
                 volume = float.Parse(xml.Attributes["volume"].Value, CultureInfo.InvariantCulture);
             foreach (XmlElement x in xml.ChildNodes)
@@ -72,16 +69,25 @@ namespace JaebeMusicStudio.Sound
             }
             document.DocumentElement.AppendChild(node);
         }
-        public void cleanToRender(int samples)
+        public SoundLineRendering getByRendering(Rendering r)
         {
-            currentToRender = inputs.Count;
-            lastRendered = new float[2, samples];
+            if (!renderings.ContainsKey(r))
+                renderings[r] = new SoundLineRendering();
+            return renderings[r];
+        }
+        public void prepareToRender(Rendering rendering)
+        {
+            var slRend = getByRendering(rendering);
+            slRend.currentToRender = inputs.Count;
+            slRend.data = new float[2, (int)Project.current.CountSamples(rendering.renderingLength)];
         }
         public void rendered(int offset, float[,] data, Rendering rendering, float volumeChange = 1)
         {
             float vol = volumeChange;
             lock (this)
             {
+                var slRend = getByRendering(rendering);
+                var lastRendered = slRend.data;
                 if (volume != 0)
                 {
                     var length = data.GetLength(1);
@@ -126,27 +132,28 @@ namespace JaebeMusicStudio.Sound
                         }
                     }
                 }
-                currentToRender--;
+                slRend.currentToRender--;
             }
-            checkIfReady();
+            checkIfReady(rendering);
 
         }
-        public void checkIfReady()
+        public void checkIfReady(Rendering rendering)
         {
             lock (this)
             {
-                if (currentToRender == 0)
+                var slRend = getByRendering(rendering);
+                if (slRend.currentToRender == 0)
                 {
-                    var sound = lastRendered;
+                    var sound = slRend.data;
                     if (volume != 0)
                     {
                         if (volume != 1)
                         {
-                            var length = lastRendered.GetLength(1);
+                            var length = sound.GetLength(1);
                             for (int i = 0; i < length; i++)
                             {
-                                lastRendered[0, i] *= volume;
-                                lastRendered[1, i] *= volume;
+                                sound[0, i] *= volume;
+                                sound[1, i] *= volume;
                             }
                         }
                         foreach (var effect in effects)
@@ -156,12 +163,11 @@ namespace JaebeMusicStudio.Sound
                     }
                     foreach (var output in outputs)
                     {
-                        output.output.rendered(0, sound, output.volume);
+                        output.output.rendered(0, sound, rendering, output.volume);
                     }
-                    if (this == Project.current.lines[0])
-                    {
-                        Project.current.ReturnedSound(sound);
-                    }
+                    slRend.data = sound;
+                    slRend.Resolve();
+
                     if (connectedUIs != 0)
                     {
                         float minL = sound[0, 0];
@@ -229,6 +235,63 @@ namespace JaebeMusicStudio.Sound
             this.output = Project.current.lines[lineNumberOutput];
             this.input = input;
             this.volume = volume;
+        }
+    }
+    public class SoundLineRendering
+    {
+        public int currentToRender;
+        public float[,] data;
+        public bool completed;
+        List<Action> waitingOnCompletion = new List<Action>();
+        public SoundLineRenderingAwaiter GetAwaiter()
+        {
+            return new SoundLineRenderingAwaiter(this);
+        }
+        public void Resolve()
+        {
+            lock (this)
+            {
+                this.completed = true;
+            }
+            foreach (var x in waitingOnCompletion)
+            {
+                try
+                {
+                    x();
+                }
+                catch { }
+            }
+        }
+        public class SoundLineRenderingAwaiter : INotifyCompletion
+        {
+            private SoundLineRendering parent;
+
+            public SoundLineRenderingAwaiter(SoundLineRendering parent)
+            {
+                this.parent = parent;
+            }
+
+            public bool IsCompleted
+            {
+                get
+                {
+                    return parent.completed;
+                }
+            }
+
+
+            public float[,] GetResult() { return this.parent.data; }
+
+
+            public void OnCompleted(Action continuation)
+            {
+                lock (parent)
+                {
+                    parent.waitingOnCompletion.Add(continuation);
+                }
+            }
+
+            public void UnsafeOnCompleted(Action continuation) { OnCompleted(continuation); }
         }
     }
 }

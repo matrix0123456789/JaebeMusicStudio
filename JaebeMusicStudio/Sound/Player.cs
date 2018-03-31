@@ -13,7 +13,7 @@ namespace JaebeMusicStudio.Sound
         public static float[] LastVolume = { 0, 0 };
         public static Status status = Status.paused;
         public static float position;
-        public static bool rendering = false;
+        public static bool liveRenderingNow = false;
         static int renderPeriod = 15;
         static System.Threading.Thread renderingThread;
         public enum Status { fileRendering, playing, paused }
@@ -52,22 +52,24 @@ namespace JaebeMusicStudio.Sound
                 positionChanged(position);
         }
         static DateTime lastRendered;
-        static void Render(object a = null)
+        static async void Render(object a = null)
         {
             while (true)
             {
                 lastRendered = DateTime.Now;
-                if (!rendering && bufor.BufferedDuration.TotalMilliseconds < renderPeriod * 2)
+                if (!liveRenderingNow && bufor.BufferedDuration.TotalMilliseconds < renderPeriod * 2)
                 {
-                    rendering = true;
+                    liveRenderingNow = true;
                     var renderLength = (((float)renderPeriod * 2 - bufor.BufferedDuration.TotalMilliseconds) *
                                         Project.current.tempo / 60f) / 1000f;
-                    Project.current.Render(new Rendering() { renderingStart = position, renderingLength = (float)renderLength });
+                    var rendering = new Rendering() { renderingStart = position, renderingLength = (float)renderLength };
+                    Project.current.Render(rendering);
+                    var sound = await Project.current.lines[0].getByRendering(rendering);
+                    ReturnedSound(sound);
                     if (status == Status.playing)
                     {
                         position += (float)renderLength;
-                        if (positionChanged != null)
-                            positionChanged(position);
+                        positionChanged?.Invoke(position);
                     }
                 }
                 var sleepTime = renderPeriod - (int)(DateTime.Now - lastRendered).TotalMilliseconds;
@@ -109,7 +111,7 @@ namespace JaebeMusicStudio.Sound
                 data[i * 4 + 3] = (byte)((ushort)right >> 8);
             }
             bufor.AddSamples(data, 0, sound.Length * 2);
-            rendering = false;
+            liveRenderingNow = false;
             minL = Math.Abs(minL);
             maxL = Math.Abs(maxL);
             minR = Math.Abs(minR);

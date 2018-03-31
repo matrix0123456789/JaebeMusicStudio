@@ -10,7 +10,7 @@ namespace JaebeMusicStudio.Sound
     public interface INoteSynth: INamedElement
     {
         SoundLine SoundLine { get; set; }
-        float[,] GetSound(float start, float length, NotesCollection notes);
+        float[,] GetSound(float start, float length,Rendering rendering, NotesCollection notes);
         void Serialize(XmlNode node);
     }
 }

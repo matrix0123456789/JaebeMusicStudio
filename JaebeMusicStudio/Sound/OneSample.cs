@@ -45,7 +45,7 @@ namespace JaebeMusicStudio.Sound
             Length = this.sample.Length;
         }
 
-        public float[,] GetSound(float start, float length)
+        public float[,] GetSound(float start, float length, Rendering rendering)
         {
             long samples = (long)Project.current.CountSamples(length);//how many samples you need on output
             var ret = new float[sample.channels, samples];//sound that will be returned

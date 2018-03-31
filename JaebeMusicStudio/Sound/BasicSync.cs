@@ -75,7 +75,7 @@ namespace JaebeMusicStudio.Sound
             }
             oscillators.CollectionChanged += Oscillators_CollectionChanged;
         }
-        public float[,] GetSound(float start, float length, NotesCollection notes)
+        public float[,] GetSound(float start, float length,Rendering rendering,  NotesCollection notes)
         {
             long samples = (long)Project.current.CountSamples(length);//how many samples you need on output
             var ret = new float[2, samples];//sound that will be returned

@@ -113,7 +113,7 @@ namespace JaebeMusicStudio.Sound
             }
             return wave;
         }
-        public void checkIfReady()
+        public void checkIfReady(Rendering rendering)
         {
             lock (this)
             {
@@ -142,15 +142,15 @@ namespace JaebeMusicStudio.Sound
                 foreach (var output in outputs)
                 {
                     Console.WriteLine("output " + lastRendered.GetLength(1));
-                    output.output.rendered(0, lastRendered, output.volume);
+                    output.output.rendered(0, lastRendered, rendering, output.volume);
                 }
 
 
             }
         }
-        public void cleanToRender(int samples)
+        public void prepareToRender(Rendering rendering)
         {
-            lastRendered = new float[2, samples];
+            lastRendered = new float[2, (int)Project.current.CountSamples(rendering.renderingLength)];
         }
     }
 }
