@@ -16,7 +16,7 @@ namespace JaebeMusicStudio.Sound
         /// </summary>
         public List<SoundLineConnection> inputs = new List<SoundLineConnection>();
         public List<Effect> effects = new List<Effect>();
-        
+
         public event Action<int, Effect> effectAdded;
         public event Action<int> effectRemoved;
         Dictionary<Rendering, SoundLineRendering> renderings = new Dictionary<Rendering, SoundLineRendering>();
@@ -84,9 +84,9 @@ namespace JaebeMusicStudio.Sound
         public void rendered(int offset, float[,] data, Rendering rendering, float volumeChange = 1)
         {
             float vol = volumeChange;
+            var slRend = getByRendering(rendering);
             lock (this)
             {
-                var slRend = getByRendering(rendering);
                 var lastRendered = slRend.data;
                 if (volume != 0)
                 {
@@ -139,6 +139,8 @@ namespace JaebeMusicStudio.Sound
         }
         public void checkIfReady(Rendering rendering)
         {
+            if (!rendering.canHarvest)
+                return;
             lock (this)
             {
                 var slRend = getByRendering(rendering);
@@ -223,6 +225,10 @@ namespace JaebeMusicStudio.Sound
                 return "Linia główna";
             return "Linia " + number;
         }
+        public void clearAfterRender(Rendering rendering)
+        {
+            renderings.Remove(rendering);
+        }
     }
     public class SoundLineConnection
     {
@@ -280,7 +286,10 @@ namespace JaebeMusicStudio.Sound
             }
 
 
-            public float[,] GetResult() { return this.parent.data; }
+            public float[,] GetResult()
+            {
+                return this.parent.data;
+            }
 
 
             public void OnCompleted(Action continuation)

@@ -120,6 +120,19 @@ namespace JaebeMusicStudio.Sound
             }
         }
 
+        internal void Clear(Rendering rendering)
+        {
+            foreach (var line in lines)
+            {
+                line.clearAfterRender(rendering);
+            }
+            var liveLinesList = liveLines.getAvaibleInputs();
+            foreach (var line in liveLinesList)
+            {
+                line.clearAfterRender(rendering);
+            }
+        }
+
 
         /// <summary>
         /// Event: new track was added. First parameter is index of new track;
@@ -217,6 +230,7 @@ namespace JaebeMusicStudio.Sound
                     playTracks(rendering);
                 }
                 playLive(rendering);
+                rendering.canHarvest = true;
                 foreach (var line in lines)
                 {
                     line.checkIfReady(rendering);

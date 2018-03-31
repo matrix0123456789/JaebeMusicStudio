@@ -56,25 +56,34 @@ namespace JaebeMusicStudio.Sound
         {
             while (true)
             {
-                lastRendered = DateTime.Now;
-                if (!liveRenderingNow && bufor.BufferedDuration.TotalMilliseconds < renderPeriod * 2)
+                try
                 {
-                    liveRenderingNow = true;
-                    var renderLength = (((float)renderPeriod * 2 - bufor.BufferedDuration.TotalMilliseconds) *
-                                        Project.current.tempo / 60f) / 1000f;
-                    var rendering = new Rendering() { renderingStart = position, renderingLength = (float)renderLength };
-                    Project.current.Render(rendering);
-                    var sound = await Project.current.lines[0].getByRendering(rendering);
-                    ReturnedSound(sound);
-                    if (status == Status.playing)
+                    lastRendered = DateTime.Now;
+                    if (!liveRenderingNow && bufor.BufferedDuration.TotalMilliseconds < renderPeriod * 2)
                     {
-                        position += (float)renderLength;
-                        positionChanged?.Invoke(position);
+                        liveRenderingNow = true;
+                        var renderLength = (((float)renderPeriod * 2 - bufor.BufferedDuration.TotalMilliseconds) *
+                                            Project.current.tempo / 60f) / 1000f;
+                        var rendering = new Rendering() { renderingStart = position, renderingLength = (float)renderLength, project = Project.current };
+                        var soundReady = rendering.project.lines[0].getByRendering(rendering);
+                        rendering.project.Render(rendering);
+                        var sound = await soundReady;
+                        ReturnedSound(sound);
+                        rendering.project.Clear(rendering);
+                        if (status == Status.playing)
+                        {
+                            position += (float)renderLength;
+                            positionChanged?.Invoke(position);
+                        }
                     }
+                    var sleepTime = renderPeriod - (int)(DateTime.Now - lastRendered).TotalMilliseconds;
+                    if (sleepTime > 0)
+                        System.Threading.Thread.Sleep(sleepTime);
                 }
-                var sleepTime = renderPeriod - (int)(DateTime.Now - lastRendered).TotalMilliseconds;
-                if (sleepTime > 0)
-                    System.Threading.Thread.Sleep(sleepTime);
+                catch
+                {
+
+                }
             }
         }
         static public void ReturnedSound(float[,] sound)

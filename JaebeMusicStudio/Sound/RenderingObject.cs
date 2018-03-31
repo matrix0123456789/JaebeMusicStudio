@@ -10,5 +10,7 @@ namespace JaebeMusicStudio.Sound
     {
         internal float renderingStart;
         internal float renderingLength;
+        internal Project project;
+        public bool canHarvest = false;//all tasks to render was created
     }
 }

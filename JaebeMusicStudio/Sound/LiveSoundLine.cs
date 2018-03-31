@@ -113,8 +113,16 @@ namespace JaebeMusicStudio.Sound
             }
             return wave;
         }
+
+        internal void clearAfterRender(Rendering rendering)
+        {
+
+        }
+
         public void checkIfReady(Rendering rendering)
         {
+            if (!rendering.canHarvest)
+                return;
             lock (this)
             {
                 Console.WriteLine("checkIfReady " + bufferAvalible);
