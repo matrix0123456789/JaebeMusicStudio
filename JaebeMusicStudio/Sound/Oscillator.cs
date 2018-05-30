@@ -64,6 +64,8 @@ namespace JaebeMusicStudio.Sound
                 S = float.Parse(x.Attributes["s"].Value, CultureInfo.InvariantCulture);
             if (x.Attributes["r"] != null)
                 R = float.Parse(x.Attributes["r"].Value, CultureInfo.InvariantCulture);
+            if (x.Attributes["randomPhase"] != null)
+                randomPhase = bool.Parse(x.Attributes["randomPhase"].Value);
             if (x.Attributes["type"] != null)
                 Type = (OscillatorType)Enum.Parse(typeof(OscillatorType), x.Attributes["type"].Value);
 
@@ -211,6 +213,7 @@ namespace JaebeMusicStudio.Sound
             node2.SetAttribute("s", S.ToString(CultureInfo.InvariantCulture));
             node2.SetAttribute("r", R.ToString(CultureInfo.InvariantCulture));
             node2.SetAttribute("volume", volume.ToString(CultureInfo.InvariantCulture));
+            node2.SetAttribute("randomPhase", randomPhase.ToString());
             foreach (var p in Pitchs)
             {
                 var node3 = node.OwnerDocument.CreateElement("Pitch");
