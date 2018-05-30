@@ -145,8 +145,11 @@ namespace JaebeMusicStudio.Sound
                         if (tasks[i, j] != null)
                         {
                             var retTask = tasks[i, j].Result;
-
-                            for (long k = 0; k < retTask.LongLength / 2; k++)
+                            var minLength = retTask.LongLength / 2;
+                            if (ret.LongLength / 2 < minLength)
+                                minLength = ret.LongLength / 2;
+                                long k;
+                            for ( k = 0; k < minLength; k++)
                             {
                                 ret[0, k + notSamplesOffset] += retTask[0, k];
                                 ret[1, k + notSamplesOffset] += retTask[1, k];

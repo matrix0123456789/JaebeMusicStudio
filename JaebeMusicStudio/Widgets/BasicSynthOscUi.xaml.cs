@@ -62,6 +62,7 @@ namespace JaebeMusicStudio.Widgets
             D.Value = osc.D;
             S.Value = osc.S;
             R.Value = osc.R;
+            randomPhase.IsChecked = osc.randomPhase;
             Volume.Value = osc.Volume;
             switch (osc.Type)
             {
@@ -186,6 +187,16 @@ namespace JaebeMusicStudio.Widgets
         private void SquareRatio_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             osc.SquareRatio = (float)e.NewValue;
+        }
+
+        private void randomPhase_Checked(object sender, RoutedEventArgs e)
+        {
+            osc.randomPhase = true;
+        }
+
+        private void randomPhase_Unchecked(object sender, RoutedEventArgs e)
+        {
+            osc.randomPhase = false;
         }
     }
 }

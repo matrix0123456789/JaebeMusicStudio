@@ -158,11 +158,20 @@
     <Compile Include="Widgets\FlangerIU.xaml.cs">
       <DependentUpon>FlangerIU.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Widgets\InputsUi.xaml.cs">
+      <DependentUpon>InputsUi.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\keyboardUi.xaml.cs">
+      <DependentUpon>keyboardUi.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Widgets\NotesEdit.xaml.cs">
       <DependentUpon>NotesEdit.xaml</DependentUpon>
     </Compile>
     <Compile Include="Widgets\OneSynth.xaml.cs">
       <DependentUpon>OneSynth.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\PcKeyboardUi.xaml.cs">
+      <DependentUpon>PcKeyboardUi.xaml</DependentUpon>
     </Compile>
     <Compile Include="Widgets\PitchUI.xaml.cs">
       <DependentUpon>PitchUI.xaml</DependentUpon>
@@ -236,11 +245,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Widgets\InputsUi.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Widgets\keyboardUi.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Widgets\NotesEdit.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Widgets\OneSynth.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Widgets\PcKeyboardUi.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

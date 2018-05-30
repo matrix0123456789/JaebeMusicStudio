@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace JaebeMusicStudio.Sound
 {
-    class KeyboardInput : ILiveInput
+    public class KeyboardInput : ILiveInput
     {
         public INoteSynth Synth { get; set; }
         public static KeyboardInput singleton = new KeyboardInput();
@@ -65,7 +65,6 @@ namespace JaebeMusicStudio.Sound
                     return 61;
 
                 case Key.X:
-                    ;
                     return 62;
 
                 case Key.D:

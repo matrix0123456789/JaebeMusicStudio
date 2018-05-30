@@ -8,13 +8,14 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <Grid Height="118" VerticalAlignment="Top" HorizontalAlignment="Left" Width="108">
+        <Grid Height="156" VerticalAlignment="Top" HorizontalAlignment="Left" Width="108">
             <RadioButton Name="TypeOscSin" Margin="0,0,0,0" Checked="TypeOscSin_Checked" VerticalAlignment="Top">Sinusoida</RadioButton>
             <RadioButton Name="TypeOscTri" Margin="0,20,0,0" Checked="TypeOscTri_Checked" VerticalAlignment="Top">Trójkątna</RadioButton>
             <RadioButton Name="TypeOscSq" Margin="0,40,0,0" Checked="TypeOscSq_Checked" VerticalAlignment="Top">Prostokątna</RadioButton>
             <RadioButton Name="TypeOscSaw" Margin="0,60,0,0" Checked="TypeOscSaw_Checked" VerticalAlignment="Top">Piłokształtna</RadioButton>
             <RadioButton Name="TypeOscWhite" Margin="0,80,0,0" Checked="TypeOscWhite_Checked" VerticalAlignment="Top">Szum biały</RadioButton>
             <RadioButton Name="TypeOscPink" Margin="0,100,0,0" Checked="TypeOscPink_Checked" VerticalAlignment="Top">Szum różowy</RadioButton>
+            <CheckBox Name="randomPhase" Margin="0,120,0,0"  VerticalAlignment="Top" Checked="randomPhase_Checked" Unchecked="randomPhase_Unchecked">Losowa faza</CheckBox>
         </Grid>
         <Label Margin="108,5,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" >Attack</Label>
         <Label Margin="108,31,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" >Delay</Label>

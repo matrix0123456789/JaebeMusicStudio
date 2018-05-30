@@ -150,5 +150,9 @@ namespace JaebeMusicStudio
             SaveSound.SaveFileAsync();
         }
 
+        private void openInputsButton_Click(object sender, RoutedEventArgs e)
+        {
+            PseudoWindow.OpenWindow(() => new Widgets.InputsUi());
+        }
     }
 }

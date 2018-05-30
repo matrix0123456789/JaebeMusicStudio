@@ -16,6 +16,7 @@ namespace JaebeMusicStudio.Sound
         public float a = 0, d = 0, s = 1, r = 0;
         private float squareRatio = .5f;
         private float volume = 1;
+        public bool randomPhase = false;
         public float Volume { get { return volume; } set { volume = value; } }
         public float SquareRatio { get { return squareRatio; } set { squareRatio = value; } }
         static Random rand = new Random();
@@ -81,7 +82,7 @@ namespace JaebeMusicStudio.Sound
         {
             long samples = (long)Project.current.CountSamples(length); //how many samples you need on output
             float samplesTotal = Project.current.CountSamples(note.Length + R);
-            var timeWaited = Project.current.CountSamples(start);
+            var timeWaited = Project.current.CountSamples(randomPhase ? start + 1000 : start);//+1000 to taki trik
             var ret = new float[2, samples]; //sound that will be returned
 
             foreach (var p in Pitchs)

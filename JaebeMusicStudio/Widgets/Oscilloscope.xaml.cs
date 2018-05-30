@@ -30,6 +30,7 @@ namespace JaebeMusicStudio.Widgets
         int typX = 2, typY = 1;
         private int bufforred = 0;
         public Queue<float[,]> dane = new Queue<float[,]>();
+        float[,] currentFrame = new float[2,0], previousFrame = null;
 
         public Oscilloscope()
         {
@@ -50,123 +51,95 @@ namespace JaebeMusicStudio.Widgets
                     }
                 });
         }
-        private void Update(object state)
+        private int samplesPerFrame => (int)(Project.current.sampleRate * 0.016);
+        void UpdateFrame()
         {
-            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (ThreadStart)delegate ()
+            lock (dane)
             {
-                lock (dane)
+                var samplesPerFrame = this.samplesPerFrame;
+                previousFrame = currentFrame;
+                currentFrame = new float[2, samplesPerFrame];
+
+                while (bufforred > 2000)
                 {
-                    var ilePróbek = (int)(Project.current.sampleRate*0.016);
-                    if (bufforred < 0)
-                        bufforred = 0;
-                    //if (bufforred > 2000)
-                    //{
-                    //    bufforred -= aktualniePrzetwarzane.GetLength(1) + pozycja;
-                    //    pozycja = 0;
-                    //    aktualniePrzetwarzane = null;
-                    //}
-                    while (bufforred>2000)
-                    {
-                        var skipped = dane.Dequeue();
-                        bufforred -= skipped.GetLength(1);
+                    var skipped = dane.Dequeue();
+                    bufforred -= skipped.GetLength(1);
 
+                }
+                if (aktualniePrzetwarzane == null)
+                {
+                    if (dane.Count == 0)
+                    {
+                        return;
                     }
-                    //while ((DateTime.Now - czas).TotalMilliseconds > 1000 / częstotliwość * 10)
-                    //{
-                    //    if (aktualniePrzetwarzane == null && dane.Count != 0)
-                    //    {
-
-                        //        aktualniePrzetwarzane = dane.Dequeue();
-                        //        pozycja = 0;
-                        //    }
-                        //    int dododania = ilePróbek;
-                        //    if (aktualniePrzetwarzane != null)
-                        //        while (dododania > 0)
-                        //        {
-                        //            if (aktualniePrzetwarzane.Length / 2 > dododania + pozycja)
-                        //            {
-                        //                pozycja += dododania;
-                        //                break;
-                        //            }
-                        //            else if (dane.Count > 0)
-                        //            {
-                        //                dododania -= aktualniePrzetwarzane.Length / 2 - pozycja;
-                        //                pozycja = 0;
-                        //                aktualniePrzetwarzane = dane.Dequeue();
-                        //            }
-                        //            else
-                        //            {
-                        //                break;
-                        //            }
-                        //        }
-                        //}
-
-
-                    chart.Points.Clear();
-                    if (aktualniePrzetwarzane == null)
+                    aktualniePrzetwarzane = dane.Dequeue();
+                    bufforred -= aktualniePrzetwarzane.GetLength(1);
+                    pozycja = 0;
+                }
+                try
+                {
+                    for (int i = 0; i < samplesPerFrame; i++)
                     {
-                        if (dane.Count == 0)
+                        while (pozycja >= aktualniePrzetwarzane.GetLength(1))
                         {
-
-                            chart.Points.Add(new Point(0, 0.5 * drawArea.ActualHeight));
-                            chart.Points.Add(new Point(drawArea.ActualWidth, 0.5 * drawArea.ActualHeight));
-                            return;
-                        }
-                        aktualniePrzetwarzane = dane.Dequeue();
-                        bufforred -= aktualniePrzetwarzane.GetLength(1);
-                        pozycja = 0;
-                    }
-                    int przeskokint = (int)(ilePróbek / drawArea.ActualWidth);
-                    if (przeskokint < 1)
-                        przeskokint = 1;
-                    for (int i = 0; i < ilePróbek; i += przeskokint)
-                    {
-                        pozycja += przeskokint;
-                        if (pozycja >= aktualniePrzetwarzane.Length / 2)
-                        {
-                            if (dane.Count == 0)
-                            {
-
-                                //linia.Points.Add(new Point(wykres.ActualWidth * i / ilePróbek, 0.5 * wykres.ActualHeight));
-                                //linia.Points.Add(new Point(wykres.ActualWidth, 0.5 * wykres.ActualHeight));
-                                aktualniePrzetwarzane = null;
-                                pozycja = 0;
-                                //wykres.Children.Add(linia);
-                                break;
-                            }
                             aktualniePrzetwarzane = dane.Dequeue();
                             bufforred -= aktualniePrzetwarzane.GetLength(1);
                             pozycja = 0;
                         }
-                        double X, Y;
-                        if (typX == 0)
-                        {
-                            X = (-aktualniePrzetwarzane[0, pozycja] + 1f) / 2f * drawArea.ActualHeight;
-                        }
-                        else if (typX == 1)
-                        {
-                            X = (-aktualniePrzetwarzane[1, pozycja] + 1f) / 2f * drawArea.ActualHeight;
-                        }
-                        else
-                        {
-                            X = drawArea.ActualWidth * i / ilePróbek;
-                        }
-                        if (typY == 0)
-                        {
-                            Y = (-aktualniePrzetwarzane[0, pozycja] + 1f) / 2f * drawArea.ActualHeight;
-                        }
-                        else if (typY == 1)
-                        {
-                            Y = (-aktualniePrzetwarzane[1, pozycja] + 1f) / 2f * drawArea.ActualHeight;
-                        }
-                        else
-                        {
-                            Y = drawArea.ActualWidth * i / ilePróbek;
-                        }
-                        chart.Points.Add(new Point(X, Y));
+                        currentFrame[0, i] = aktualniePrzetwarzane[0, pozycja];
+                        currentFrame[1, i] = aktualniePrzetwarzane[1, pozycja];
+                        pozycja++;
                     }
                 }
-            });
+                catch { aktualniePrzetwarzane = null; }
+            }
+        }
+        private void Update(object state)
+        {
+            UpdateFrame();
+            float[,] previousFrame, currentFrame;
+            var samplesPerFrame = this.samplesPerFrame;
+            lock (dane)
+            {
+                previousFrame = this.previousFrame;
+                currentFrame = this.currentFrame;
+            }
+            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (ThreadStart)delegate ()
+        {
+
+            int goLeft = findTrigger(currentFrame);
+            chart.Points.Clear();
+
+            int przeskokint = (int)(samplesPerFrame / drawArea.ActualWidth);//optymalizacja
+            if (przeskokint < 1)
+                przeskokint = 1;
+            for (int i = 0; i < goLeft; i += przeskokint)
+            {
+                double X, Y;
+                X = drawArea.ActualWidth * i / samplesPerFrame;
+                Y = (-previousFrame[0, previousFrame.GetLength(1) - goLeft + i] + 1f) / 2f * drawArea.ActualHeight;
+                chart.Points.Add(new Point(X, Y));
+            }
+            for (int i = 0; i < samplesPerFrame; i += przeskokint)
+            {
+                double X, Y;
+                X = drawArea.ActualWidth * (i + goLeft) / samplesPerFrame;
+                Y = (-currentFrame[0, i] + 1f) / 2f * drawArea.ActualHeight;
+                chart.Points.Add(new Point(X, Y));
+            }
+
+        });
+        }
+        int findTrigger(float[,] data)
+        {
+            for (var i = data.GetLength(1) / 2; i > 0; i--)
+            {
+                if (data[0, i - 1] > 0 && data[0, i] <= 0)
+                {
+                    return data.GetLength(1) / 2 - i;
+                }
+            }
+            return 0;
         }
     }
 }

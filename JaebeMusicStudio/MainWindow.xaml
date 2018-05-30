@@ -26,6 +26,7 @@
                 <Rectangle Fill="Green" Width="0" Height="20" Margin="0,20,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Name="VolumeR"></Rectangle>
 
             </Grid>
+            <UI:ButtonPretty Height="20" Margin="135,36,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="20" Icon="e80a" x:Name="openInputsButton" Click="openInputsButton_Click" ToolTip="Wejścia"/>
         </Grid>
     </Grid>
 </Window>
