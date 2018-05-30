@@ -9,6 +9,7 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <UI:ButtonPretty Text="o" HorizontalAlignment="Left" Width="21" Height="19" VerticalAlignment="Top" Click="ButtonPretty_OnClick" />
-        <Label Name="Title" Margin="26,0,0,0"></Label>
+        <Label Name="Title" Margin="51,0,0,0"></Label>
+        <UI:ButtonPretty Text="x" HorizontalAlignment="Left" Width="21" Height="19" VerticalAlignment="Top" Click="ButtonPretty2_OnClick" Margin="25,0,0,0" />
     </Grid>
 </UserControl>

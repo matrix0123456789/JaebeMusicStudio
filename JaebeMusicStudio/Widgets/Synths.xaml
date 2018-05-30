@@ -12,7 +12,6 @@
 
     <Grid>
 
-
         <ScrollViewer Name="SynthListScroll" Margin="0,0,0,0">
             <ScrollViewer.ContextMenu>
                 <ContextMenu>
@@ -20,6 +19,7 @@
                         <MenuItem Name="AddStandard" Header="Standardowy syntezator" Click="AddStandard_Click"></MenuItem>
                         <MenuItem Name="AddVSTi" Header="VSTi" Click="AddVSTi_Click"></MenuItem>
                     </MenuItem>
+                    <MenuItem Name="contextMenuPaste" Header="Wklej" Click="contextMenuPaste_Click"></MenuItem>
                 </ContextMenu>
             </ScrollViewer.ContextMenu>
             <Grid>

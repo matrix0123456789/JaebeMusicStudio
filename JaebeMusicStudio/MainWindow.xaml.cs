@@ -133,12 +133,14 @@ namespace JaebeMusicStudio
 
         private void MainWindow_OnKeyDown(object sender, KeyEventArgs e)
         {
-            KeyboardInput.singleton.KeyDown(e);
+            KeyboardInput.singleton1.KeyDown(e);
+            KeyboardInput.singleton2.KeyDown(e);
         }
 
         private void MainWindow_OnKeyUp(object sender, KeyEventArgs e)
         {
-            KeyboardInput.singleton.KeyUp(e);
+            KeyboardInput.singleton1.KeyUp(e);
+            KeyboardInput.singleton2.KeyUp(e);
         }
 
         private void RenderButton_OnClick(object sender, RoutedEventArgs e)

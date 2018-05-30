@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JaebeMusicStudio.Sound;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,43 @@ namespace JaebeMusicStudio.Widgets
         public PcKeyboardUi(Sound.KeyboardInput singleton)
         {
             InitializeComponent();
+            updateConfig();
+        }
+        void updateConfig()
+        {
+            synthSelect1.Selected = KeyboardInput.singleton1.Synth;
+            synthSelect2.Selected = KeyboardInput.singleton2.Synth;
+            synthSelect1.Generate();
+            synthSelect2.Generate();
+        }
+
+        private void SynthSelect1_OnChanged(SynthSelect arg1, Sound.INoteSynth arg2)
+        {
+            KeyboardInput.singleton1.Synth = arg2;
+        }
+        private void SynthSelect2_OnChanged(SynthSelect arg1, Sound.INoteSynth arg2)
+        {
+            KeyboardInput.singleton2.Synth = arg2;
+        }
+
+
+        private void keyboardType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (keyboardType.SelectedIndex == 0)
+            {
+                KeyboardInput.singleton1.type = KeyboardInput.Type.lowerAndUpper;
+                KeyboardInput.singleton2.type = KeyboardInput.Type.silent;
+            }
+            else if (keyboardType.SelectedIndex == 1)
+            {
+                KeyboardInput.singleton1.type = KeyboardInput.Type.lower;
+                KeyboardInput.singleton2.type = KeyboardInput.Type.upper;
+            }
+            else
+            {
+                KeyboardInput.singleton1.type = KeyboardInput.Type.launchpad;
+                KeyboardInput.singleton2.type = KeyboardInput.Type.silent;
+            }
         }
     }
 }

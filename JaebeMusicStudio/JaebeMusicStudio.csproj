@@ -104,6 +104,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="addons\Extensions.cs" />
     <Compile Include="addons\Promise.cs" />
     <Compile Include="Exceptions\BadFileException.cs" />
     <Compile Include="Sound\BasicPercussion.cs" />

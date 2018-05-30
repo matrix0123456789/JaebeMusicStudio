@@ -24,7 +24,7 @@ namespace JaebeMusicStudio.Widgets
         public InputsUi()
         {
             InitializeComponent();
-            inputStack.Children.Add(new PcKeyboardUi(KeyboardInput.singleton));
+            inputStack.Children.Add(new PcKeyboardUi(KeyboardInput.singleton1));
         }
     }
 }

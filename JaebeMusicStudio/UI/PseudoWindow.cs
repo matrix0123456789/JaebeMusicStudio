@@ -24,11 +24,13 @@ namespace JaebeMusicStudio.UI
 
         private void PseudoWindow_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            KeyboardInput.singleton.KeyDown(e);
+            KeyboardInput.singleton1.KeyDown(e);
+            KeyboardInput.singleton2.KeyDown(e);
         }
         private void PseudoWindow_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            KeyboardInput.singleton.KeyUp(e);
+            KeyboardInput.singleton1.KeyUp(e);
+            KeyboardInput.singleton2.KeyUp(e);
         }
 
         static public void closeAll()

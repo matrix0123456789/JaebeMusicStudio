@@ -12,8 +12,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml;
 using JaebeMusicStudio.Sound;
 using JaebeMusicStudio.UI;
+using JaebeMusicStudio.addons;
 
 namespace JaebeMusicStudio.Widgets
 {
@@ -49,7 +51,16 @@ namespace JaebeMusicStudio.Widgets
 
         private void Default_OnClick(object sender, RoutedEventArgs e)
         {
-            KeyboardInput.singleton.Synth = synth;
+            KeyboardInput.singleton1.Synth = synth;
+        }
+
+        private void contextMenuCopy_Click(object sender, RoutedEventArgs e)
+        {
+            var xml = new XmlDocument();
+            var xmlFragment = xml.CreateElement("fragment");
+                synth.Serialize(xmlFragment);
+            xml.AppendChild(xmlFragment);
+            Clipboard.SetText(xml.AsString());
         }
     }
 }

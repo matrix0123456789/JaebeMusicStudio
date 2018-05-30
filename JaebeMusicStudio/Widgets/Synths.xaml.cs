@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml;
 using JaebeMusicStudio.Sound;
 using JaebeMusicStudio.UI;
 
@@ -84,6 +85,25 @@ namespace JaebeMusicStudio.Widgets
             {
                 Project.current.NoteSynths.Add(new VSTi(dialog.FileName));
             }
+        }
+
+        private void contextMenuPaste_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var xml = Clipboard.GetText();
+                var xmlDocument=new XmlDocument();
+                xmlDocument.LoadXml(xml);
+                if (xmlDocument.DocumentElement.Name == "fragment")
+                {
+                    var BasicSynths = xmlDocument.GetElementsByTagName("BasicSynth");
+                    foreach (XmlNode x in BasicSynths)
+                    {
+                        Project.current.NoteSynths.Add(new BasicSynth(x));
+                    }
+                }
+            }
+            catch { }
         }
     }
 }

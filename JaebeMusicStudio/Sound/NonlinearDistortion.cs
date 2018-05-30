@@ -11,6 +11,7 @@ namespace JaebeMusicStudio.Sound
     public class NonlinearDistortion : Effect
     {
         NonlinearDistortionType effectType = NonlinearDistortionType.Power;
+        public NonlinearDistortionType EffectType { get { return effectType; } set { effectType = value; } }
         float powerExponentiation = 2;
         public float PowerExponentiation { get { return powerExponentiation; } set { powerExponentiation = value; } }
 
@@ -41,6 +42,8 @@ namespace JaebeMusicStudio.Sound
             {
                 case NonlinearDistortionType.Power:
                     return DoPower(input);
+                case NonlinearDistortionType.ArcTan:
+                    return DoArcTan(input);
             }
             throw new Exception();
         }
@@ -61,6 +64,19 @@ namespace JaebeMusicStudio.Sound
             }
             return newSound;
         }
+        private float[,] DoArcTan(float[,] input)
+        {
+            var newSound = new float[input.GetLength(0), input.GetLength(1)];
+            for (int i = 0; i < input.GetLength(0); i++)
+            {
+                for (int j = 0; j < input.GetLength(1); j++)
+                {
+                    var old = input[i, j];
+                        newSound[i, j] = (float)(Math.Atan(old*Math.PI/2) / Math.PI * 2);
+                }
+            }
+            return newSound;
+        }
     }
-    enum NonlinearDistortionType { Power }
+    public enum NonlinearDistortionType { Power, ArcTan }
 }

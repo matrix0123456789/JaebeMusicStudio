@@ -34,5 +34,20 @@ namespace JaebeMusicStudio.Widgets
         {
             Effect.PowerExponentiation = (float)PowerExponentiation.Value;
         }
+
+        private void LimiterThreshold_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+
+        }
+
+        private void power_Checked(object sender, RoutedEventArgs e)
+        {
+            Effect.EffectType = NonlinearDistortionType.Power;
+        }
+
+        private void arctan_Checked(object sender, RoutedEventArgs e)
+        {
+            Effect.EffectType = NonlinearDistortionType.ArcTan;
+        }
     }
 }

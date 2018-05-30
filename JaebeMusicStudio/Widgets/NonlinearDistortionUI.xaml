@@ -10,7 +10,8 @@
       Title="NonlinearDistortionUI">
 
     <Grid>
-        <RadioButton HorizontalAlignment="Left" VerticalAlignment="Top">Funkcja potęgowa</RadioButton>
+        <RadioButton HorizontalAlignment="Left" VerticalAlignment="Top" Name="power" Checked="power_Checked">Funkcja potęgowa</RadioButton>
+        <RadioButton HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,23,0,0" Name="arctan" Checked="arctan_Checked">arctan</RadioButton>
         <UI:Slider VerticalAlignment="Top" Margin="121,0,10,0" x:Name="PowerExponentiation" ValueChanged="PowerExponentiation_OnValueChanged" Minimum="0" Maximum="10"/>
     </Grid>
 </Page>

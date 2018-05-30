@@ -58,7 +58,7 @@ namespace JaebeMusicStudio.Widgets
                 index++;
             }
 
-           var liveLinesList= Project.current.liveLines.getAvaibleInputs();
+            var liveLinesList = Project.current.liveLines.getAvaibleInputs();
             foreach (var line in liveLinesList)
             {
                 project_liveLineAdded(index, line);
@@ -97,17 +97,22 @@ namespace JaebeMusicStudio.Widgets
 
         private void Line_effectRemoved(int index)
         {
-           // var removed = EffectsList.Children[index];
+            // var removed = EffectsList.Children[index];
             EffectsList.Children.RemoveAt(index);
         }
 
         private void Line_effectAdded(int index, Effect effect)
         {
-
+            Dispatcher.BeginInvoke((Action)(() => { 
             var ui = new EffectMini(effect);
-
+            ui.WantDelete += Ui_WantDelete;
             EffectsList.Children.Insert(index, ui);
             ui.MouseDown += Ui_MouseDown;
+        }));}
+
+        private void Ui_WantDelete(EffectMini obj)
+        {
+            selectedLine.Line.effects.Remove(obj.effect);
         }
 
         private void Ui_MouseDown(object sender, MouseButtonEventArgs e)

@@ -29,7 +29,7 @@ namespace JaebeMusicStudio.Widgets
             InitializeComponent();
             Title.Content = effect.ToString();
         }
-
+        public event Action<EffectMini> WantDelete;
 
         private void ButtonPretty_OnClick(object sender, RoutedEventArgs e)
         {
@@ -45,6 +45,11 @@ namespace JaebeMusicStudio.Widgets
             {
                 PseudoWindow.OpenWindow(() => new FlangerUI(effect as Flanger));
             }
+        }
+
+        private void ButtonPretty2_OnClick(object sender, RoutedEventArgs e)
+        {
+            WantDelete?.Invoke(this);
         }
     }
 }
