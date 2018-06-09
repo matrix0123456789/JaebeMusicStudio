@@ -1,5 +1,4 @@
-﻿using JaebeMusicStudio.Sound;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,19 +16,22 @@ using System.Windows.Shapes;
 namespace JaebeMusicStudio.Widgets
 {
     /// <summary>
-    /// Logika interakcji dla klasy InputsUi.xaml
+    /// Logika interakcji dla klasy keyboardUi.xaml
     /// </summary>
-    public partial class InputsUi : UserControl
+    public partial class MidiInUi : UserControl
     {
-        public InputsUi()
+        Sound.MidiInput midi;
+        public MidiInUi(Sound.MidiInput midi)
         {
+            this.midi = midi;
             InitializeComponent();
-            inputStack.Children.Add(new PcKeyboardUi(KeyboardInput.singleton1));
-           var allMidis= MidiInput.getAllObject();
-            foreach(var midi in allMidis)
-            {
-                inputStack.Children.Add(new MidiInUi(midi));
-            }
+            synthSelect1.Selected = midi.Synth;
+            synthSelect1.Generate();
+        }
+
+        private void SynthSelect1_OnChanged(SynthSelect arg1, Sound.INoteSynth arg2)
+        {
+            midi.Synth = arg2;
         }
     }
 }

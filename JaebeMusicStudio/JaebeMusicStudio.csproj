@@ -121,6 +121,7 @@
     <Compile Include="Sound\LiveSoundLine.cs" />
     <Compile Include="Sound\KeyboardInput.cs" />
     <Compile Include="Sound\LiveSoundLineCollection.cs" />
+    <Compile Include="Sound\MidiInput.cs" />
     <Compile Include="Sound\NonlinearDistortion.cs" />
     <Compile Include="Sound\Note.cs" />
     <Compile Include="Sound\Notes.cs" />
@@ -161,6 +162,9 @@
     </Compile>
     <Compile Include="Widgets\InputsUi.xaml.cs">
       <DependentUpon>InputsUi.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\MidiInUi.xaml.cs">
+      <DependentUpon>MidiInUi.xaml</DependentUpon>
     </Compile>
     <Compile Include="Widgets\keyboardUi.xaml.cs">
       <DependentUpon>keyboardUi.xaml</DependentUpon>
@@ -249,6 +253,10 @@
     <Page Include="Widgets\InputsUi.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Widgets\MidiInUi.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Widgets\keyboardUi.xaml">
       <SubType>Designer</SubType>
