@@ -262,6 +262,7 @@ namespace JaebeMusicStudio.Widgets
                 grid.Children.Add(rect);
                 rect.Stroke = Brushes.Black;
                 rect.StrokeThickness = 1;
+                rect.HorizontalAlignment = HorizontalAlignment.Left;
 
                 rect.Fill = Brushes.Green;
 
@@ -323,7 +324,11 @@ namespace JaebeMusicStudio.Widgets
         }
         void setNoteUiParams(Grid grid, Note note)
         {
+            var rect = grid.Children[0] as Rectangle;
             grid.Width = note.Length * scaleX;
+            if (grid.Width < 15)//wąska nuta, zeby dało się myszą chwycić
+                grid.Width += 10;
+            rect.Width = note.Length * scaleX;
             grid.Height = scaleY;
             grid.Margin = new Thickness(note.Offset * scaleX, (offsetY - note.Pitch) * scaleY, 0, 0);
             grid.VerticalAlignment = VerticalAlignment.Top;
@@ -451,10 +456,12 @@ namespace JaebeMusicStudio.Widgets
             else
                 length = editCalcNewTime(e);
             if (length < 0)
-                length = editingElement.Length;
+                length = 0;
+            if (offset < 0)
+                offset = 0;
 
             editingVisualElement.Margin = new Thickness(offset * scaleX, (offsetY - pitch) * scaleY, 0, 0);
-            editingVisualElement.Width = length * scaleY;
+            editingVisualElement.Width = length * scaleY+1;
             if (save)
             {
                 editingElement.Offset = offset;
