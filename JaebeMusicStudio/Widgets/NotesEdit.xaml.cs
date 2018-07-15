@@ -33,6 +33,7 @@ namespace JaebeMusicStudio.Widgets
         private FrameworkElement editingVisualElement;
         private Point editingStartposition;
         private EditingTypes editingType;
+        List<Line> timeLines = new List<Line>();
         enum EditingTypes { Move, Rezise }
         public NotesEdit(Notes notes)
         {
@@ -97,6 +98,8 @@ namespace JaebeMusicStudio.Widgets
         void showTimeLabels(object a = null, object b = null)
         {
             TimeLabels.Children.Clear();
+            timeLines.ForEach(x => WholeScrollableGrid.Children.Remove(x));
+
             double pixelOffset = -scrollHorizontal.HorizontalOffset + scrollHorizontal.Margin.Left;
             var scale = 1 / scaleX * 50;
             var scale1 = Math.Pow(10, Math.Ceiling(Math.Log10(scale)));
@@ -116,6 +119,24 @@ namespace JaebeMusicStudio.Widgets
                 text.Text = (i * scale).ToString();
                 TimeLabels.Children.Add(text);
 
+                var lineLeft = pixelOffset + scale * i * scaleX;
+                if (lineLeft > 100)
+                {
+                    var line = new Line();
+                    line.VerticalAlignment = VerticalAlignment.Stretch;
+                    line.HorizontalAlignment = HorizontalAlignment.Left;
+                    line.X1 = 0;
+                    line.Y1 = 0;
+                    line.X2 = 0;
+                    line.Y2 = 20;
+                    line.Margin = new Thickness(lineLeft, 0, 0, 0);
+                    line.Stretch = Stretch.Fill;
+                    line.Stroke = new SolidColorBrush(Color.FromRgb(128, 128, 128));
+                    line.StrokeThickness = 1;
+                    timeLines.Add(line);
+                    WholeScrollableGrid.Children.Add(line);
+                }
+
             }
         }
         void showNotePitches(object a = null, object b = null)
@@ -133,11 +154,11 @@ namespace JaebeMusicStudio.Widgets
                 text.Text = Note.GetName(i);
                 if (Note.IsPitchBlack(i))
                 {
-                    text.Background = new SolidColorBrush(Color.FromRgb(200, 200, 200));
+                    text.Background = new SolidColorBrush(Color.FromArgb(56, 0, 0,0));
                 }
                 else
                 {
-                    text.Background = new SolidColorBrush(Color.FromRgb(240, 240, 240));
+                    text.Background = new SolidColorBrush(Color.FromArgb(16, 0, 0,0));
                 }
                 tracksGrid.Children.Add(text);
 
