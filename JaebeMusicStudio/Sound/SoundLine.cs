@@ -261,14 +261,15 @@ namespace JaebeMusicStudio.Sound
             lock (this)
             {
                 this.completed = true;
-            }
-            foreach (var x in waitingOnCompletion)
-            {
-                try
+
+                foreach (var x in waitingOnCompletion)
                 {
-                    x();
+                    try
+                    {
+                        x();
+                    }
+                    catch { }
                 }
-                catch { }
             }
         }
         public class SoundLineRenderingAwaiter : INotifyCompletion

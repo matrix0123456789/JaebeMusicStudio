@@ -93,21 +93,28 @@ namespace JaebeMusicStudio.Sound
                         var j_copy = j;
                         tasks[i, j] = Task.Run(() =>
                         {
-                            if (start > note.Offset)
+                            try
                             {
-                                var l1 = note.Length + oscillators[j_copy].R - (start - note.Offset);
-                                if (length < l1)
+                                if (start > note.Offset)
                                 {
-                                    l1 = length;
+                                    var l1 = note.Length + oscillators[j_copy].R - (start - note.Offset);
+                                    if (length < l1)
+                                    {
+                                        l1 = length;
+                                    }
+                                    return oscillators[j_copy].GetSound(start - note.Offset, l1, note);
                                 }
-                                return oscillators[j_copy].GetSound(start - note.Offset, l1, note);
+                                else
+                                {
+                                    var l1 = length + start - note.Offset;
+                                    if (note.Length + oscillators[j_copy].R < l1)
+                                        l1 = note.Length + oscillators[j_copy].R;
+                                    return oscillators[j_copy].GetSound(0, l1, note);
+                                }
                             }
-                            else
+                            catch
                             {
-                                var l1 = length + start - note.Offset;
-                                if (note.Length + oscillators[j_copy].R < l1)
-                                    l1 = note.Length + oscillators[j_copy].R;
-                                return oscillators[j_copy].GetSound(0, l1, note);
+                                return null;
                             }
                         });
                     }

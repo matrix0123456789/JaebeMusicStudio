@@ -27,6 +27,8 @@
 
             </Grid>
             <UI:ButtonPretty Height="20" Margin="135,36,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="20" Icon="e80a" x:Name="openInputsButton" Click="openInputsButton_Click" ToolTip="Wejścia"/>
+            <Label Content="Tempo" HorizontalAlignment="Left" Margin="10,75,0,0" VerticalAlignment="Top"/>
+            <TextBox HorizontalAlignment="Left" Height="23" Margin="61,75,0,0" TextWrapping="Wrap" Text="120" VerticalAlignment="Top" Width="120" Name="TempoTextBox" TextChanged="TempoTextBox_TextChanged"/>
         </Grid>
     </Grid>
 </Window>

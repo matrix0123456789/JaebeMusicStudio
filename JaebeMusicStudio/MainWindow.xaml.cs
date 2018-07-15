@@ -156,5 +156,14 @@ namespace JaebeMusicStudio
         {
             PseudoWindow.OpenWindow(() => new Widgets.InputsUi());
         }
+
+        private void TempoTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                Project.current.tempo = float.Parse(TempoTextBox.Text);
+            }
+            catch { }
+        }
     }
 }

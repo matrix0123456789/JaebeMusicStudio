@@ -24,6 +24,7 @@ namespace JaebeMusicStudio.Sound
         public float tempo
         {
             get { return _tempo; }
+            set { _tempo = value; }
         }
 
         public float sampleRate

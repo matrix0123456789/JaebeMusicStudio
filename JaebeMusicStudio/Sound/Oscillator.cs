@@ -84,7 +84,8 @@ namespace JaebeMusicStudio.Sound
         {
             long samples = (long)Project.current.CountSamples(length); //how many samples you need on output
             float samplesTotal = Project.current.CountSamples(note.Length + R);
-            var timeWaited = Project.current.CountSamples(randomPhase ? start + 1000 : start);//+1000 to taki trik
+            var phaseTimeWaited = Project.current.CountSamples(randomPhase ? start + 1000 : start);//+1000 to taki trik
+            var realTimeWaited = Project.current.CountSamples( start);//+1000 to taki trik
             var ret = new float[2, samples]; //sound that will be returned
 
             foreach (var p in Pitchs)
@@ -93,19 +94,19 @@ namespace JaebeMusicStudio.Sound
                 switch (Type)
                 {
                     case OscillatorType.sine:
-                        createSine(ret, waveTime, timeWaited);
+                        createSine(ret, waveTime, phaseTimeWaited);
                         break;
                     case OscillatorType.saw:
-                        createSaw(ret, waveTime, timeWaited);
+                        createSaw(ret, waveTime, phaseTimeWaited);
                         break;
                     case OscillatorType.square:
-                        createSquare(ret, waveTime, timeWaited);
+                        createSquare(ret, waveTime, phaseTimeWaited);
                         break;
                     case OscillatorType.triangle:
-                        createTriangle(ret, waveTime, timeWaited);
+                        createTriangle(ret, waveTime, phaseTimeWaited);
                         break;
                     case OscillatorType.whiteNoise:
-                        createWhite(ret, waveTime, timeWaited);
+                        createWhite(ret, waveTime, phaseTimeWaited);
                         break;
                 }
             }
@@ -115,7 +116,7 @@ namespace JaebeMusicStudio.Sound
             for (int i = 0; i < samples; i++)
             {
                 float adsrVal;
-                var sumTime = i + timeWaited;
+                var sumTime = i + realTimeWaited;
                 if (sumTime < dLen)
                     adsrVal = S + (1 - S) * (dLen - sumTime) / dLen;
                 else

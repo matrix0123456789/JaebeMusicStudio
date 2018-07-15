@@ -89,7 +89,11 @@ namespace JaebeMusicStudio.Widgets
         {
             showTimeLabels();
             tracksGrid.Children.Clear();
-            foreach (var x in tracksContentStackGrid.Children)
+            var tracksContentStackGridArray = new UIElement[tracksContentStackGrid.Children.Count];
+            for (var i = 0;  i<tracksContentStackGridArray.Length; i++){
+                tracksContentStackGridArray[i] = tracksContentStackGrid.Children[i];
+            }
+            foreach (var x in tracksContentStackGridArray)
             {
                 if (x is Grid)
                     tracksContentStackGrid.Children.Remove(x as Grid);
