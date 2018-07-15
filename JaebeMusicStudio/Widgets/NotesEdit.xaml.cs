@@ -35,6 +35,8 @@ namespace JaebeMusicStudio.Widgets
         private EditingTypes editingType;
         List<Line> timeLines = new List<Line>();
         enum EditingTypes { Move, Rezise }
+        private float selectStart = 0;
+        private float selectEnd = 0;
         public NotesEdit(Notes notes)
         {
             this.notes = notes;
@@ -87,7 +89,11 @@ namespace JaebeMusicStudio.Widgets
         {
             showTimeLabels();
             tracksGrid.Children.Clear();
-            tracksContentStackGrid.Children.Clear();
+            foreach (var x in tracksContentStackGrid.Children)
+            {
+                if (x is Grid)
+                    tracksContentStackGrid.Children.Remove(x as Grid);
+            }
             foreach (var note in notes.Items)
             {
                 noteAdded(note);
@@ -152,18 +158,50 @@ namespace JaebeMusicStudio.Widgets
                 text.TextAlignment = TextAlignment.Left;
                 text.Height = scaleY;
                 text.Text = Note.GetName(i);
+                text.Tag = i;
                 if (Note.IsPitchBlack(i))
                 {
-                    text.Background = new SolidColorBrush(Color.FromArgb(56, 0, 0,0));
+                    text.Background = new SolidColorBrush(Color.FromArgb(56, 0, 0, 0));
                 }
                 else
                 {
-                    text.Background = new SolidColorBrush(Color.FromArgb(16, 0, 0,0));
+                    text.Background = new SolidColorBrush(Color.FromArgb(16, 0, 0, 0));
                 }
                 tracksGrid.Children.Add(text);
-
+                text.MouseDown += pitchMouseDown; text.MouseUp += pitchMouseUp;
+                
             }
         }
+
+        private void pitchMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var block = (TextBlock)sender;
+            var pitch = (int)block.Tag;
+
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                if (lastClick != null && (DateTime.Now - lastClickTime).TotalSeconds < 1 && (lastClick.GetPosition(this) - lastClick.GetPosition(this)).Length < 100)
+                {
+                    var newNote = new Note();
+                    newNote.Offset = selectStart;
+                    newNote.Pitch = pitch;
+                    newNote.Length = 1;
+                    notes.Items.Add(newNote);
+                    lastClick = null;
+                }
+                else
+                {
+                    lastClick = e;
+                    lastClickTime = DateTime.Now;
+ 
+                }
+            }
+        }
+        private void pitchMouseUp(object sender, MouseButtonEventArgs e)
+        {
+           
+        }
+
         private void Player_positionChanged(float obj = 0)
         {
             Dispatcher.Invoke(() =>
@@ -441,20 +479,37 @@ namespace JaebeMusicStudio.Widgets
         static DateTime lastClickTime;
         private void tracksContentStackGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (lastClick != null && (DateTime.Now - lastClickTime).TotalSeconds < 1 && (lastClick.GetPosition(this) - lastClick.GetPosition(this)).Length < 100)
+            if (e.ChangedButton == MouseButton.Left)
             {
-                var newNote = new Note();
-                newNote.Offset = AddCalcNewTime(e);
-                newNote.Pitch = AddCalcNewPitch(e);
-                newNote.Length = 1;
-                notes.Items.Add(newNote);
-                lastClick = null;
+                if (lastClick != null && (DateTime.Now - lastClickTime).TotalSeconds < 1 && (lastClick.GetPosition(this) - lastClick.GetPosition(this)).Length < 100)
+                {
+                    var newNote = new Note();
+                    newNote.Offset = AddCalcNewTime(e);
+                    newNote.Pitch = AddCalcNewPitch(e);
+                    newNote.Length = 1;
+                    notes.Items.Add(newNote);
+                    lastClick = null;
+                }
+                else
+                {
+                    lastClick = e;
+                    lastClickTime = DateTime.Now;
+                    selectEnd = selectStart = AddCalcNewTime(e);
+                    updateSelect();
+                }
             }
-            else
+        }
+
+        private void updateSelect()
+        {
+            if (selectStart > selectEnd)
             {
-                lastClick = e;
-                lastClickTime = DateTime.Now;
+                float tmp = selectStart;
+                selectStart = selectEnd;
+                selectEnd = tmp;
             }
+            selection.Margin = new Thickness(selectStart * scaleX-1, 0, 0, 0);
+            selection.Width = (selectEnd - selectStart) * scaleX+2;
         }
     }
 }
