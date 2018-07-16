@@ -28,8 +28,10 @@ namespace JaebeMusicStudio.Sound
         }
         public SoundLine SoundLine { get; set; }
         private Dictionary<int, BasicPercussionElement> pitchesToElement = new Dictionary<int, BasicPercussionElement>();
-
-        public BasicPercussion(XmlNode element)
+        public BasicPercussion()
+        {
+        }
+            public BasicPercussion(XmlNode element)
         {
             Name = element.Attributes["name"].Value;
             foreach (XmlNode ch in element.ChildNodes)

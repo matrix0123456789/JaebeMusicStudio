@@ -17,6 +17,7 @@
                 <ContextMenu>
                     <MenuItem Header="Dodaj">
                         <MenuItem Name="AddStandard" Header="Standardowy syntezator" Click="AddStandard_Click"></MenuItem>
+                        <MenuItem Name="AddBasicPercussion" Header="Standardowa perkusja" Click="AddBasicPercussion_Click"></MenuItem> 
                         <MenuItem Name="AddVSTi" Header="VSTi" Click="AddVSTi_Click"></MenuItem>
                     </MenuItem>
                     <MenuItem Name="contextMenuPaste" Header="Wklej" Click="contextMenuPaste_Click"></MenuItem>

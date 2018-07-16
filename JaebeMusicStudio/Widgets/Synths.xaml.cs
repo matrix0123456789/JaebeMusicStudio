@@ -105,5 +105,10 @@ namespace JaebeMusicStudio.Widgets
             }
             catch { }
         }
+
+        private void AddBasicPercussion_Click(object sender, RoutedEventArgs e)
+        {
+                        Project.current.NoteSynths.Add(new BasicPercussion());
+        }
     }
 }

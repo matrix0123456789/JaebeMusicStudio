@@ -110,14 +110,17 @@
     <Compile Include="Sound\BasicPercussion.cs" />
     <Compile Include="Sound\BasicPercussionElement.cs" />
     <Compile Include="Sound\BasicSync.cs" />
+    <Compile Include="Sound\Compresor.cs" />
     <Compile Include="Sound\Effect.cs" />
     <Compile Include="Sound\FileFormat\IFileFormat.cs" />
     <Compile Include="Sound\FileFormat\MP3.cs" />
     <Compile Include="Sound\FileFormat\Wave.cs" />
     <Compile Include="Sound\Flanger.cs" />
+    <Compile Include="Sound\IEffectModulable.cs" />
     <Compile Include="Sound\ILiveInput.cs" />
     <Compile Include="Sound\INamedElement.cs" />
     <Compile Include="Sound\INoteSynth.cs" />
+    <Compile Include="Sound\LFO.cs" />
     <Compile Include="Sound\LiveSoundLine.cs" />
     <Compile Include="Sound\KeyboardInput.cs" />
     <Compile Include="Sound\LiveSoundLineCollection.cs" />

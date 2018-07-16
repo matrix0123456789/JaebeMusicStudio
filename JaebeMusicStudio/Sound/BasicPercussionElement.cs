@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,22 @@ namespace JaebeMusicStudio.Sound
 
         public BasicPercussionElement(XmlNode ch)
         {
+           foreach(XmlNode x in ch.ChildNodes)
+            {
+                if (x.Name == "Tone")
+                {
+                    ToneHalfTime = float.Parse(x.Attributes["halfTime"].Value, CultureInfo.InvariantCulture);
+                    ToneFrequency = float.Parse(x.Attributes["frequency"].Value, CultureInfo.InvariantCulture);
+                    ToneModulationTime = float.Parse(x.Attributes["modulationTime"].Value, CultureInfo.InvariantCulture);
+                    ModulationAddFrequency = float.Parse(x.Attributes["modulationAddFrequency"].Value, CultureInfo.InvariantCulture);
+                    ToneVolume = float.Parse(x.Attributes["volume"].Value, CultureInfo.InvariantCulture);
+                }
+                else if (x.Name == "Noise")
+                {
+                    NoiseHalfTime = float.Parse(x.Attributes["halfTime"].Value, CultureInfo.InvariantCulture);
+                    NoiseVolume = float.Parse(x.Attributes["volume"].Value, CultureInfo.InvariantCulture);
+                }
+            }
         }
         public float[,] GetSound(float start, float length, Note note)
         {
