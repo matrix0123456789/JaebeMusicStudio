@@ -50,8 +50,8 @@ namespace JaebeMusicStudio.Sound
             var samples = Noise.GetLength(1);
             for (var i = 0; i < samples; i++)
             {
-                Noise[0, i] += Tone[0, i];
-                Noise[1, i] += Tone[1, i];
+                Noise[0, i] =(Noise[0, i]+ Tone[0, i])*note.Volume;
+                Noise[1, i] =(Noise[1, i]+ Tone[1, i])*note.Volume;
             }
             return Noise;
         }
@@ -99,6 +99,19 @@ namespace JaebeMusicStudio.Sound
         {
             var node2 = node.OwnerDocument.CreateElement("BasicPercussionElement");
             node2.SetAttribute("pitches", string.Join(",", pitches.Select(x => x.ToString())));
+
+            var nodeTone = node.OwnerDocument.CreateElement("Tone");
+            nodeTone.SetAttribute("halfTime", ToneHalfTime.ToString(CultureInfo.InvariantCulture));
+            nodeTone.SetAttribute("frequency", ToneFrequency.ToString(CultureInfo.InvariantCulture));
+            nodeTone.SetAttribute("modulationTime", ToneModulationTime.ToString(CultureInfo.InvariantCulture));
+            nodeTone.SetAttribute("volume", ToneVolume.ToString(CultureInfo.InvariantCulture));
+            node2.AppendChild(nodeTone);
+
+            var nodeNoise = node.OwnerDocument.CreateElement("Noise");
+            nodeNoise.SetAttribute("halfTime", NoiseHalfTime.ToString(CultureInfo.InvariantCulture));
+            nodeNoise.SetAttribute("volume", NoiseVolume.ToString(CultureInfo.InvariantCulture));
+            node2.AppendChild(nodeNoise);
+
             node.AppendChild(node2);
         }
 

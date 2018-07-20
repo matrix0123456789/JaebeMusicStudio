@@ -144,7 +144,7 @@ namespace JaebeMusicStudio.Sound
             var node2 = node.OwnerDocument.CreateElement("BasicPercussion");
             node2.SetAttribute("name", Name);
             node2.SetAttribute("soundLine", Project.current.lines.IndexOf(SoundLine).ToString());
-            foreach (var BPElem in pitchesToElement.Values)
+            foreach (var BPElem in elements)
             {
                 BPElem.Serialize(node2, pitchesToElement.Where(pair => pair.Value == BPElem).Select(pair => pair.Key));
             }

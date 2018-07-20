@@ -35,11 +35,11 @@ namespace JaebeMusicStudio.Sound
                     var eventObj = e.MidiEvent as NoteEvent;
                     var eventObjOn = e.MidiEvent as NoteEvent;
                     var pitch = eventObj.NoteNumber;
-                    if (eventObjOn != null&& eventObj.Velocity>0)
+                    if (eventObjOn != null && eventObj.Velocity > 0)
                     {
                         if (!pressedNotes.ContainsKey(pitch))
                         {
-                            var newNote = new Note() { Offset = (float)curentPositon, Length = float.MaxValue, Pitch = pitch };
+                            var newNote = new Note() { Offset = (float)curentPositon, Length = float.MaxValue, Pitch = pitch, Volume = (float)eventObj.Velocity / 128 };
                             pressedNotes.Add(pitch, newNote);
                             Items.Add(newNote);
                         }
@@ -54,7 +54,7 @@ namespace JaebeMusicStudio.Sound
                         }
                     }
                     break;
-                    
+
                 default:
                     Console.WriteLine(e.MidiEvent.ToString());
                     break;
@@ -64,7 +64,7 @@ namespace JaebeMusicStudio.Sound
         static public List<MidiInput> getAllObject()
         {
             var ret = new List<MidiInput>();
-            for(var i=0;i< MidiIn.NumberOfDevices; i++)
+            for (var i = 0; i < MidiIn.NumberOfDevices; i++)
             {
                 ret.Add(getObject(i));
             }

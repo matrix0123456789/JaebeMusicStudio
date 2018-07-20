@@ -27,8 +27,18 @@ namespace JaebeMusicStudio.Widgets
         {
             this.element = element;
             InitializeComponent();
+            init();
         }
-
+        void init()
+        {
+            ToneVolume.Value = element.ToneVolume;
+            ToneHalfTime.Value = element.ToneHalfTime;
+            ToneFrequency.Value = element.ToneFrequency;
+            ModulationAddFrequency.Value = element.ModulationAddFrequency;
+            ToneModulationTime.Value = element.ToneModulationTime;
+            NoiseVolume.Value = element.NoiseVolume;
+            NoiseHalfTime.Value = element.NoiseHalfTime;
+        }
 
         private void ToneVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
