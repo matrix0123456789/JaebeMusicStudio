@@ -39,7 +39,7 @@ namespace JaebeMusicStudio.Sound
                     {
                         if (!pressedNotes.ContainsKey(pitch))
                         {
-                            var newNote = new Note() { Offset = (float)curentPositon, Length = float.MaxValue, Pitch = pitch, Volume = (float)eventObj.Velocity / 128 };
+                            var newNote = new Note() { Offset = (float)curentPositon, Length = float.MaxValue, Pitch = pitch, Volume = (float)eventObj.Velocity / 127 };
                             pressedNotes.Add(pitch, newNote);
                             Items.Add(newNote);
                         }
