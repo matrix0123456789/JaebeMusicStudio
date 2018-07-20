@@ -8,23 +8,25 @@ using System.Xml;
 
 namespace JaebeMusicStudio.Sound
 {
-    class BasicPercussionElement
+    public class BasicPercussionElement
     {
         Random RandomGenerator = new Random();
         public float SoundLength { get { return Math.Max(ToneHalfTime, NoiseHalfTime) * quality / 60 * Project.current.tempo; } }
         /*const*/
         int quality = 16;//where its silence
-        float ToneHalfTime = .4f;
-        float ToneModulationTime = .1f;
-        float ModulationAddFrequency = 150;
-        float ToneVolume = 1;
-        float ToneFrequency = 50;
-        float NoiseHalfTime = .1f;
-        float NoiseVolume = .4f;
-
+        float toneHalfTime = .4f;
+        float toneModulationTime = .1f;
+        float modulationAddFrequency = 150;
+        float toneVolume = 1;
+        float toneFrequency = 50;
+        float noiseHalfTime = .1f;
+        float noiseVolume = .4f;
+        public BasicPercussionElement()
+        {
+        }
         public BasicPercussionElement(XmlNode ch)
         {
-           foreach(XmlNode x in ch.ChildNodes)
+            foreach (XmlNode x in ch.ChildNodes)
             {
                 if (x.Name == "Tone")
                 {
@@ -98,6 +100,70 @@ namespace JaebeMusicStudio.Sound
             var node2 = node.OwnerDocument.CreateElement("BasicPercussionElement");
             node2.SetAttribute("pitches", string.Join(",", pitches.Select(x => x.ToString())));
             node.AppendChild(node2);
+        }
+
+        public event Action<BasicPercussionElement> parametersChanged;
+        public float ToneHalfTime
+        {
+            get { return toneHalfTime; }
+            set
+            {
+                if (toneHalfTime == value) return; toneHalfTime = value; parametersChanged?.Invoke(this);
+            }
+        }
+
+
+
+        public float ToneModulationTime
+        {
+            get { return toneModulationTime; }
+            set
+            {
+                if (toneModulationTime == value) return; toneModulationTime = value; parametersChanged?.Invoke(this);
+            }
+        }
+
+        public float ModulationAddFrequency
+        {
+            get { return modulationAddFrequency; }
+            set
+            {
+                if (modulationAddFrequency == value) return; modulationAddFrequency = value; parametersChanged?.Invoke(this);
+            }
+        }
+
+        public float ToneVolume
+        {
+            get { return toneVolume; }
+            set
+            {
+                if (toneVolume == value) return; toneVolume = value; parametersChanged?.Invoke(this);
+            }
+        }
+
+        public float ToneFrequency
+        {
+            get { return toneFrequency; }
+            set
+            {
+                if (toneFrequency == value) return; toneFrequency = value; parametersChanged?.Invoke(this);
+            }
+        }
+        public float NoiseVolume
+        {
+            get { return noiseVolume; }
+            set
+            {
+                if (noiseVolume == value) return; noiseVolume = value; parametersChanged?.Invoke(this);
+            }
+        }
+        public float NoiseHalfTime
+        {
+            get { return noiseHalfTime; }
+            set
+            {
+                if (noiseHalfTime == value) return; noiseHalfTime = value; parametersChanged?.Invoke(this);
+            }
         }
     }
 }

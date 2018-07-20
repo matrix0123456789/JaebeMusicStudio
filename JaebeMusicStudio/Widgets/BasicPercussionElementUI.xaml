@@ -1,0 +1,26 @@
+﻿<UserControl x:Class="JaebeMusicStudio.Widgets.BasicPercussionElementUI"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:JaebeMusicStudio.Widgets"
+             xmlns:UI="clr-namespace:JaebeMusicStudio.UI"
+             mc:Ignorable="d" 
+             Height="350" d:DesignWidth="300">
+    <Grid Height="350" VerticalAlignment="Top">
+        <Label VerticalAlignment="Top">Ton: glośność</Label>
+        <UI:Slider VerticalAlignment="Top" x:Name="ToneVolume" Minimum="0" Maximum="1" Margin="0,26,0,0" ValueChanged="ToneVolume_ValueChanged"></UI:Slider>
+        <UI:Slider VerticalAlignment="Top" x:Name="ToneHalfTime" Minimum="0" Maximum="1" Margin="0,75,0,0" ValueChanged="ToneHalfTime_ValueChanged"></UI:Slider>
+        <UI:Slider VerticalAlignment="Top" x:Name="ToneFrequency" Minimum="0" Maximum="1000" Margin="0,124,0,0" ValueChanged="ToneFrequency_ValueChanged"></UI:Slider>
+        <UI:Slider VerticalAlignment="Top" x:Name="ModulationAddFrequency" Minimum="0" Maximum="1000" Margin="0,173,0,0" ValueChanged="ModulationAddFrequency_ValueChanged"></UI:Slider>
+        <UI:Slider VerticalAlignment="Top" x:Name="ToneModulationTime"  Minimum="0" Maximum="1" Margin="0,222,0,0" ValueChanged="ToneModulationTime_ValueChanged"></UI:Slider>
+        <UI:Slider VerticalAlignment="Top" x:Name="NoiseVolume" Minimum="0" Maximum="1" Margin="0,272,0,0" ValueChanged="NoiseVolume_ValueChanged"></UI:Slider>
+        <UI:Slider VerticalAlignment="Top" x:Name="NoiseHalfTime" Minimum="0" Maximum="1" Margin="0,321,0,-39" ValueChanged="NoiseHalfTime_ValueChanged"></UI:Slider>
+        <Label VerticalAlignment="Top" Content="Ton: czas półzaniku" Margin="0,49,0,0"/>
+        <Label VerticalAlignment="Top" Content="Ton: częstotliwość" Margin="0,98,0,0"/>
+        <Label VerticalAlignment="Top" Content="Ton: cześtotliwość dodatkowa startowa" Margin="0,147,0,0"/>
+        <Label VerticalAlignment="Top" Content="Ton: czas startowej podwyższonej cześtotliwości" Margin="0,196,0,0"/>
+        <Label VerticalAlignment="Top" Content="Szum: głośność" Margin="0,245,0,0"/>
+        <Label VerticalAlignment="Top" Content="Szum: czas półzaniku" Margin="0,295,0,-21"/>
+    </Grid>
+</UserControl>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ using System.Xml;
 
 namespace JaebeMusicStudio.Sound
 {
-    class BasicPercussion : INoteSynth
+    public class BasicPercussion : INoteSynth
     {
 
         private string name;
@@ -30,9 +31,11 @@ namespace JaebeMusicStudio.Sound
         private Dictionary<int, BasicPercussionElement> pitchesToElement = new Dictionary<int, BasicPercussionElement>();
         public BasicPercussion()
         {
+            elements.CollectionChanged += elements_CollectionChanged;
         }
-            public BasicPercussion(XmlNode element)
+        public BasicPercussion(XmlNode element)
         {
+            elements.CollectionChanged += elements_CollectionChanged;
             Name = element.Attributes["name"].Value;
             foreach (XmlNode ch in element.ChildNodes)
             {
@@ -44,6 +47,7 @@ namespace JaebeMusicStudio.Sound
                     {
                         pitchesToElement.Add(x, BPElem);
                     }
+                    elements.Add(BPElem);
                 }
             }
         }
@@ -146,5 +150,14 @@ namespace JaebeMusicStudio.Sound
             }
             node.AppendChild(node2);
         }
+        public event Action<int, BasicPercussionElement> elementAdded;
+        private void elements_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                elementAdded?.Invoke(e.NewStartingIndex, e.NewItems[0] as BasicPercussionElement);
+            }
+        }
+        public ObservableCollection<BasicPercussionElement> elements = new ObservableCollection<BasicPercussionElement>();
     }
 }

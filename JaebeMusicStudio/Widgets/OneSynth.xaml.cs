@@ -38,7 +38,12 @@ namespace JaebeMusicStudio.Widgets
             if (synth is BasicSynth)
             {
                 PseudoWindow.OpenWindow(() => new Widgets.BasicSynthUi(synth as BasicSynth));
-            }else if (synth is VSTi)
+            }
+            else if (synth is BasicPercussion)
+            {
+                PseudoWindow.OpenWindow(() => new Widgets.BasicPercussionUI(synth as BasicPercussion));
+            }
+            else if (synth is VSTi)
             {
                 (synth as VSTi).ShowWindow();
             }
