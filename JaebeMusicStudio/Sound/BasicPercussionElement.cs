@@ -50,8 +50,8 @@ namespace JaebeMusicStudio.Sound
             var samples = Noise.GetLength(1);
             for (var i = 0; i < samples; i++)
             {
-                Noise[0, i] =(Noise[0, i]+ Tone[0, i])*note.Volume;
-                Noise[1, i] =(Noise[1, i]+ Tone[1, i])*note.Volume;
+                Noise[0, i] = (Noise[0, i] + Tone[0, i]) * note.Volume;
+                Noise[1, i] = (Noise[1, i] + Tone[1, i]) * note.Volume;
             }
             return Noise;
         }
@@ -63,7 +63,11 @@ namespace JaebeMusicStudio.Sound
             var ret = new float[2, samples]; //sound that will be returned
             for (var i = 0; i < samples; i++)
             {
-                var volume = (float)Math.Pow(.5, (i + timeWaited) / Project.current.sampleRate / NoiseHalfTime) * NoiseVolume;
+                float volume;
+                if (NoiseHalfTime == 0)
+                    volume = 0;
+                else
+                    volume = (float)Math.Pow(.5, (i + timeWaited) / Project.current.sampleRate / NoiseHalfTime) * NoiseVolume;
                 ret[0, i] = ((float)RandomGenerator.NextDouble() * 2f - 1f) * volume;
                 ret[1, i] = ((float)RandomGenerator.NextDouble() * 2f - 1f) * volume;
             }
@@ -104,6 +108,7 @@ namespace JaebeMusicStudio.Sound
             nodeTone.SetAttribute("halfTime", ToneHalfTime.ToString(CultureInfo.InvariantCulture));
             nodeTone.SetAttribute("frequency", ToneFrequency.ToString(CultureInfo.InvariantCulture));
             nodeTone.SetAttribute("modulationTime", ToneModulationTime.ToString(CultureInfo.InvariantCulture));
+            nodeTone.SetAttribute("modulationAddFrequency", ModulationAddFrequency.ToString(CultureInfo.InvariantCulture));
             nodeTone.SetAttribute("volume", ToneVolume.ToString(CultureInfo.InvariantCulture));
             node2.AppendChild(nodeTone);
 

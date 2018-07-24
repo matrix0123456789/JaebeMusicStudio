@@ -256,7 +256,7 @@ namespace JaebeMusicStudio.Sound
             var document = new XmlDocument();
 
             document.LoadXml("<?xml version=\"1.0\" encoding=\"UTF-8\"?><project></project>");
-
+            document.DocumentElement.SetAttribute("tempo", tempo.ToString(CultureInfo.InvariantCulture));
             foreach (var x in lines)
             {
                 x.Serialize(document);
@@ -289,6 +289,10 @@ namespace JaebeMusicStudio.Sound
 
         void LoadXml(XmlDocument document)
         {
+            if (document.DocumentElement.Attributes["tempo"] != null)
+            {
+                tempo = float.Parse(document.DocumentElement.Attributes["tempo"].Value, CultureInfo.InvariantCulture);
+            }
             var lines = document.GetElementsByTagName("SoundLine");
             foreach (XmlElement line in lines)
             {

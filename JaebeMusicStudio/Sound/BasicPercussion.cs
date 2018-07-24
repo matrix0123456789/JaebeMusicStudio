@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JaebeMusicStudio.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -37,6 +38,15 @@ namespace JaebeMusicStudio.Sound
         {
             elements.CollectionChanged += elements_CollectionChanged;
             Name = element.Attributes["name"].Value;
+            if (element.Attributes["soundLine"] != null)
+            {
+                var number = uint.Parse(element.Attributes["soundLine"].Value);
+                if (number >= Project.current.lines.Count)
+                    throw new BadFileException();
+                SoundLine = Project.current.lines[(int)number];
+            }
+            else
+                SoundLine = Project.current.lines[0];
             foreach (XmlNode ch in element.ChildNodes)
             {
                 if (ch.Name == "BasicPercussionElement")
