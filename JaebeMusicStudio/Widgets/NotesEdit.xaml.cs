@@ -29,12 +29,13 @@ namespace JaebeMusicStudio.Widgets
         double scaleX = 20;
         double scaleY = 20;
         int offsetY = 80;
-        private Note editingElement;
-        private FrameworkElement editingVisualElement;
+        private List<Note> editingElements = new List<Note>();
+        private List<FrameworkElement> editingVisualElements = new List<FrameworkElement>();
         private Point editingStartposition;
+        private DateTime editingStarTime;
         private EditingTypes editingType;
         List<Line> timeLines = new List<Line>();
-        enum EditingTypes { Move, Rezise }
+        enum EditingTypes { None, Move, Rezise }
         private float selectStart = 0;
         private float selectEnd = 0;
         public NotesEdit(Notes notes)
@@ -90,7 +91,8 @@ namespace JaebeMusicStudio.Widgets
             showTimeLabels();
             tracksGrid.Children.Clear();
             var tracksContentStackGridArray = new UIElement[tracksContentStackGrid.Children.Count];
-            for (var i = 0;  i<tracksContentStackGridArray.Length; i++){
+            for (var i = 0; i < tracksContentStackGridArray.Length; i++)
+            {
                 tracksContentStackGridArray[i] = tracksContentStackGrid.Children[i];
             }
             foreach (var x in tracksContentStackGridArray)
@@ -173,7 +175,7 @@ namespace JaebeMusicStudio.Widgets
                 }
                 tracksGrid.Children.Add(text);
                 text.MouseDown += pitchMouseDown; text.MouseUp += pitchMouseUp;
-                
+
             }
         }
 
@@ -197,13 +199,13 @@ namespace JaebeMusicStudio.Widgets
                 {
                     lastClick = e;
                     lastClickTime = DateTime.Now;
- 
+
                 }
             }
         }
         private void pitchMouseUp(object sender, MouseButtonEventArgs e)
         {
-           
+
         }
 
         private void Player_positionChanged(float obj = 0)
@@ -274,6 +276,7 @@ namespace JaebeMusicStudio.Widgets
 
                 grid.Tag = element;
                 grid.MouseLeftButtonDown += Element_MouseLeftButtonDown;
+                grid.MouseLeftButtonUp += Element_MouseLeftButtonUp;
                 element.Changed += Note_Changed;
 
                 var menu = new ContextMenu();
@@ -361,18 +364,43 @@ namespace JaebeMusicStudio.Widgets
         private void Element_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             editingStartposition = e.GetPosition(this);
-            editingElement = (Note)(sender as Grid).Tag;
-            editingVisualElement = (FrameworkElement)sender;
+            editingStarTime = DateTime.Now;
+            var note = (Note)(sender as Grid).Tag;
+            var visualElement = (FrameworkElement)sender;
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            {
+                editingElements.Add(note);
+                editingVisualElements.Add(visualElement);
+            }
+            else
+            {
+                editingElements = new List<Note> { note };
+                editingVisualElements = new List<FrameworkElement> { visualElement };
+            }
 
             editingType = EditingTypes.Move;
+        }
+        private void Element_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+
         }
         private void ElementResizer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             editingStartposition = e.GetPosition(this);
             var resizer = (sender as Grid);
             var parent = resizer.Parent as Grid;
-            editingElement = (Note)(parent).Tag;
-            editingVisualElement = parent;
+            var note = (Note)(parent).Tag;
+
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            {
+                editingElements.Add(note);
+                editingVisualElements.Add(parent);
+            }
+            else
+            {
+                editingElements = new List<Note> { note };
+                editingVisualElements = new List<FrameworkElement> { parent };
+            }
 
             editingType = EditingTypes.Rezise;
             e.Handled = true;
@@ -381,37 +409,21 @@ namespace JaebeMusicStudio.Widgets
 
         float editCalcNewTime(MouseEventArgs e)
         {
-            var timeDifference = (editingStartposition.X - e.GetPosition(this).X) / scaleX;
-            double newTime;
-            if (editingType == EditingTypes.Move)
-            {
-                newTime = editingElement.Offset - timeDifference;
-            }
-            else
-            {
-                newTime = editingElement.Length - timeDifference;
-            }
-            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
-            {
-                var scale = 1 / scaleX * 20;
-                var scale1 = Math.Pow(10, Math.Ceiling(Math.Log10(scale)));
-                if (scale1 / 5 > scale)
-                    scale = scale1 / 5;
-                else if (scale1 / 2 > scale)
-                    scale = scale1 / 2;
-                else
-                    scale = scale1;
-                newTime = Math.Round(newTime / scale) * scale;
-                if (newTime <= 0)
-                    newTime = scale;
-            }
-            return (float)newTime;
+            return -(float)((editingStartposition.X - e.GetPosition(this).X) / scaleX);
         }
+        float roundTime(float input)
+        {
+            var scale = 1 / scaleX * 20;
+            var scaleRounded = Math.Pow(2, Math.Ceiling(Math.Log(scale)/ Math.Log(2)));
+
+           return (float)(Math.Round(input / scaleRounded) * scaleRounded);
+
+        }
+
         int editCalcNewPitch(MouseEventArgs e)
         {
-            var timeDifference = -(editingStartposition.Y - e.GetPosition(this).Y) / scaleY;
-            var newPitch = editingElement.Pitch - timeDifference;
-            return (int)Math.Round(newPitch);
+            var deltaPitch = (editingStartposition.Y - e.GetPosition(this).Y) / scaleY;
+            return (int)Math.Round(deltaPitch);
         }
         float AddCalcNewTime(MouseEventArgs e)
         {
@@ -441,7 +453,7 @@ namespace JaebeMusicStudio.Widgets
 
         private void Page_MouseMove(object sender, MouseEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed && editingElement != null)
+            if (e.LeftButton == MouseButtonState.Pressed && editingType != EditingTypes.None)
             {
                 moveByMouseMovement(e, false);
 
@@ -449,40 +461,74 @@ namespace JaebeMusicStudio.Widgets
         }
         void moveByMouseMovement(MouseEventArgs e, bool save)
         {
-            var offset = editingElement.Offset;
-            var length = editingElement.Length;
-            var pitch = editingElement.Pitch;
-            if (editingType == EditingTypes.Move)
+            var deltaTime = editCalcNewTime(e);
+            var deltaPitch = editCalcNewPitch(e);
+            if (editingElements.Count != 1)
             {
-                offset = editCalcNewTime(e);
-                pitch = editCalcNewPitch(e);
+                if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+                {
+                    deltaTime = roundTime(deltaTime);
+                }
             }
-            else
-                length = editCalcNewTime(e);
-            if (length < 0)
-                length = 0;
-            if (offset < 0)
-                offset = 0;
+            for (var i = 0; i < editingElements.Count; i++)
+            {
+                var element = editingElements[i];
+                var visualElement = editingVisualElements[i];
 
-            editingVisualElement.Margin = new Thickness(offset * scaleX, (offsetY - pitch) * scaleY, 0, 0);
-            editingVisualElement.Width = length * scaleY+1;
-            if (save)
-            {
-                editingElement.Offset = offset;
-                editingElement.Length = length;
-                editingElement.Pitch = pitch;
+                var offset = element.Offset;
+                var length = element.Length;
+                var pitch = element.Pitch;
+
+
+                if (editingType == EditingTypes.Move)
+                {
+                    offset += deltaTime;
+                    if (editingElements.Count == 1)
+                    {
+                        if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+                        {
+                            offset = roundTime(offset);
+                        }
+                    }
+                    pitch += deltaPitch;
+                }else if (editingType == EditingTypes.Rezise)
+                {
+                    length += deltaTime;
+                    if (editingElements.Count == 1)
+                    {
+                        if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+                        {
+                            length = roundTime(length);
+                        }
+                    }
+                }
+
+                if (length < 0)
+                    length = 0;
+                if (offset < 0)
+                    offset = 0;
+
+                visualElement.Margin = new Thickness(offset * scaleX, (offsetY - pitch) * scaleY, 0, 0);
+                visualElement.Width = length * scaleX + 1;
+                if (save)
+                {
+                    element.Offset = offset;
+                    element.Length = length;
+                    element.Pitch = pitch;
+                }
             }
+
+
+            
         }
         private void Page_MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
             {
-                if (editingElement != null)
+                if (editingType!=EditingTypes.None)
                 {
                     moveByMouseMovement(e, true);
-
-                    editingVisualElement = null;
-                    editingElement = null;
+                    editingType = EditingTypes.None;
                 }
             }
         }
@@ -492,7 +538,7 @@ namespace JaebeMusicStudio.Widgets
         {
             if (e.ChangedButton == MouseButton.Left)
             {
-                if (lastClick != null && (DateTime.Now - lastClickTime).TotalSeconds < 1 && (lastClick.GetPosition(this) - lastClick.GetPosition(this)).Length < 100)
+                if (lastClick != null && (DateTime.Now - lastClickTime).TotalSeconds < 1 && (lastClick.GetPosition(this) - lastClick.GetPosition(this)).Length < 10)
                 {
                     var newNote = new Note();
                     newNote.Offset = AddCalcNewTime(e);
@@ -519,8 +565,8 @@ namespace JaebeMusicStudio.Widgets
                 selectStart = selectEnd;
                 selectEnd = tmp;
             }
-            selection.Margin = new Thickness(selectStart * scaleX-1, 0, 0, 0);
-            selection.Width = (selectEnd - selectStart) * scaleX+2;
+            selection.Margin = new Thickness(selectStart * scaleX - 1, 0, 0, 0);
+            selection.Width = (selectEnd - selectStart) * scaleX + 2;
         }
     }
 }
