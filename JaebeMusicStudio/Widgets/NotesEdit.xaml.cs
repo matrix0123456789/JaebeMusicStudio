@@ -54,31 +54,34 @@ namespace JaebeMusicStudio.Widgets
 
         private void NotesChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            switch (e.Action)
+            Dispatcher.Invoke(() =>
             {
-                case NotifyCollectionChangedAction.Add:
-                    foreach (var note in e.NewItems)
-                    {
-                        noteAdded(note as Note);
-                    }
-                    break;
-                case NotifyCollectionChangedAction.Remove:
-                    foreach (var note in e.OldItems)
-                    {
-                        noteRemoved(note as Note);
-                    }
-                    break;
-                case NotifyCollectionChangedAction.Replace:
-                    foreach (var note in e.NewItems)
-                    {
-                        noteAdded(note as Note);
-                    }
-                    foreach (var note in e.OldItems)
-                    {
-                        noteRemoved(note as Note);
-                    }
-                    break;
-            }
+                switch (e.Action)
+                {
+                    case NotifyCollectionChangedAction.Add:
+                        foreach (var note in e.NewItems)
+                        {
+                            noteAdded(note as Note);
+                        }
+                        break;
+                    case NotifyCollectionChangedAction.Remove:
+                        foreach (var note in e.OldItems)
+                        {
+                            noteRemoved(note as Note);
+                        }
+                        break;
+                    case NotifyCollectionChangedAction.Replace:
+                        foreach (var note in e.NewItems)
+                        {
+                            noteAdded(note as Note);
+                        }
+                        foreach (var note in e.OldItems)
+                        {
+                            noteRemoved(note as Note);
+                        }
+                        break;
+                }
+            });
         }
 
 

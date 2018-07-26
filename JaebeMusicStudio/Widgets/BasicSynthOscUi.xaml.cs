@@ -115,7 +115,10 @@ namespace JaebeMusicStudio.Widgets
 
         private void But_Click(object sender, RoutedEventArgs e)
         {
-            osc.Pitchs.Add(0);
+            lock (osc)
+            {
+                osc.Pitchs.Add(0);
+            }
         }
 
         private void Pitchui_ValueChanged(PitchUI obj)

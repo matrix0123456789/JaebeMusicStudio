@@ -88,7 +88,7 @@ namespace JaebeMusicStudio.Sound
             var realTimeWaited = Project.current.CountSamples( start);//+1000 to taki trik
             var ret = new float[2, samples]; //sound that will be returned
 
-            foreach (var p in Pitchs)
+            foreach (var p in Pitchs.ToArray())
             {
                 var waveTime = Project.current.waveTime(note.Pitch + p);
                 switch (Type)
