@@ -112,7 +112,10 @@ namespace JaebeMusicStudio.Widgets
 
         private void Ui_WantDelete(EffectMini obj)
         {
-            selectedLine.Line.effects.Remove(obj.effect);
+            lock (selectedLine.Line)
+            {
+                selectedLine.Line.effects.Remove(obj.effect);
+            }
         }
 
         private void Ui_MouseDown(object sender, MouseButtonEventArgs e)

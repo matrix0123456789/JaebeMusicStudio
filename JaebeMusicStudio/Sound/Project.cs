@@ -184,7 +184,7 @@ namespace JaebeMusicStudio.Sound
                                 if (renderStart >= 0) //you must wait to start playing
                                 {
                                     var rendered = (el as ISoundElement).GetSound(0, rendering.renderingLength - renderStart, rendering);
-                                    (el as ISoundElement).SoundLine.rendered((int)CountSamples(rendering.renderingStart),
+                                    (el as ISoundElement).SoundLine.rendered((int)CountSamples(renderStart),
                                         rendered, rendering);
                                 }
                                 else
