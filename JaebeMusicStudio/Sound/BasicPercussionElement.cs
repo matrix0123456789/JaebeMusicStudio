@@ -21,6 +21,8 @@ namespace JaebeMusicStudio.Sound
         float toneFrequency = 50;
         float noiseHalfTime = .1f;
         float noiseVolume = .4f;
+        float noiseLowpass = 2000;
+        float noiseHighpass = 200;
         public BasicPercussionElement()
         {
         }

@@ -184,5 +184,15 @@ namespace JaebeMusicStudio.Widgets
             // EffectsList.Children.Insert(index,e.Source as EffectMini);
             selectedLine.Line.AddEffect(index, newEffect);
         }
+
+        private void AddSimpleFilter_Click(object sender, RoutedEventArgs e)
+        {
+
+            if (selectedLine?.Line != null)
+            {
+                var effect = new SimpleFilter();
+                selectedLine.Line.AddEffect(effect);
+            }
+        }
     }
 }

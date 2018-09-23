@@ -34,6 +34,9 @@ namespace JaebeMusicStudio.Sound
                     case "Flanger":
                         effects.Add(new Flanger(x));
                         break;
+                    case "SimpleFilter":
+                        effects.Add(new SimpleFilter(x));
+                        break;
 
                     case "Reverb":
                         effects.Add(new Reverb(x));

@@ -45,6 +45,10 @@ namespace JaebeMusicStudio.Widgets
             {
                 PseudoWindow.OpenWindow(() => new FlangerUI(effect as Flanger));
             }
+            else if (effect is SimpleFilter)
+            {
+                PseudoWindow.OpenWindow(() => new SimpleFilterUI(effect as SimpleFilter));
+            }
         }
 
         private void ButtonPretty2_OnClick(object sender, RoutedEventArgs e)

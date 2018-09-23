@@ -115,6 +115,7 @@
     <Compile Include="Sound\FileFormat\IFileFormat.cs" />
     <Compile Include="Sound\FileFormat\MP3.cs" />
     <Compile Include="Sound\FileFormat\Wave.cs" />
+    <Compile Include="Sound\FilterIIR.cs" />
     <Compile Include="Sound\Flanger.cs" />
     <Compile Include="Sound\IEffectModulable.cs" />
     <Compile Include="Sound\ILiveInput.cs" />
@@ -137,6 +138,7 @@
     <Compile Include="Sound\Reverb.cs" />
     <Compile Include="Sound\SampledSound.cs" />
     <Compile Include="Sound\SaveSound.cs" />
+    <Compile Include="Sound\SimpleFilter.cs" />
     <Compile Include="Sound\SoundElement.cs" />
     <Compile Include="Sound\SoundElementClone.cs" />
     <Compile Include="Sound\SoundLine.cs" />
@@ -192,6 +194,9 @@
     </Compile>
     <Compile Include="Widgets\LiveSoundLineUI.xaml.cs">
       <DependentUpon>LiveSoundLineUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\SimpleFilterUI.xaml.cs">
+      <DependentUpon>SimpleFilterUI.xaml</DependentUpon>
     </Compile>
     <Compile Include="Widgets\SynthSelect.xaml.cs">
       <DependentUpon>SynthSelect.xaml</DependentUpon>
@@ -298,6 +303,10 @@
     <Page Include="Widgets\LiveSoundLineUI.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Widgets\SimpleFilterUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Widgets\SynthSelect.xaml">
       <Generator>MSBuild:Compile</Generator>

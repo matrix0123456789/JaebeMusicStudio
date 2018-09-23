@@ -32,6 +32,7 @@
                         <MenuItem Name="AddReverb" Header="Reverb" Click="AddReverb_Click"></MenuItem>
                         <MenuItem Name="AddNonlinearDistortion" Header="Nonlinear" Click="AddNonlinearDistortion_Click"></MenuItem>
                         <MenuItem Name="AddFlanger" Header="Flanger" Click="AddFlanger_Click"></MenuItem>
+                        <MenuItem Name="AddSimpleFilter" Header="SimpleFilter" Click="AddSimpleFilter_Click"></MenuItem>
                     </MenuItem>
                 </ContextMenu>
             </ScrollViewer.ContextMenu>
