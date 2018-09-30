@@ -13,6 +13,8 @@ namespace JaebeMusicStudio.Sound
     {
         public INoteSynth Sound { get; set; }
         public NotesCollection Items { get; set; }
+        private string title = "";
+        public string Title { get { if (title != "") return title; else return Name; } set { title = value; } }
 
         private float length, offset;
 
@@ -29,6 +31,8 @@ namespace JaebeMusicStudio.Sound
             offset = float.Parse(element.Attributes["offset"].Value, CultureInfo.InvariantCulture);
             if (element.Attributes["name"] != null)
                 Name = element.Attributes["name"].Value;
+            if (element.Attributes["title"] != null)
+                Title = element.Attributes["title"].Value;
             if (element.Attributes["sound"].Value != "")
             {
                 Sound = Project.current[element.Attributes["sound"].Value] as INoteSynth;
@@ -65,6 +69,7 @@ namespace JaebeMusicStudio.Sound
             node2.SetAttribute("offset", Offset.ToString(CultureInfo.InvariantCulture));
             node2.SetAttribute("length", Length.ToString(CultureInfo.InvariantCulture));
             node2.SetAttribute("name", Name);
+            node2.SetAttribute("title", Title);
             node2.SetAttribute("sound", Sound == null ? "" : Sound.Name);
             foreach (Note item in Items)
             {

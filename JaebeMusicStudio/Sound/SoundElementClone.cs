@@ -12,14 +12,21 @@ namespace JaebeMusicStudio.Sound
     {
         private ISoundElement original;
         private float offset;
-
+        public string Title
+        {
+            get
+            {
+                return original.Title + " - clone";
+            }
+        }
         public SoundElementClone(ISoundElement soundElement)
         {
             if (soundElement is SoundElementClone)
             {
                 this.original = (soundElement as SoundElementClone).original;
             }
-            else {
+            else
+            {
                 this.original = soundElement;
             }
         }
@@ -30,7 +37,7 @@ namespace JaebeMusicStudio.Sound
             {
                 throw new Exception("Bad File");
             }
-            
+
             offset = float.Parse(element.Attributes["offset"].Value, CultureInfo.InvariantCulture);
         }
         public float Length { get { return original.Length; } set { } }

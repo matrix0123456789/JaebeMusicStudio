@@ -17,6 +17,9 @@ namespace JaebeMusicStudio.Sound
         public float Length { get { return length; } set { length = value; positionChanged?.Invoke(this); } }
         public float Offset { get { return offset; } set { offset = value; positionChanged?.Invoke(this); } }
         public SoundLine SoundLine { get; set; }
+        private string title = "";
+        public string Title { get { if (title != "") return title; else return Name; } set { title = value; } }
+
         public OneSample(XmlNode element)
         {
             if (element.Attributes["soundLine"] != null)

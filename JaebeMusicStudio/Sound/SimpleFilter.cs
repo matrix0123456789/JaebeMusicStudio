@@ -53,8 +53,8 @@ namespace JaebeMusicStudio.Sound
 
         public SimpleFilter(XmlNode node)
         {
-            frequency = float.Parse(node.Attributes["Frequency"].Value);
-            resonation = float.Parse(node.Attributes["Resonation"].Value);
+            frequency = float.Parse(node.Attributes["Frequency"].Value, CultureInfo.InvariantCulture);
+            resonation = float.Parse(node.Attributes["Resonation"].Value,CultureInfo.InvariantCulture);
             type = (FilterType)Enum.Parse(typeof(FilterType), node.Attributes["Type"].Value);
             recalcFilter();
         }

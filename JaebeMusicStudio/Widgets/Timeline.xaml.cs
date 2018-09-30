@@ -164,8 +164,9 @@ namespace JaebeMusicStudio.Widgets
             else
                 rect.Fill = Brushes.Blue;
 
+            grid.ToolTip = element.Title;
             grid.Width = element.Length * scaleX;
-            grid.MinWidth = 10;
+                        grid.MinWidth = 10;
             grid.Margin = new Thickness(element.Offset * scaleX, 0, 0, 0);
             grid.VerticalAlignment = VerticalAlignment.Stretch;
             grid.HorizontalAlignment = HorizontalAlignment.Left;
