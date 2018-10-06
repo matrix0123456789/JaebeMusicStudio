@@ -95,6 +95,8 @@ namespace JaebeMusicStudio.Widgets
             ShowEffect();
             ShowInput();
             LineTitle.Text = selectedLine.Line.Title;
+
+            LineInput_AddSelect.Generate();
         }
 
         private void Line_effectRemoved(int index)
@@ -223,6 +225,21 @@ namespace JaebeMusicStudio.Widgets
             {
                 selectedLine.Line.Title = LineTitle.Text;
             }
+        }
+
+        private void LineInput_AddButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (selectedLine?.Line != null)
+            {
+                var connection = new SoundLineConnection(Project.current.lines.IndexOf(selectedLine.Line), LineInput_AddSelect.Selected, 1);
+                connection.input.outputs.Add(connection);
+                connection.output.inputs.Add(connection);
+            }
+        }
+
+        private void AddLinButton_Click(object sender, RoutedEventArgs e)
+        {
+            Project.current.lines.Add(new SoundLine());
         }
     }
 }

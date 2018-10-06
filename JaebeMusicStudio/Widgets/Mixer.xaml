@@ -23,7 +23,7 @@
         <ScrollViewer Name="SoundLinesListScroll" Margin="0" Grid.RowSpan="2">
             <Grid>
                 <StackPanel Name="SoundLinesList">
-                    <Button>Dodaj</Button>
+                    <Button Click="AddLinButton_Click">Dodaj</Button>
                 </StackPanel>
             </Grid>
         </ScrollViewer>
@@ -46,11 +46,13 @@
             </Grid>
         </ScrollViewer>
         <Label Grid.Column="1" Grid.Row="1" HorizontalContentAlignment="Center" VerticalAlignment="Top">Wejścia</Label>
-        <ScrollViewer Name="InputsListScroll" Grid.Column="1" Grid.Row="1" Margin="0,26,0,0">
-          
+        <ScrollViewer Name="InputsListScroll" Grid.Column="1" Grid.Row="1" Margin="0,26,0,22">
+
             <Grid>
                 <StackPanel Name="InputsList"/>
             </Grid>
         </ScrollViewer>
+        <local:SoundLineSelect Grid.Column="1" Grid.Row="1" VerticalAlignment="Bottom" Margin="0,0,58,0" x:Name="LineInput_AddSelect"></local:SoundLineSelect>
+        <UI:ButtonPretty Grid.Column="1" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Height="22" x:Name="LineInput_AddButton" Click="LineInput_AddButton_Click" Width="58" Margin="159,0,0,0">Dodaj</UI:ButtonPretty>
     </Grid>
 </Page>
