@@ -170,7 +170,8 @@ namespace JaebeMusicStudio.Sound
                         }
                         foreach (var effect in effects)
                         {
-                            sound = effect.DoFilter(sound);
+                            if (effect.IsActive)
+                                sound = effect.DoFilter(sound);
                         }
                     }
                     foreach (var output in outputs)
