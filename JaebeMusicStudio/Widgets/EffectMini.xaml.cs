@@ -28,6 +28,7 @@ namespace JaebeMusicStudio.Widgets
             this.effect = effect;
             InitializeComponent();
             Title.Content = effect.ToString();
+            Active.IsChecked = effect.IsActive;
         }
         public event Action<EffectMini> WantDelete;
 
@@ -54,6 +55,16 @@ namespace JaebeMusicStudio.Widgets
         private void ButtonPretty2_OnClick(object sender, RoutedEventArgs e)
         {
             WantDelete?.Invoke(this);
+        }
+
+        private void Active_Checked(object sender, RoutedEventArgs e)
+        {
+            effect.IsActive = true;
+        }
+
+        private void Active_Unchecked(object sender, RoutedEventArgs e)
+        {
+            effect.IsActive = false;
         }
     }
 }

@@ -9,6 +9,7 @@ namespace JaebeMusicStudio.Sound
 {
     class LFO : Effect
     {
+        public bool IsActive { get; set; } = true;
         public OscillatorType Type;
         float phase = 0;
         float frequency = 1;

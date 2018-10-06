@@ -10,6 +10,7 @@ namespace JaebeMusicStudio.Sound
 {
     public class Flanger : Effect
     {
+        public bool IsActive { get; set; } = true;
         private List<FlangerItem> items = new List<FlangerItem>();
         long counter = 0;
         List<float[,]> history = new List<float[,]>();
@@ -19,6 +20,8 @@ namespace JaebeMusicStudio.Sound
         }
         public Flanger(XmlElement xml)
         {
+            if (xml.Attributes["isActive"] != null)
+                IsActive = bool.Parse(xml.Attributes["isActive"].Value);
             foreach (XmlElement x in xml.ChildNodes)
             {
                 items.Add(new FlangerItem(float.Parse(x.Attributes["frequency"].Value, System.Globalization.CultureInfo.InvariantCulture),float.Parse(x.Attributes["amplitude"].Value, System.Globalization.CultureInfo.InvariantCulture)));
@@ -113,6 +116,7 @@ namespace JaebeMusicStudio.Sound
         public void Serialize(XmlNode node)
         {
             var node2 = node.OwnerDocument.CreateElement("Flanger");
+            node2.SetAttribute("isActive", IsActive.ToString(CultureInfo.InvariantCulture));
             for (int i = 0; i < items.Count; i++)
             {
 

@@ -9,6 +9,7 @@ namespace JaebeMusicStudio.Sound
 {
     public abstract class FilterIIR : Effect
     {
+        public bool IsActive { get; set; } = true;
         protected float[] a;
         protected float[] b;
         protected int level;

@@ -56,6 +56,8 @@ namespace JaebeMusicStudio.Sound
             frequency = float.Parse(node.Attributes["Frequency"].Value, CultureInfo.InvariantCulture);
             resonation = float.Parse(node.Attributes["Resonation"].Value,CultureInfo.InvariantCulture);
             type = (FilterType)Enum.Parse(typeof(FilterType), node.Attributes["Type"].Value);
+            if (node.Attributes["isActive"] != null)
+                IsActive = bool.Parse(node.Attributes["isActive"].Value);
             recalcFilter();
         }
 
@@ -73,6 +75,7 @@ namespace JaebeMusicStudio.Sound
             node2.SetAttribute("Frequency", Frequency.ToString(CultureInfo.InvariantCulture));
             node2.SetAttribute("Resonation", Resonation.ToString(CultureInfo.InvariantCulture));
             node2.SetAttribute("Type", Type.ToString());
+            node2.SetAttribute("isActive", IsActive.ToString(CultureInfo.InvariantCulture));
             node.AppendChild(node2);
         }
         public enum FilterType

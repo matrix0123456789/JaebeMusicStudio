@@ -17,6 +17,7 @@ namespace JaebeMusicStudio.Sound
         public List<SoundLineConnection> inputs = new List<SoundLineConnection>();
         public List<Effect> effects = new List<Effect>();
 
+        public string Title { get; set; } = "";
         public event Action<int, Effect> effectAdded;
         public event Action<int> effectRemoved;
         Dictionary<Rendering, SoundLineRendering> renderings = new Dictionary<Rendering, SoundLineRendering>();
@@ -27,6 +28,8 @@ namespace JaebeMusicStudio.Sound
         {
             if (xml.Attributes["volume"] != null)
                 volume = float.Parse(xml.Attributes["volume"].Value, CultureInfo.InvariantCulture);
+            if (xml.Attributes["title"] != null)
+                Title = xml.Attributes["title"].Value;
             foreach (XmlElement x in xml.ChildNodes)
             {
                 switch (x.Name)
@@ -52,6 +55,7 @@ namespace JaebeMusicStudio.Sound
         {
             var node = document.CreateElement("SoundLine");
             node.SetAttribute("volume", volume.ToString(CultureInfo.InvariantCulture));
+            node.SetAttribute("title", Title);
             foreach (var input in inputs)
             {
                 var node2 = document.CreateElement("SoundLineInput");
@@ -226,10 +230,17 @@ namespace JaebeMusicStudio.Sound
 
         public override string ToString()
         {
+            string ret;
             var number = Project.current.lines.IndexOf(this);
             if (number == 0)
-                return "Linia główna";
-            return "Linia " + number;
+                ret = "Linia główna";
+            else
+                ret = "Linia " + number;
+            if (Title != null || Title != "")
+            {
+                ret += " " + Title;
+            }
+            return ret;
         }
         public void clearAfterRender(Rendering rendering)
         {

@@ -10,6 +10,7 @@ namespace JaebeMusicStudio.Sound
 {
     public class NonlinearDistortion : Effect
     {
+        public bool IsActive { get; set; } = true;
         NonlinearDistortionType effectType = NonlinearDistortionType.Power;
         public NonlinearDistortionType EffectType { get { return effectType; } set { effectType = value; } }
         float powerExponentiation = 2;
@@ -23,6 +24,8 @@ namespace JaebeMusicStudio.Sound
         {
             if (x.Attributes["exponentiation"] != null)
                 powerExponentiation = float.Parse(x.Attributes["exponentiation"].Value, System.Globalization.CultureInfo.InvariantCulture);
+            if (x.Attributes["isActive"] != null)
+                IsActive = bool.Parse(x.Attributes["isActive"].Value);
         }
         public void CleanMemory()
         {
@@ -33,6 +36,7 @@ namespace JaebeMusicStudio.Sound
 
             var node2 = node.OwnerDocument.CreateElement("NonlinearDistortion");
             node2.SetAttribute("exponentiation", powerExponentiation.ToString(CultureInfo.InvariantCulture));
+            node2.SetAttribute("isActive", IsActive.ToString(CultureInfo.InvariantCulture));
             node.AppendChild(node2);
         }
 

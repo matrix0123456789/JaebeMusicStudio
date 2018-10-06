@@ -93,6 +93,8 @@ namespace JaebeMusicStudio.Widgets
             selectedLine.Line.effectAdded += Line_effectAdded;
             selectedLine.Line.effectRemoved += Line_effectRemoved; ;
             ShowEffect();
+            ShowInput();
+            LineTitle.Text = selectedLine.Line.Title;
         }
 
         private void Line_effectRemoved(int index)
@@ -103,12 +105,22 @@ namespace JaebeMusicStudio.Widgets
 
         private void Line_effectAdded(int index, Effect effect)
         {
-            Dispatcher.BeginInvoke((Action)(() => { 
-            var ui = new EffectMini(effect);
-            ui.WantDelete += Ui_WantDelete;
-            EffectsList.Children.Insert(index, ui);
-            ui.MouseDown += Ui_MouseDown;
-        }));}
+            Dispatcher.BeginInvoke((Action)(() =>
+            {
+                var ui = new EffectMini(effect);
+                ui.WantDelete += Ui_WantDelete;
+                EffectsList.Children.Insert(index, ui);
+                ui.MouseDown += Ui_MouseDown;
+            }));
+        }
+        private void Line_inputAdded(int index, SoundLineConnection input)
+        {
+            Dispatcher.BeginInvoke((Action)(() =>
+            {
+                var ui = new SoundLineConnectionUI(input);
+                InputsList.Children.Insert(index, ui);
+            }));
+        }
 
         private void Ui_WantDelete(EffectMini obj)
         {
@@ -124,6 +136,16 @@ namespace JaebeMusicStudio.Widgets
         }
 
         void ShowEffect()
+        {
+            InputsList.Children.Clear();
+            int index = 0;
+            foreach (var input in selectedLine.Line.inputs)
+            {
+                Line_inputAdded(index, input);
+                index++;
+            };
+        }
+        void ShowInput()
         {
             EffectsList.Children.Clear();
             int index = 0;
@@ -192,6 +214,14 @@ namespace JaebeMusicStudio.Widgets
             {
                 var effect = new SimpleFilter();
                 selectedLine.Line.AddEffect(effect);
+            }
+        }
+
+        private void LineTitle_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (selectedLine?.Line != null)
+            {
+                selectedLine.Line.Title = LineTitle.Text;
             }
         }
     }

@@ -9,6 +9,7 @@ namespace JaebeMusicStudio.Sound
 {
     class Compresor : Effect
     {
+        public bool IsActive { get; set; } = true;
         float multiplerNow = 1;
 
         public void CleanMemory()

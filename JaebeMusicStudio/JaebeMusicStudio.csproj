@@ -198,6 +198,9 @@
     <Compile Include="Widgets\SimpleFilterUI.xaml.cs">
       <DependentUpon>SimpleFilterUI.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Widgets\SoundLineConnectionUI.xaml.cs">
+      <DependentUpon>SoundLineConnectionUI.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Widgets\SynthSelect.xaml.cs">
       <DependentUpon>SynthSelect.xaml</DependentUpon>
     </Compile>
@@ -305,6 +308,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Widgets\SimpleFilterUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Widgets\SoundLineConnectionUI.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

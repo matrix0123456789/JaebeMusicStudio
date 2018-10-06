@@ -10,6 +10,7 @@ namespace JaebeMusicStudio.Sound
 {
     public class Reverb : Effect
     {
+        public bool IsActive { get; set; } = true;
         //Queue<float[]> buffor = new Queue<float[]>();
         Queue<float> bufforLeft = new Queue<float>();
         Queue<float> bufforRight = new Queue<float>();
@@ -28,6 +29,8 @@ namespace JaebeMusicStudio.Sound
                 feedback = float.Parse(x.Attributes["feedback"].Value, CultureInfo.InvariantCulture);
             if (x.Attributes["pan"] != null)
                 pan = float.Parse(x.Attributes["pan"].Value, CultureInfo.InvariantCulture);
+            if (x.Attributes["isActive"] != null)
+                IsActive = bool.Parse(x.Attributes["isActive"].Value);
         }
 
         public Reverb()
@@ -46,6 +49,7 @@ namespace JaebeMusicStudio.Sound
             node2.SetAttribute("delay", Delay.ToString(CultureInfo.InvariantCulture));
             node2.SetAttribute("feedback", Feedback.ToString(CultureInfo.InvariantCulture));
             node2.SetAttribute("pan", Pan.ToString(CultureInfo.InvariantCulture));
+            node2.SetAttribute("isActive", IsActive.ToString(CultureInfo.InvariantCulture));
             node.AppendChild(node2);
         }
 
