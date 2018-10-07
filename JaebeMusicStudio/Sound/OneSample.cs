@@ -59,16 +59,21 @@ namespace JaebeMusicStudio.Sound
                 samples = (long)((sample.wave.GetLength(1) - 1 - startOffset) / samplesRatio);
 
             if (sample.channels == 1)
-                for (var i = 0; i < samples; i++)
+                for (var i = 0; i < samples - Math.Ceiling(samplesRatio); i++)//odejmuje ceil żeby nie wyjść z tablicy
                 {
-                    ret[0, i] = sample.wave[0, (int)(startOffset + (float)i * samplesRatio)];
+                    var offset = (startOffset + (float)i * samplesRatio);
+                    var offsetInt = (int)offset;
+                    var lerp = (offset - offsetInt);
+                    ret[0, i] = (float)(sample.wave[0, offsetInt] * (1 - lerp) + sample.wave[0, offsetInt + 1] * lerp);
                 }
             else
-                for (var i = 0; i < samples; i++)
+                for (var i = 0; i < samples - Math.Ceiling(samplesRatio); i++)//odejmuje ceil żeby nie wyjść z tablicy
                 {
-                    var positionInside = (int)(startOffset + (float)i * samplesRatio);
-                    ret[0, i] = sample.wave[0, positionInside];
-                    ret[1, i] = sample.wave[1, positionInside];
+                    var offset = (startOffset + (float)i * samplesRatio);
+                    var offsetInt = (int)offset;
+                    var lerp = (offset - offsetInt);
+                    ret[0, i] = (float)(sample.wave[0, offsetInt] * (1 - lerp) + sample.wave[0, offsetInt + 1] * lerp);
+                    ret[1, i] = (float)(sample.wave[1, offsetInt] * (1 - lerp) + sample.wave[1, offsetInt + 1] * lerp);
                 }
             return ret;
         }

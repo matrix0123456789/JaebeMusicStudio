@@ -40,7 +40,7 @@ namespace JaebeMusicStudio.Sound
         /// for EXAMPLE KEYBOARD OR MINI INPUT
         /// </summary>
         public static List<ILiveInput> live = new List<ILiveInput>();
-
+        public string Path { get; private set; }
 
 
         public List<Track> tracks = new List<Track>();
@@ -78,7 +78,7 @@ namespace JaebeMusicStudio.Sound
             current?.stopOldProject();
             current = this;
             var read = new System.IO.FileStream(path, FileMode.Open);
-
+            Path = path;
             read.Position = 0;
             var zis = new ZipInputStream(read);
             ZipEntry ent;
@@ -337,6 +337,11 @@ namespace JaebeMusicStudio.Sound
             foreach (XmlNode basicPercussion in basicPercussions)
             {
                 this.NoteSynths.Add(new BasicPercussion(basicPercussion));
+            }
+            var SamplePlays = document.GetElementsByTagName("SamplePlay");
+            foreach (XmlNode SamplePlay in SamplePlays)
+            {
+                this.NoteSynths.Add(new SamplePlay(SamplePlay));
             }
             var VSTis = document.GetElementsByTagName("VSTi");
             foreach (XmlNode VSTi in VSTis)

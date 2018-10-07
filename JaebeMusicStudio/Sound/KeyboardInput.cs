@@ -16,6 +16,7 @@ namespace JaebeMusicStudio.Sound
         Dictionary<Key, Note> pressedNotes = new Dictionary<Key, Note>();
         private double curentPositon = 0;
         public Type type;
+        public float Pitch { get; set; }
 
         public KeyboardInput(Type type)
         {
@@ -31,7 +32,7 @@ namespace JaebeMusicStudio.Sound
                 var pitch = getPitchBykey(e.Key);
                 if (pitch.HasValue)
                 {
-                    var newNote = new Note() { Offset = (float)curentPositon, Length = float.MaxValue, Pitch = pitch.Value };
+                    var newNote = new Note() { Offset = (float)curentPositon, Length = float.MaxValue, Pitch = pitch.Value+Pitch };
                     pressedNotes.Add(e.Key, newNote);
                     Items.Add(newNote);
                 }

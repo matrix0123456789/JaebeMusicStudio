@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:JaebeMusicStudio.Widgets"
+             xmlns:UI="clr-namespace:JaebeMusicStudio.UI"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
@@ -14,8 +15,10 @@
         </ComboBox>
         <Grid Margin="0,27,0,0">
 
-            <local:SynthSelect x:Name="synthSelect1" Changed="SynthSelect1_OnChanged" VerticalAlignment="Top"/>
-            <local:SynthSelect x:Name="synthSelect2" Changed="SynthSelect2_OnChanged" VerticalAlignment="Top" Margin="0,27,0,0"/>
+            <local:SynthSelect x:Name="synthSelect1" Changed="SynthSelect1_OnChanged" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="0,0,69,0"/>
+            <UI:Slider x:Name="synthTranspose1" Minimum="-4" Maximum="4" Step="1" VerticalAlignment="Top" HorizontalAlignment="Right"  Width="69" Margin="231,0,0,0" ValueChanged="synthTranspose1_ValueChanged"></UI:Slider>
+            <local:SynthSelect x:Name="synthSelect2" Changed="SynthSelect2_OnChanged" VerticalAlignment="Top" Margin="0,27,69,0" HorizontalAlignment="Stretch" Width="231"/>
+            <UI:Slider x:Name="synthTranspose2" Minimum="-4" Maximum="4" Step="1" VerticalAlignment="Top" Margin="231,27,0,0" HorizontalAlignment="Right" Width="69" ValueChanged="synthTranspose2_ValueChanged"></UI:Slider>
         </Grid>
     </Grid>
 </UserControl>

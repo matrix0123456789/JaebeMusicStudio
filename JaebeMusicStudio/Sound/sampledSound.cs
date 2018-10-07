@@ -35,7 +35,8 @@ namespace JaebeMusicStudio.Sound
         {
             this.path = path;
             var explode = path.Split('.');
-            stream = new System.IO.FileStream(path, System.IO.FileMode.Open);
+            var fullPath = System.IO.Path.Combine((Project.current.Path??"")+"\\..", path);
+            stream = new System.IO.FileStream(fullPath, System.IO.FileMode.Open);
             BinaryReader streamRaw;
             if (explode.Last() == "mp3")
                 streamRaw = startMP3();

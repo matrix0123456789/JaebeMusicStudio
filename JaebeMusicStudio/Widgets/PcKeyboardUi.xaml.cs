@@ -62,5 +62,16 @@ namespace JaebeMusicStudio.Widgets
                 KeyboardInput.singleton2.type = KeyboardInput.Type.silent;
             }
         }
+
+        private void synthTranspose1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            KeyboardInput.singleton1.Pitch = (float)(synthTranspose1.Value * 12);
+        }
+
+        private void synthTranspose2_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+
+            KeyboardInput.singleton2.Pitch = (float)(synthTranspose1.Value * 12);
+        }
     }
 }

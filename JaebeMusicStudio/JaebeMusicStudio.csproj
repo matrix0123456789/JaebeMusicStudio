@@ -137,6 +137,7 @@
     <Compile Include="Sound\RenderingObject.cs" />
     <Compile Include="Sound\Reverb.cs" />
     <Compile Include="Sound\SampledSound.cs" />
+    <Compile Include="Sound\SamplePlay.cs" />
     <Compile Include="Sound\SaveSound.cs" />
     <Compile Include="Sound\SimpleFilter.cs" />
     <Compile Include="Sound\SoundElement.cs" />
