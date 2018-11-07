@@ -26,6 +26,7 @@ namespace JaebeMusicStudio.Widgets
         /// how many pixels represents one note
         /// </summary>
         double scaleX = 10;
+        double scaleY = 40;
 
         private ISoundElement editingElement;
         private FrameworkElement editingVisualElement;
@@ -91,7 +92,7 @@ namespace JaebeMusicStudio.Widgets
             {
                 var grid = new Grid();
                 grid.Background = Brushes.Aqua;
-                grid.Height = 40;
+                grid.Height = scaleY;
                 tracksStack.Children.Insert(index, grid);
 
                 var content = new Grid();
@@ -102,7 +103,7 @@ namespace JaebeMusicStudio.Widgets
                 line.Height = 1;
                 line.Fill = Brushes.Black;
                 content.Children.Add(line);
-                content.Height = 40;
+                content.Height = scaleY;
                 tracksContentStack.Children.Insert(index, content);
                 foreach (var element in track.Elements)
                 {
@@ -158,7 +159,8 @@ namespace JaebeMusicStudio.Widgets
                 rect.Fill = Brushes.Red;
                 grid.Children.Add(new OneSampleLookInside(element as OneSample));
             }
-            if (element is Sound.SoundElementClone) {
+            if (element is Sound.SoundElementClone)
+            {
                 rect.Fill = Brushes.Orange;
             }
             else
@@ -166,7 +168,7 @@ namespace JaebeMusicStudio.Widgets
 
             grid.ToolTip = element.Title;
             grid.Width = element.Length * scaleX;
-                        grid.MinWidth = 10;
+            grid.MinWidth = 10;
             grid.Margin = new Thickness(element.Offset * scaleX, 0, 0, 0);
             grid.VerticalAlignment = VerticalAlignment.Stretch;
             grid.HorizontalAlignment = HorizontalAlignment.Left;
@@ -193,7 +195,7 @@ namespace JaebeMusicStudio.Widgets
             menuClone.Tag = new Object[] { element, trackContainer.Tag };
             menuClone.Click += element_clone_Click;
             menu.Items.Add(menuClone);
-        
+
             var menuDelete = new MenuItem() { Header = "Usun" };
             menuDelete.Tag = new Object[] { element, trackContainer.Tag };
             menuDelete.Click += element_delete_Click;
@@ -232,7 +234,7 @@ namespace JaebeMusicStudio.Widgets
         private void element_duplicate_Click(object sender, RoutedEventArgs e)
         {
             var data = (sender as FrameworkElement).Tag as Object[];
-            var newElem=(data[0] as ISoundElement).Duplicate();
+            var newElem = (data[0] as ISoundElement).Duplicate();
             Project.current.FindTrackWithSpace(newElem.Offset, newElem.Offset + newElem.Length).AddElement(newElem);
         }
 
@@ -358,16 +360,42 @@ namespace JaebeMusicStudio.Widgets
             }
             return (float)newTime;
         }
+        private int getTrackNumberByMouse(MouseEventArgs e)
+        {
+            var trackNumber = (int)Math.Round(e.GetPosition(this).Y / scaleY) - 2;
+            if (trackNumber >= Project.current.tracks.Count)
+                trackNumber = Project.current.tracks.Count - 1;
+            if (trackNumber < 0)
+                trackNumber = 0;
+            return trackNumber;
+        }
         private void Timeline_OnMouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed && editingElement != null)
             {
-                var newTime = editCalcNewTime(e);
-
-
+                float newTime;
+                if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+                {
+                    newTime = editingElement.Offset;
+                }
+                else
+                {
+                    newTime = editCalcNewTime(e);
+                }
+                int trackNumber;
+                if (Keyboard.IsKeyDown(Key.LeftAlt) || Keyboard.IsKeyDown(Key.RightAlt))
+                    trackNumber = Project.current.tracks.FindIndex(track => track.Elements.Contains(editingElement));
+                else
+                    trackNumber = getTrackNumberByMouse(e);
+                Panel newTrackVisual = tracksContentStack.Children[getTrackNumberByMouse(e)] as Panel;
+                if (newTrackVisual != editingVisualElement.Parent)
+                {
+                    (editingVisualElement.Parent as Panel).Children.Remove(editingVisualElement);
+                    newTrackVisual.Children.Add(editingVisualElement);
+                }
                 editingVisualElement.Margin = new Thickness(newTime * scaleX, 0, 0, 0);
-
             }
+
         }
 
         private void Timeline_OnMouseUp(object sender, MouseButtonEventArgs e)
@@ -378,7 +406,19 @@ namespace JaebeMusicStudio.Widgets
                 {
                     var newTime = editCalcNewTime(e);
 
-                    editingElement.Offset = newTime;
+                    if (!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl))
+                        editingElement.Offset = newTime;
+
+                    if (!Keyboard.IsKeyDown(Key.LeftAlt) && !Keyboard.IsKeyDown(Key.RightAlt))
+                    {
+                        var oldTrackNumber = Project.current.tracks.FindIndex(track => track.Elements.Contains(editingElement));
+                        var trackNumber = getTrackNumberByMouse(e);
+                        if (oldTrackNumber != trackNumber)
+                        {
+                            Project.current.tracks[oldTrackNumber].Elements.Remove(editingElement);
+                            Project.current.tracks[trackNumber].Elements.Add(editingElement);
+                        }
+                    }
                     editingVisualElement = null;
                     editingElement = null;
                 }
