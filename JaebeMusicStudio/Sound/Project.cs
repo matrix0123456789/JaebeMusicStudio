@@ -20,7 +20,7 @@ namespace JaebeMusicStudio.Sound
     {
         float _tempo = 120;
         uint _sampleRate = 48000;
-
+        public event Action loadEnd;
         public float tempo
         {
             get { return _tempo; }
@@ -355,6 +355,7 @@ namespace JaebeMusicStudio.Sound
             {
                 this.tracks.Add(new Track(track));
             }
+            loadEnd?.Invoke();
         }
         public void ReturnedSound(float[,] data)
         {

@@ -11,6 +11,7 @@ namespace JaebeMusicStudio.Sound
     class SoundElementClone : ISoundElement
     {
         private ISoundElement original;
+        private string oryginalName;
         private float offset;
         public string Title
         {
@@ -32,14 +33,20 @@ namespace JaebeMusicStudio.Sound
         }
         public SoundElementClone(XmlNode element)
         {
-            this.original = Project.current[element.Attributes["original"].Value] as ISoundElement;
+            oryginalName = element.Attributes["original"].Value;
+                        offset = float.Parse(element.Attributes["offset"].Value, CultureInfo.InvariantCulture);
+            Project.current.loadEnd += Current_loadEnd;
+        }
+
+        private void Current_loadEnd()
+        {
+            this.original = Project.current[oryginalName] as ISoundElement;
             if (this?.original == null)
             {
                 throw new Exception("Bad File");
             }
-
-            offset = float.Parse(element.Attributes["offset"].Value, CultureInfo.InvariantCulture);
         }
+
         public float Length { get { return original.Length; } set { } }
         public float Offset { get { return offset; } set { offset = value; positionChanged?.Invoke(this); } }
 

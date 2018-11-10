@@ -63,6 +63,9 @@ namespace JaebeMusicStudio.Sound
         }
         public float[,] GetSound(float start, float length, Rendering rendering, NotesCollection notes)
         {
+            var maxLength = notes.Max(note => pitchesToElement[(int)note.Pitch].SoundLength+note.Offset);
+            if (length > maxLength)
+                length = maxLength;
             long samples = (long)Project.current.CountSamples(length);//how many samples you need on output
             var ret = new float[2, samples];//sound that will be returned
             var notesCount = notes.Count;

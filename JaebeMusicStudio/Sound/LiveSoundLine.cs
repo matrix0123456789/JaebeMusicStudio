@@ -42,7 +42,6 @@ namespace JaebeMusicStudio.Sound
             float[,] sound;
             lock (this)
             {
-                Console.WriteLine("Wave_DataAvailable " + bufferAvalible);
                 var reader = new BinaryReader(new MemoryStream(e.Buffer));
                 sound = read(reader, input.WaveFormat.BitsPerSample, input.WaveFormat.Channels);
                 buffer.Add(sound);

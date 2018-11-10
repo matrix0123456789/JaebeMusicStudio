@@ -97,6 +97,7 @@ namespace JaebeMusicStudio.Sound
             var slRend = getByRendering(rendering);
             lock (this)
             {
+                Console.WriteLine(this.ToString() + ": " + offset);
                 var lastRendered = slRend.data;
                 if (volume != 0)
                 {
@@ -154,8 +155,9 @@ namespace JaebeMusicStudio.Sound
             lock (this)
             {
                 var slRend = getByRendering(rendering);
-                if (slRend.currentToRender == 0)
+                if (slRend.currentToRender == 0&&!slRend.completed)
                 {
+                    Console.WriteLine("Ready! " + this.ToString());
                     var sound = slRend.data;
                     if (volume != 0)
                     {

@@ -81,7 +81,7 @@ namespace JaebeMusicStudio.Sound
         public ISoundElement Duplicate()
         {
             var newElem = this.MemberwiseClone() as Notes;
-
+            newElem.name = name;
             return newElem;
         }
         private string name;
