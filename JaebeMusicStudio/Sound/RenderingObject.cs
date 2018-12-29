@@ -13,6 +13,7 @@ namespace JaebeMusicStudio.Sound
         internal Project project;
         public bool canHarvest = false;//all tasks to render was created
         public RenderngType type;
+        public readonly DateTime started = DateTime.Now;
     }
-    public enum RenderngType { live, block};
+    public enum RenderngType { live, block };
 }

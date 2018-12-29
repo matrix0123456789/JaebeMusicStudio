@@ -19,21 +19,19 @@ namespace JaebeMusicStudio.Sound
         static System.Threading.Thread renderingThread;
         public enum Status { fileRendering, playing, paused }
         public static BufferedWaveProvider bufor = new BufferedWaveProvider(new WaveFormat((int)Sound.Project.current.sampleRate, 2));
-        public static WasapiOut WasapiWyjście = new WasapiOut(AudioClientShareMode.Shared, false, 10);
+        public static WasapiOut WasapiWyjście = new WasapiOut(AudioClientShareMode.Shared, true, renderPeriod);
         public static event Action<float> positionChanged;
         public static event Action<float[,]> SoundPlayed;
         static Rendering liveRenderingObject = new Rendering();
-        static Timer renderFallbackTimer;
-        static Player()
+        static int dbg = 0;  static Player()
         {
             WasapiWyjście.Init(bufor);
             renderingThread = new System.Threading.Thread(Render);
             renderingThread.Name = "renderingThread";
             renderingThread.Start();
             WasapiWyjście.Play();
-            renderFallbackTimer = new Timer(Render, null, 0, 10);
-
         }
+
         public static void Play()
         {
             if (status == Status.paused)
@@ -57,43 +55,42 @@ namespace JaebeMusicStudio.Sound
         static DateTime lastRendered;
         static async void Render(object a = null)
         {
-            RenderOnce();
-            //var sleepTime = renderPeriod - (int)(DateTime.Now - lastRendered).TotalMilliseconds;
-            //if (sleepTime > 0)
-            //    System.Threading.Thread.Sleep(sleepTime);
-        }
-        static async void RenderOnce()
-        {
-            try
+            while (true)
             {
-                lastRendered = DateTime.Now;
-                Console.WriteLine("Buffered ms:" + bufor.BufferedDuration.TotalMilliseconds+" RP " + renderPeriod);
-                if (bufor.BufferedDuration.TotalMilliseconds < renderPeriod * 2)
+                try
                 {
-                    var renderLength = (((float)renderPeriod * 2 - bufor.BufferedDuration.TotalMilliseconds) *
-                                        Project.current.tempo / 60f) / 1000f;
-                    if (renderLength < 0)
-                        renderLength = 0;
-                    liveRenderingNow = true;
-                    var rendering = new Rendering() { renderingStart = position, renderingLength = (float)renderLength, project = Project.current, type = RenderngType.live };
-                    var soundReady = rendering.project.lines[0].getByRendering(rendering);
-                    rendering.project.Render(rendering);
-                    var sound = await soundReady;
-                    ReturnedSound(sound);
-                    rendering.project.Clear(rendering);
-                    if (status == Status.playing)
+                    lastRendered = DateTime.Now;
+                    Console.WriteLine("Buffered ms:" + bufor.BufferedDuration.TotalMilliseconds + " RP " + renderPeriod);
+                    if (bufor.BufferedDuration.TotalMilliseconds < renderPeriod * 2)
                     {
-                        position += (float)renderLength;
-                        positionChanged?.Invoke(position);
+                        var renderLength = (((float)renderPeriod) *
+                                            Project.current.tempo / 60f) / 1000f;
+                        Console.WriteLine("renderLength " + renderLength);
+                        if (renderLength < 0)
+                            renderLength = 0;
+                        liveRenderingNow = true;
+                        var rendering = new Rendering() { renderingStart = position, renderingLength = (float)renderLength, project = Project.current, type = RenderngType.live };
+                        var soundReady = rendering.project.lines[0].getByRendering(rendering);
+                        rendering.project.Render(rendering);
+                        var sound = await soundReady;
+                        Console.WriteLine("RenderedTime " + renderPeriod + " real" + (DateTime.Now - rendering.started).TotalMilliseconds);
+                        ReturnedSound(sound);
+                        rendering.project.Clear(rendering);
+                        if (status == Status.playing)
+                        {
+                            position += (float)renderLength;
+                            positionChanged?.Invoke(position);
+                        }
                     }
-                    ThreadPool.QueueUserWorkItem(o => RenderOnce());
+                    else
+                    {
+                        Thread.Sleep(1);
+                    }
                 }
-                
-            }
-            catch
-            {
-                ThreadPool.QueueUserWorkItem(o => RenderOnce());
+                catch
+                {
 
+                }
             }
         }
         static public void ReturnedSound(float[,] sound)

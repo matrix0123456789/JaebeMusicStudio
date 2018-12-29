@@ -434,8 +434,9 @@ namespace JaebeMusicStudio.Widgets
         private void TimeLabels_MouseDown(object sender, MouseButtonEventArgs e)
         {
             var positionPixels=e.GetPosition(TimeLabels);
-            var positionSound = positionPixels.X / scaleX;
-            Sound.Player.SetPosition(10);
+            double pixelOffset = -scrollHorizontal.HorizontalOffset + tracksStack.ActualWidth;
+            var positionSound = (positionPixels.X- pixelOffset) / scaleX;
+            Sound.Player.SetPosition((float)positionSound);
         }
     }
 }
