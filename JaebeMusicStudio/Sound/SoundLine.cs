@@ -20,7 +20,6 @@ namespace JaebeMusicStudio.Sound
         public string Title { get; set; } = "";
         public event Action<int, Effect> effectAdded;
         public event Action<int> effectRemoved;
-        Dictionary<Rendering, SoundLineRendering> renderings = new Dictionary<Rendering, SoundLineRendering>();
         public SoundLine()
         {
         }
@@ -75,21 +74,6 @@ namespace JaebeMusicStudio.Sound
                 effect.Serialize(node);
             }
             document.DocumentElement.AppendChild(node);
-        }
-        public SoundLineRendering getByRendering(Rendering r)
-        {
-            if (!renderings.ContainsKey(r))
-            {
-                renderings[r] = new SoundLineRendering();
-                prepareToRender(r);
-            }
-            return renderings[r];
-        }
-        public void prepareToRender(Rendering rendering)
-        {
-            var slRend = getByRendering(rendering);
-            slRend.currentToRender = inputs.Count;
-            slRend.data = new float[2, (int)rendering.project.CountSamples(rendering.renderingLength)];
         }
         public void rendered(int offset, float[,] data, Rendering rendering, float volumeChange = 1)
         {
@@ -147,7 +131,7 @@ namespace JaebeMusicStudio.Sound
             checkIfReady(rendering);
 
         }
-        public void checkIfReady(Rendering rendering)
+        public async void checkIfReady(Rendering rendering)
         {
             if (!rendering.canHarvest)
                 return;
@@ -156,7 +140,19 @@ namespace JaebeMusicStudio.Sound
                 var slRend = getByRendering(rendering);
                 if (slRend.currentToRender == 0&&!slRend.completed)
                 {
+
                     var sound = slRend.data;
+                    foreach (var input in inputs)
+                    {
+                      var inputData= await input.input.getByRendering(rendering);
+                        var length = sound.GetLength(1);
+                        for (int i = 0; i < length; i++)
+                        {
+                            sound[0, i] += inputData[0, i];
+                            sound[1, i] += inputData[1, i];
+                        }
+                        //output.output.rendered(0, sound, rendering, output.volume);
+                    }
                     if (volume != 0)
                     {
                         if (volume != 1)
@@ -173,10 +169,6 @@ namespace JaebeMusicStudio.Sound
                             if (effect.IsActive)
                                 sound = effect.DoFilter(sound);
                         }
-                    }
-                    foreach (var output in outputs)
-                    {
-                        output.output.rendered(0, sound, rendering, output.volume);
                     }
                     slRend.data = sound;
                     slRend.Resolve();
@@ -283,7 +275,7 @@ namespace JaebeMusicStudio.Sound
                     {
                         x();
                     }
-                    catch { }
+                    catch (Exception ex) { Console.WriteLine(ex); }
                 }
             }
         }
