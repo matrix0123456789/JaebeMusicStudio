@@ -67,6 +67,7 @@ namespace JaebeMusicStudio.Sound
             try
             {
                 lastRendered = DateTime.Now;
+                Console.WriteLine("Buffered ms:" + bufor.BufferedDuration.TotalMilliseconds+" RP " + renderPeriod);
                 if (bufor.BufferedDuration.TotalMilliseconds < renderPeriod * 2)
                 {
                     var renderLength = (((float)renderPeriod * 2 - bufor.BufferedDuration.TotalMilliseconds) *

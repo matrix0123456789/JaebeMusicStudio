@@ -124,7 +124,6 @@ namespace JaebeMusicStudio.Sound
                 return;
             lock (this)
             {
-                Console.WriteLine("checkIfReady " + bufferAvalible);
                 var length = lastRendered.GetLength(1);
 
                 if (buffer.Count > 0)
@@ -148,7 +147,6 @@ namespace JaebeMusicStudio.Sound
 
                 foreach (var output in outputs)
                 {
-                    Console.WriteLine("output " + lastRendered.GetLength(1));
                     output.output.rendered(0, lastRendered, rendering, output.volume);
                 }
 
