@@ -18,7 +18,7 @@
         <UI:ButtonPretty Height="20" Margin="0,10,35,0" VerticalAlignment="Top" FontFamily="/fonts/jms.ttf#jms" HorizontalAlignment="Right" Width="20" Icon="e800" x:Name="newNotesButton" Click="NewNotesButton_OnClick" ToolTip="próbka nut"></UI:ButtonPretty>
         <UI:ButtonPretty Height="20" Margin="0,10,10,0" VerticalAlignment="Top" FontFamily="/fonts/jms.ttf#jms" HorizontalAlignment="Right" Width="20" Icon="e800" x:Name="openFileSampleButton" Click="openFileSampleButton_Click" ToolTip="otworz plik"></UI:ButtonPretty>
 
-        <Grid Name="TimeLabels" Height="20" VerticalAlignment="Top" Margin="0,35,0,0"></Grid>
+        <Grid Name="TimeLabels" Height="20" VerticalAlignment="Top" Margin="0,35,0,0" MouseDown="TimeLabels_MouseDown"></Grid>
         <ScrollViewer Name="WholeScrollable" Margin="0,55,0,0">
             <Grid 
       MouseWheel="Page_MouseWheel" Background="#fff">

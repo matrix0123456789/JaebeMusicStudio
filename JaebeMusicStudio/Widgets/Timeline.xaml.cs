@@ -430,5 +430,12 @@ namespace JaebeMusicStudio.Widgets
             var notes = new Notes();
             Project.current.FindTrackWithSpace(notes.Offset, notes.Offset + notes.Length).AddElement(notes);
         }
+
+        private void TimeLabels_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var positionPixels=e.GetPosition(TimeLabels);
+            var positionSound = positionPixels.X / scaleX;
+            Sound.Player.SetPosition(10);
+        }
     }
 }
