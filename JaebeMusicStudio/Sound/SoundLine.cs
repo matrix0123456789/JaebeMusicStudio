@@ -172,6 +172,8 @@ namespace JaebeMusicStudio.Sound
                 }
             }
             slRend.data = sound;
+
+            Console.WriteLine("RedyToResolve Line "+this);
             slRend.Resolve();
 
             if (connectedUIs != 0)

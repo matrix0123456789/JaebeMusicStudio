@@ -81,78 +81,45 @@ namespace JaebeMusicStudio.Sound
             var ret = new float[2, samples];//sound that will be returned
             var notesCount = notes.Count;
             var oscillatorsCount = oscillators.Count;
-            var tasks = new Task<float[,]>[notesCount, oscillatorsCount];
 
             for (var i = 0; i < notesCount; i++)
             {
                 var note = notes[i].Clone();
+                var notSamplesOffset = (long)Project.current.CountSamples(note.Offset - start);
                 for (var j = 0; j < oscillatorsCount; j++)
                 {
                     if (note.Offset < start + length && note.Offset + note.Length + oscillators[j].R > start)
                     {
                         var j_copy = j;
-                        tasks[i, j] = Task.Run(() =>
+                        float[,] returnedSound;
+                        if (start > note.Offset)
                         {
-                            if (start > note.Offset)
+                            var l1 = note.Length + oscillators[j_copy].R - (start - note.Offset);
+                            if (length < l1)
                             {
-                                var l1 = note.Length + oscillators[j_copy].R - (start - note.Offset);
-                                if (length < l1)
-                                {
-                                    l1 = length;
-                                }
-                                return oscillators[j_copy].GetSound(start - note.Offset, l1, note);
+                                l1 = length;
                             }
-                            else
+                            returnedSound = oscillators[j_copy].GetSound(start - note.Offset, l1, note);
+                            for (long k = 0; k < returnedSound.LongLength / 2; k++)
                             {
-                                var l1 = length + start - note.Offset;
-                                if (note.Length + oscillators[j_copy].R < l1)
-                                    l1 = note.Length + oscillators[j_copy].R;
-                                return oscillators[j_copy].GetSound(0, l1, note);
+                                ret[0, k] += returnedSound[0, k];
+                                ret[1, k] += returnedSound[1, k];
                             }
-                        });
-                    }
-                }
-            }
-
-            for (var i = 0; i < notesCount; i++)
-            {
-                var note = notes[i];
-                if (start > note.Offset)
-                {
-                    for (var j = 0; j < oscillatorsCount; j++)
-                    {
-                        if (tasks[i, j] != null)
-                        {
-                            try
-                            {
-                                var retTask = tasks[i, j].Result;
-
-                                for (long k = 0; k < retTask.LongLength / 2; k++)
-                                {
-                                    ret[0, k] += retTask[0, k];
-                                    ret[1, k] += retTask[1, k];
-                                }
-                            }
-                            catch (Exception e) { Console.Write(e); }
                         }
-                    }
-                }
-                else
-                {
-                    var notSamplesOffset = (long)Project.current.CountSamples(note.Offset - start);
-                    for (var j = 0; j < oscillators.Count; j++)
-                    {
-                        if (tasks[i, j] != null)
+                        else
                         {
-                            var retTask = tasks[i, j].Result;
-                            var minLength = retTask.LongLength / 2;
+                            var l1 = length + start - note.Offset;
+                            if (note.Length + oscillators[j_copy].R < l1)
+                                l1 = note.Length + oscillators[j_copy].R;
+                            returnedSound = oscillators[j_copy].GetSound(0, l1, note);
+                            var minLength = returnedSound.LongLength / 2;
                             if (ret.LongLength / 2 < minLength)
                                 minLength = ret.LongLength / 2;
                             long k;
                             for (k = 0; k < minLength; k++)
                             {
-                                ret[0, k + notSamplesOffset] += retTask[0, k];
-                                ret[1, k + notSamplesOffset] += retTask[1, k];
+                                ret[0, k + notSamplesOffset] += returnedSound[0, k];
+                                ret[1, k + notSamplesOffset] += returnedSound[1, k];
                             }
                         }
                     }
