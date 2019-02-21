@@ -180,7 +180,7 @@ namespace JaebeMusicStudio.Sound
                         var task = new Task<SoundElementRenderResult>(() =>
                          {
                              if (renderStart >= 0) //you must wait to start playing
-                            {
+                             {
                                  var rendered = element.GetSound(0, rendering.renderingLength - renderStart, rendering);
                                  return new SoundElementRenderResult { data = rendered, offset = (int)CountSamples(renderStart) };
                              }
@@ -204,7 +204,7 @@ namespace JaebeMusicStudio.Sound
                 {
                     if (NoteSynths.Count == 0)
                         break;
-                        break;
+                    break;
                     liveElement.Synth = NoteSynths[0];
                 }
                 if (liveElement.Synth?.SoundLine == null) continue;
@@ -221,37 +221,35 @@ namespace JaebeMusicStudio.Sound
         }
         internal void Render(Rendering rendering)
         {
-            lock (this)
+            prepareToRender(rendering);
+            if (rendering.type == RenderngType.live)
             {
-                prepareToRender(rendering);
-                if (rendering.type == RenderngType.live)
-                {
-                    if (Player.status != Player.Status.paused)
-                    {
-                        playTracks(rendering);
-                    }
-                    playLive(rendering);
-                }
-                else
+                if (Player.status != Player.Status.paused)
                 {
                     playTracks(rendering);
                 }
-                rendering.canHarvest = true;
-                Console.WriteLine("LinesStart");
-                foreach (var line in lines)
-                {
-                    line.checkIfReady(rendering);
-                    Console.WriteLine("Line" + line);
-                }
-                Console.WriteLine("LinesEnd");
-                var liveLinesList = liveLines.getAvaibleInputs();
-                foreach (var line in liveLinesList)
-                {
-                    line.checkIfReady(rendering);
-                    Console.WriteLine("LineLive" + line);
-                }
-                Console.WriteLine("LinesLiveEnd");
+                playLive(rendering);
             }
+            else
+            {
+                playTracks(rendering);
+            }
+            rendering.canHarvest = true;
+            Console.WriteLine("LinesStart");
+            foreach (var line in lines)
+            {
+                line.checkIfReady(rendering);
+                Console.WriteLine("Line" + line);
+            }
+            Console.WriteLine("LinesEnd");
+            //var liveLinesList = liveLines.getAvaibleInputs();
+            //foreach (var line in liveLinesList)
+            //{
+            //    line.checkIfReady(rendering);
+            //    Console.WriteLine("LineLive" + line);
+            //}
+            Console.WriteLine("LinesLiveEnd");
+
         }
 
         public void Serialize(string path)

@@ -173,7 +173,7 @@ namespace JaebeMusicStudio.Sound
             }
             slRend.data = sound;
 
-            Console.WriteLine("RedyToResolve Line "+this);
+            Console.WriteLine("RedyToResolve Line " + this);
             slRend.Resolve();
 
             if (connectedUIs != 0)
@@ -271,15 +271,12 @@ namespace JaebeMusicStudio.Sound
             lock (this)
             {
                 this.completed = true;
-
+                Console.WriteLine("waitingOnCompletion" + waitingOnCompletion.Count);
                 foreach (var x in waitingOnCompletion)
                 {
-                    try
-                    {
-                        x();
-                    }
-                    catch (Exception ex) { Console.WriteLine(ex); }
+                    x();
                 }
+                waitingOnCompletion = null;
             }
         }
         public class SoundLineRenderingAwaiter : INotifyCompletion
@@ -310,7 +307,10 @@ namespace JaebeMusicStudio.Sound
             {
                 lock (parent)
                 {
-                    parent.waitingOnCompletion.Add(continuation);
+                    if (IsCompleted)
+                        continuation();
+                    else
+                        parent.waitingOnCompletion.Add(continuation);
                 }
             }
 
