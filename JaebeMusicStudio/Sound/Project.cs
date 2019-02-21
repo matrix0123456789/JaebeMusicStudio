@@ -37,7 +37,7 @@ namespace JaebeMusicStudio.Sound
         public LiveSoundLineCollection liveLines = new LiveSoundLineCollection();
 
         /// <summary>
-        /// for EXAMPLE KEYBOARD OR MINI INPUT
+        /// for EXAMPLE KEYBOARD OR MIDI INPUT
         /// </summary>
         public static List<ILiveInput> live = new List<ILiveInput>();
         public string Path { get; private set; }
@@ -175,25 +175,23 @@ namespace JaebeMusicStudio.Sound
                     if (element.SoundLine == null) continue; //skip element without output
                     if (element.Offset < position + rendering.renderingLength && element.Offset + element.Length > position)
                     {
-                        lock (element.SoundLine)
-                        {
-                            element.SoundLine.getByRendering(rendering).currentToRender++;
-                            System.Threading.ThreadPool.QueueUserWorkItem((el) =>
+                        var lineRendering = element.SoundLine.getByRendering(rendering);
+                        var renderStart = element.Offset - position;
+                        var task = new Task<SoundElementRenderResult>(() =>
+                         {
+                             if (renderStart >= 0) //you must wait to start playing
                             {
-                                var renderStart = (el as ISoundElement).Offset - position;
-                                if (renderStart >= 0) //you must wait to start playing
-                                {
-                                    var rendered = (el as ISoundElement).GetSound(0, rendering.renderingLength - renderStart, rendering);
-                                    (el as ISoundElement).SoundLine.rendered((int)CountSamples(renderStart),
-                                        rendered, rendering);
-                                }
-                                else
-                                {
-                                    var rendered = (el as ISoundElement).GetSound(-renderStart, rendering.renderingLength, rendering);
-                                    (el as ISoundElement).SoundLine.rendered(0, rendered, rendering);
-                                }
-                            }, element);
-                        }
+                                 var rendered = element.GetSound(0, rendering.renderingLength - renderStart, rendering);
+                                 return new SoundElementRenderResult { data = rendered, offset = (int)CountSamples(renderStart) };
+                             }
+                             else
+                             {
+                                 var rendered = element.GetSound(-renderStart, rendering.renderingLength, rendering);
+                                 return new SoundElementRenderResult { data = rendered, offset = 0 };
+                             }
+                         });
+                        lineRendering.currentToRender.Add(task);
+                        task.Start();
                     }
                 }
             }
@@ -206,19 +204,19 @@ namespace JaebeMusicStudio.Sound
                 {
                     if (NoteSynths.Count == 0)
                         break;
+                        break;
                     liveElement.Synth = NoteSynths[0];
                 }
                 if (liveElement.Synth?.SoundLine == null) continue;
-                lock (liveElement.Synth.SoundLine)
-                {
-                    liveElement.Synth.SoundLine.getByRendering(rendering).currentToRender++;
-                    ThreadPool.QueueUserWorkItem((el) =>
-                    {
-                        var rendered = (el as ILiveInput).GetSound(0, rendering.renderingLength, rendering);
-                        (el as ILiveInput).Synth.SoundLine.rendered(0, rendered, rendering);
 
-                    }, liveElement);
-                }
+                var lineRendering = liveElement.Synth.SoundLine.getByRendering(rendering);
+                var task = new Task<SoundElementRenderResult>(() =>
+                 {
+                     var rendered = liveElement.GetSound(0, rendering.renderingLength, rendering);
+                     return new SoundElementRenderResult { data = rendered, offset = 0 };
+                 });
+                lineRendering.currentToRender.Add(task);
+                task.Start();
             }
         }
         internal void Render(Rendering rendering)
@@ -239,15 +237,20 @@ namespace JaebeMusicStudio.Sound
                     playTracks(rendering);
                 }
                 rendering.canHarvest = true;
+                Console.WriteLine("LinesStart");
                 foreach (var line in lines)
                 {
                     line.checkIfReady(rendering);
+                    Console.WriteLine("Line" + line);
                 }
+                Console.WriteLine("LinesEnd");
                 var liveLinesList = liveLines.getAvaibleInputs();
                 foreach (var line in liveLinesList)
                 {
                     line.checkIfReady(rendering);
+                    Console.WriteLine("LineLive" + line);
                 }
+                Console.WriteLine("LinesLiveEnd");
             }
         }
 

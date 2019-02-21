@@ -60,12 +60,11 @@ namespace JaebeMusicStudio.Sound
                 try
                 {
                     lastRendered = DateTime.Now;
-                    Console.WriteLine("Buffered ms:" + bufor.BufferedDuration.TotalMilliseconds + " RP " + renderPeriod);
                     if (bufor.BufferedDuration.TotalMilliseconds < renderPeriod * 2)
                     {
+                        Console.WriteLine("RenderStart");
                         var renderLength = (((float)renderPeriod) *
                                             Project.current.tempo / 60f) / 1000f;
-                        Console.WriteLine("renderLength " + renderLength);
                         if (renderLength < 0)
                             renderLength = 0;
                         liveRenderingNow = true;
@@ -73,7 +72,6 @@ namespace JaebeMusicStudio.Sound
                         var soundReady = rendering.project.lines[0].getByRendering(rendering);
                         rendering.project.Render(rendering);
                         var sound = await soundReady;
-                        Console.WriteLine("RenderedTime " + renderPeriod + " real" + (DateTime.Now - rendering.started).TotalMilliseconds);
                         ReturnedSound(sound);
                         rendering.project.Clear(rendering);
                         if (status == Status.playing)
@@ -81,6 +79,7 @@ namespace JaebeMusicStudio.Sound
                             position += (float)renderLength;
                             positionChanged?.Invoke(position);
                         }
+                        Console.WriteLine("RenderEnded");
                     }
                     else
                     {

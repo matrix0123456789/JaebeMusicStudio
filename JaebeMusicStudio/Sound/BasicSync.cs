@@ -75,7 +75,7 @@ namespace JaebeMusicStudio.Sound
             }
             oscillators.CollectionChanged += Oscillators_CollectionChanged;
         }
-        public float[,] GetSound(float start, float length,Rendering rendering,  NotesCollection notes)
+        public float[,] GetSound(float start, float length, Rendering rendering, NotesCollection notes)
         {
             long samples = (long)Project.current.CountSamples(length);//how many samples you need on output
             var ret = new float[2, samples];//sound that will be returned
@@ -93,28 +93,21 @@ namespace JaebeMusicStudio.Sound
                         var j_copy = j;
                         tasks[i, j] = Task.Run(() =>
                         {
-                            try
+                            if (start > note.Offset)
                             {
-                                if (start > note.Offset)
+                                var l1 = note.Length + oscillators[j_copy].R - (start - note.Offset);
+                                if (length < l1)
                                 {
-                                    var l1 = note.Length + oscillators[j_copy].R - (start - note.Offset);
-                                    if (length < l1)
-                                    {
-                                        l1 = length;
-                                    }
-                                    return oscillators[j_copy].GetSound(start - note.Offset, l1, note);
+                                    l1 = length;
                                 }
-                                else
-                                {
-                                    var l1 = length + start - note.Offset;
-                                    if (note.Length + oscillators[j_copy].R < l1)
-                                        l1 = note.Length + oscillators[j_copy].R;
-                                    return oscillators[j_copy].GetSound(0, l1, note);
-                                }
+                                return oscillators[j_copy].GetSound(start - note.Offset, l1, note);
                             }
-                            catch
+                            else
                             {
-                                return null;
+                                var l1 = length + start - note.Offset;
+                                if (note.Length + oscillators[j_copy].R < l1)
+                                    l1 = note.Length + oscillators[j_copy].R;
+                                return oscillators[j_copy].GetSound(0, l1, note);
                             }
                         });
                     }
@@ -155,8 +148,8 @@ namespace JaebeMusicStudio.Sound
                             var minLength = retTask.LongLength / 2;
                             if (ret.LongLength / 2 < minLength)
                                 minLength = ret.LongLength / 2;
-                                long k;
-                            for ( k = 0; k < minLength; k++)
+                            long k;
+                            for (k = 0; k < minLength; k++)
                             {
                                 ret[0, k + notSamplesOffset] += retTask[0, k];
                                 ret[1, k + notSamplesOffset] += retTask[1, k];

@@ -75,131 +75,132 @@ namespace JaebeMusicStudio.Sound
             }
             document.DocumentElement.AppendChild(node);
         }
-        public void rendered(int offset, float[,] data, Rendering rendering, float volumeChange = 1)
+        public void rendered(int offset, float[,] inputData, float[,] outputData, float volumeChange = 1)
         {
             float vol = volumeChange;
-            var slRend = getByRendering(rendering);
-            lock (this)
+
+            if (volume != 0)
             {
-                var lastRendered = slRend.data;
-                if (volume != 0)
+                var length = inputData.GetLength(1);
+                if (length + offset > outputData.GetLength(1))
+                    length = outputData.GetLength(1) - offset;
+                if (offset == 0)
                 {
-                    var length = data.GetLength(1);
-                    if (length + offset > lastRendered.GetLength(1))
-                        length = lastRendered.GetLength(1) - offset;
-                    if (offset == 0)
+                    if (inputData.GetLength(0) == 1)
                     {
-                        if (data.GetLength(0) == 1)
+                        for (int i = 0; i < length; i++)
                         {
-                            for (int i = 0; i < length; i++)
-                            {
-                                lastRendered[0, i] += data[0, i] * vol;
-                                lastRendered[1, i] += data[0, i] * vol;
-                            }
-                        }
-                        else
-                        {
-                            for (int i = 0; i < length; i++)
-                            {
-                                lastRendered[0, i] += data[0, i] * vol;
-                                lastRendered[1, i] += data[1, i] * vol;
-                            }
+                            outputData[0, i] += inputData[0, i] * vol;
+                            outputData[1, i] += inputData[0, i] * vol;
                         }
                     }
                     else
                     {
-                        if (data.GetLength(0) == 1)
+                        for (int i = 0; i < length; i++)
                         {
-                            for (int i = 0; i < length; i++)
-                            {
-                                lastRendered[0, i + offset] += data[0, i] * vol;
-                                lastRendered[1, i + offset] += data[0, i] * vol;
-                            }
-                        }
-                        else
-                        {
-                            for (int i = 0; i < length; i++)
-                            {
-                                lastRendered[0, i + offset] += data[0, i] * vol;
-                                lastRendered[1, i + offset] += data[1, i] * vol;
-                            }
+                            outputData[0, i] += inputData[0, i] * vol;
+                            outputData[1, i] += inputData[1, i] * vol;
                         }
                     }
                 }
-                slRend.currentToRender--;
+                else
+                {
+                    if (inputData.GetLength(0) == 1)
+                    {
+                        for (int i = 0; i < length; i++)
+                        {
+                            outputData[0, i + offset] += inputData[0, i] * vol;
+                            outputData[1, i + offset] += inputData[0, i] * vol;
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < length; i++)
+                        {
+                            outputData[0, i + offset] += inputData[0, i] * vol;
+                            outputData[1, i + offset] += inputData[1, i] * vol;
+                        }
+                    }
+                }
             }
-            checkIfReady(rendering);
+
 
         }
         public async void checkIfReady(Rendering rendering)
         {
             if (!rendering.canHarvest)
                 return;
-            lock (this)
+
+            var slRend = getByRendering(rendering);
+
+
+            var sound = slRend.data;
+            Console.WriteLine("startAwaiting");
+            foreach (var oneTask in slRend.currentToRender)
             {
-                var slRend = getByRendering(rendering);
-                if (slRend.currentToRender == 0&&!slRend.completed)
+                var result = await oneTask;
+                Console.WriteLine("ElementAwaited");
+                rendered(result.offset, result.data, sound, result.volumeChange);
+            }
+            foreach (var input in inputs)
+            {
+                var inputData = await input.input.getByRendering(rendering);
+                Console.WriteLine("inputAwaited");
+                var length = sound.GetLength(1);
+                for (int i = 0; i < length; i++)
                 {
-
-                    var sound = slRend.data;
-                    foreach (var input in inputs)
+                    sound[0, i] += inputData[0, i];
+                    sound[1, i] += inputData[1, i];
+                }
+                //output.output.rendered(0, sound, rendering, output.volume);
+            }
+            if (volume != 0)
+            {
+                if (volume != 1)
+                {
+                    var length = sound.GetLength(1);
+                    for (int i = 0; i < length; i++)
                     {
-                      var inputData= await input.input.getByRendering(rendering);
-                        var length = sound.GetLength(1);
-                        for (int i = 0; i < length; i++)
-                        {
-                            sound[0, i] += inputData[0, i];
-                            sound[1, i] += inputData[1, i];
-                        }
-                        //output.output.rendered(0, sound, rendering, output.volume);
-                    }
-                    if (volume != 0)
-                    {
-                        if (volume != 1)
-                        {
-                            var length = sound.GetLength(1);
-                            for (int i = 0; i < length; i++)
-                            {
-                                sound[0, i] *= volume;
-                                sound[1, i] *= volume;
-                            }
-                        }
-                        foreach (var effect in effects)
-                        {
-                            if (effect.IsActive)
-                                sound = effect.DoFilter(sound);
-                        }
-                    }
-                    slRend.data = sound;
-                    slRend.Resolve();
-
-                    if (connectedUIs != 0)
-                    {
-                        float minL = sound[0, 0];
-                        float minR = sound[1, 0];
-                        float maxL = sound[0, 0];
-                        float maxR = sound[1, 0];
-                        for (var i = 0; i < sound.GetLength(1); i++)
-                        {
-                            if (sound[0, i] < minL)
-                                minL = sound[0, i];
-                            else if (sound[0, i] > maxL)
-                                maxL = sound[0, i];
-                            if (sound[1, i] < minR)
-                                minR = sound[1, i];
-                            else if (sound[1, i] > maxR)
-                                maxR = sound[1, i];
-                        }
-                        minL = Math.Abs(minL);
-                        maxL = Math.Abs(maxL);
-                        minR = Math.Abs(minR);
-                        maxR = Math.Abs(maxR);
-                        LastVolume[0] = minL > maxL ? minL : maxL;
-                        LastVolume[1] = minR > maxR ? minR : maxR;
+                        sound[0, i] *= volume;
+                        sound[1, i] *= volume;
                     }
                 }
+                foreach (var effect in effects)
+                {
+                    if (effect.IsActive)
+                        sound = effect.DoFilter(sound);
+                }
             }
+            slRend.data = sound;
+            slRend.Resolve();
+
+            if (connectedUIs != 0)
+            {
+                float minL = sound[0, 0];
+                float minR = sound[1, 0];
+                float maxL = sound[0, 0];
+                float maxR = sound[1, 0];
+                for (var i = 0; i < sound.GetLength(1); i++)
+                {
+                    if (sound[0, i] < minL)
+                        minL = sound[0, i];
+                    else if (sound[0, i] > maxL)
+                        maxL = sound[0, i];
+                    if (sound[1, i] < minR)
+                        minR = sound[1, i];
+                    else if (sound[1, i] > maxR)
+                        maxR = sound[1, i];
+                }
+                minL = Math.Abs(minL);
+                maxL = Math.Abs(maxL);
+                minR = Math.Abs(minR);
+                maxR = Math.Abs(maxR);
+                LastVolume[0] = minL > maxL ? minL : maxL;
+                LastVolume[1] = minR > maxR ? minR : maxR;
+            }
+
         }
+
 
 
         public void AddEffect(Effect e)
@@ -255,7 +256,7 @@ namespace JaebeMusicStudio.Sound
     }
     public class SoundLineRendering
     {
-        public int currentToRender;
+        public List<Task<SoundElementRenderResult>> currentToRender = new List<Task<SoundElementRenderResult>>();
         public float[,] data;
         public bool completed;
         List<Action> waitingOnCompletion = new List<Action>();

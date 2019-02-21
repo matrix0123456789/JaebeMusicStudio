@@ -15,7 +15,6 @@ namespace JaebeMusicStudio.Sound
 
         private WaveInCapabilities Capabilities;
         private WaveIn input = null;
-        private float[,] lastRendered = new float[2, 0];
         private List<float[,]> buffer = new List<float[,]>();
         int bufferPosition = 0;
         int bufferAvalible = 0;
@@ -122,40 +121,32 @@ namespace JaebeMusicStudio.Sound
         {
             if (!rendering.canHarvest)
                 return;
-            lock (this)
-            {
-                var length = lastRendered.GetLength(1);
+            var slRend = getByRendering(rendering);
+            var data = slRend.data = new float[2, (int)Project.current.CountSamples(rendering.renderingLength)];
+            var length = data.GetLength(1);
 
-                if (buffer.Count > 0)
+            if (buffer.Count > 0)
+            {
+                for (var i = 0; i < length; i++)
                 {
-                    for (var i = 0; i < length; i++)
+                    data[0, i] = buffer[0][0, bufferPosition];
+                    data[1, i] = buffer[0][1, bufferPosition];
+                    bufferPosition++;
+                    if (bufferPosition >= buffer[0].GetLength(1))
                     {
-                        lastRendered[0, i] = buffer[0][0, bufferPosition];
-                        lastRendered[1, i] = buffer[0][1, bufferPosition];
-                        bufferPosition++;
-                        if (bufferPosition >= buffer[0].GetLength(1))
-                        {
-                            bufferAvalible -= buffer[0].GetLength(1);
-                            buffer.RemoveAt(0);
-                            bufferPosition = 0;
-                            if (buffer.Count == 0)
-                                break;
-                        }
+                        bufferAvalible -= buffer[0].GetLength(1);
+                        buffer.RemoveAt(0);
+                        bufferPosition = 0;
+                        if (buffer.Count == 0)
+                            break;
                     }
                 }
-
-
-                foreach (var output in outputs)
-                {
-                    output.output.rendered(0, lastRendered, rendering, output.volume);
-                }
-
-
             }
+            slRend.Resolve();
+
         }
         public void prepareToRender(Rendering rendering)
         {
-            lastRendered = new float[2, (int)Project.current.CountSamples(rendering.renderingLength)];
         }
     }
 }
