@@ -51,7 +51,7 @@ namespace JaebeMusicStudio.Widgets
                     }
                 });
         }
-        private int samplesPerFrame => (int)(Project.current.sampleRate * 0.016);
+        private int samplesPerFrame => (int)(Project.current.sampleRate / 60.0);
         void UpdateFrame()
         {
             lock (dane)
@@ -107,7 +107,7 @@ namespace JaebeMusicStudio.Widgets
             Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (ThreadStart)delegate ()
         {
 
-            int goLeft = findTrigger(currentFrame);
+            int goLeft = synchronize ? findTrigger(currentFrame) : 0;
             chart.Points.Clear();
 
             int przeskokint = (int)(samplesPerFrame / drawArea.ActualWidth);//optymalizacja
