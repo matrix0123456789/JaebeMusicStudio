@@ -358,20 +358,7 @@ namespace JaebeMusicStudio.Sound
             }
             loadEnd?.Invoke();
         }
-        public void ReturnedSound(float[,] data)
-        {
-            if (Player.status == Player.Status.playing || Player.status == Player.Status.paused)
-            {
-                Player.ReturnedSound(data);
-
-
-            }
-            else if (Player.status == Player.Status.fileRendering)
-            {
-                SaveSound.SaveFileEnd(data);
-            }
-        }
-        public float CountSamples(float input)
+                public float CountSamples(float input)
         {
             return input / tempo * 60f * _sampleRate;
         }
