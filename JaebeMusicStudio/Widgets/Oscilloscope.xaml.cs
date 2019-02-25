@@ -30,7 +30,8 @@ namespace JaebeMusicStudio.Widgets
         int typX = 2, typY = 1;
         private int bufforred = 0;
         public Queue<float[,]> dane = new Queue<float[,]>();
-        float[,] currentFrame = new float[2,0], previousFrame = null;
+        float[,] currentFrame, previousFrame;
+        bool synchronize = false;
 
         public Oscilloscope()
         {
@@ -54,30 +55,31 @@ namespace JaebeMusicStudio.Widgets
         private int samplesPerFrame => (int)(Project.current.sampleRate / 60.0);
         void UpdateFrame()
         {
+            float[,] nextFrame;
             lock (dane)
             {
-                var samplesPerFrame = this.samplesPerFrame;
-                previousFrame = currentFrame;
-                currentFrame = new float[2, samplesPerFrame];
-
-                while (bufforred > 2000)
+                while (bufforred > samplesPerFrame)
                 {
-                    var skipped = dane.Dequeue();
-                    bufforred -= skipped.GetLength(1);
+                    var samplesPerFrame = this.samplesPerFrame;
+                    nextFrame = new float[2, samplesPerFrame];
 
-                }
-                if (aktualniePrzetwarzane == null)
-                {
-                    if (dane.Count == 0)
+                    //while (bufforred > 2000)
+                    //{
+                    //    var skipped = dane.Dequeue();
+                    //    bufforred -= skipped.GetLength(1);
+
+                    //}
+                    if (aktualniePrzetwarzane == null)
                     {
-                        return;
+                        if (dane.Count == 0)
+                        {
+                            return;
+                        }
+                        aktualniePrzetwarzane = dane.Dequeue();
+                        bufforred -= aktualniePrzetwarzane.GetLength(1);
+                        pozycja = 0;
                     }
-                    aktualniePrzetwarzane = dane.Dequeue();
-                    bufforred -= aktualniePrzetwarzane.GetLength(1);
-                    pozycja = 0;
-                }
-                try
-                {
+
                     for (int i = 0; i < samplesPerFrame; i++)
                     {
                         while (pozycja >= aktualniePrzetwarzane.GetLength(1))
@@ -86,12 +88,13 @@ namespace JaebeMusicStudio.Widgets
                             bufforred -= aktualniePrzetwarzane.GetLength(1);
                             pozycja = 0;
                         }
-                        currentFrame[0, i] = aktualniePrzetwarzane[0, pozycja];
-                        currentFrame[1, i] = aktualniePrzetwarzane[1, pozycja];
+                        nextFrame[0, i] = aktualniePrzetwarzane[0, pozycja];
+                        nextFrame[1, i] = aktualniePrzetwarzane[1, pozycja];
                         pozycja++;
                     }
+                    previousFrame = currentFrame;
+                    currentFrame = nextFrame;
                 }
-                catch { aktualniePrzetwarzane = null; }
             }
         }
         private void Update(object state)
@@ -104,9 +107,9 @@ namespace JaebeMusicStudio.Widgets
                 previousFrame = this.previousFrame;
                 currentFrame = this.currentFrame;
             }
+            if (previousFrame == null) return;
             Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, (ThreadStart)delegate ()
         {
-
             int goLeft = synchronize ? findTrigger(currentFrame) : 0;
             chart.Points.Clear();
 
