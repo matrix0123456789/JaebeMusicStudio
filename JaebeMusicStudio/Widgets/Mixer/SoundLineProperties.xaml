@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="JaebeMusicStudio.Widgets.Mixer.SoundLineProperties"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:JaebeMusicStudio.Widgets.Mixer"
+             xmlns:Widgets="clr-namespace:JaebeMusicStudio.Widgets"
+             xmlns:UI="clr-namespace:JaebeMusicStudio.UI"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <ScrollViewer Background="White">
+        <Grid>
+            <StackPanel>
+                <TextBox VerticalAlignment="Top" Name="LineTitle" TextChanged="LineTitle_TextChanged"></TextBox>
+
+                <Label Grid.Row="1" HorizontalContentAlignment="Center" VerticalAlignment="Top">Wejścia</Label>
+                <StackPanel Name="InputsList"/>
+                <Grid>
+                    <Widgets:SoundLineSelect VerticalAlignment="Center" x:Name="LineInput_AddSelect" Margin="0,0,85,0"/>
+                    <UI:ButtonPretty Height="22" x:Name="LineInput_AddButton" Click="LineInput_AddButton_Click" Width="58" Text="Dodaj" HorizontalAlignment="Right"></UI:ButtonPretty>
+                </Grid>
+                
+                <Label Grid.Column="1" HorizontalContentAlignment="Center" VerticalAlignment="Top">Efekty</Label>
+                <StackPanel Name="EffectsList"/>
+                <StackPanel Orientation="Horizontal">
+                    <UI:ButtonPretty x:Name="AddReverb" Text="Reverb" Click="AddReverb_Click"></UI:ButtonPretty>
+                    <UI:ButtonPretty x:Name="AddNonlinearDistortion" Text="Nonlinear" Click="AddNonlinearDistortion_Click"></UI:ButtonPretty>
+                    <UI:ButtonPretty x:Name="AddFlanger" Text="Flanger" Click="AddFlanger_Click"></UI:ButtonPretty>
+                    <UI:ButtonPretty x:Name="AddSimpleFilter" Text="SimpleFilter" Click="AddSimpleFilter_Click"></UI:ButtonPretty>
+                </StackPanel>
+                
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

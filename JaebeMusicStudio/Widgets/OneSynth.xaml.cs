@@ -49,9 +49,9 @@ namespace JaebeMusicStudio.Widgets
             }
         }
 
-        private void SlSelect_OnChanged(SoundLineSelect sender, SoundLine obj)
+        private void SlSelect_OnChanged(SoundLineSelect sender, SoundLineAbstract obj)
         {
-            synth.SoundLine = obj;
+            synth.SoundLine = obj as SoundLine;
         }
 
         private void Default_OnClick(object sender, RoutedEventArgs e)

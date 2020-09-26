@@ -33,7 +33,7 @@ namespace JaebeMusicStudio.Sound
         }
 
         public static Project current = null;
-        public List<SoundLine> lines = new List<SoundLine>() { };
+        public ObservableCollection<SoundLine> lines = new ObservableCollection<SoundLine>() { };
         public LiveSoundLineCollection liveLines = new LiveSoundLineCollection();
 
         /// <summary>

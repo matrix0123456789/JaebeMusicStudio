@@ -15,44 +15,48 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace JaebeMusicStudio.Widgets
+namespace JaebeMusicStudio.Widgets.Mixer
 {
     /// <summary>
     /// Interaction logic for SoundLineUI.xaml
     /// </summary>
-    public partial class LiveSoundLineUI : UserControl, IDisposable
+    public partial class SoundLineUI : UserControl, IDisposable
     {
-        private SoundLineAbstract line;
-        public SoundLineAbstract Line { get { return line; } }
-        public LiveSoundLineUI(LiveSoundLine line)
+        public readonly SoundLineAbstract Line;
+        public SoundLineUI(SoundLineAbstract line)
         {
-            this.line = line;
-            line.ConnectUI();
+            Line = line;
+            Line.ConnectUI();
             InitializeComponent();
             volume.Value = line.volume;
+
+            if (line is SoundLine)
+                title.Content = (line as SoundLine).Title;
+            else if (line is LiveSoundLine)
+                title.Content = (line as LiveSoundLine).Title;
         }
 
         public void Dispose()
         {
-            line.DisconnectUI();
+            Line.DisconnectUI();
         }
 
         private void Volume_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            line.volume = (float)volume.Value;
+            Line.volume = (float)volume.Value;
         }
 
         public void Refresh()
         {
 
 
-            if (line.LastVolume[0] <= 1)
-                VolumeL.Width = line.LastVolume[0] * 100;
+            if (Line.LastVolume[0] <= 1)
+                VolumeL.Width = Line.LastVolume[0] * 100;
             else
                 VolumeL.Width = 100;
 
-            if (line.LastVolume[1] <= 1)
-                VolumeR.Width = line.LastVolume[1] * 100;
+            if (Line.LastVolume[1] <= 1)
+                VolumeR.Width = Line.LastVolume[1] * 100;
             else
                 VolumeR.Width = 100;
 

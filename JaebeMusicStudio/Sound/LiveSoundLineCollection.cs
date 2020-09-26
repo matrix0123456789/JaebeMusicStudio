@@ -9,9 +9,8 @@ namespace JaebeMusicStudio.Sound
 {
     class LiveSoundLineCollection
     {
-
-         Dictionary<int, LiveSoundLine> activeLines = new Dictionary<int, LiveSoundLine>();
-        public  List<LiveSoundLine> getAvaibleInputs()
+        Dictionary<int, LiveSoundLine> activeLines = new Dictionary<int, LiveSoundLine>();
+        public List<LiveSoundLine> getAvaibleInputs()
         {
             var ret = new List<LiveSoundLine>();
             for (var i = 0; i < WaveIn.DeviceCount; i++)

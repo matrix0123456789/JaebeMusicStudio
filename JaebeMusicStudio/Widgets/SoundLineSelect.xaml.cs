@@ -21,31 +21,34 @@ namespace JaebeMusicStudio.Widgets
     /// </summary>
     public partial class SoundLineSelect : UserControl
     {
-
-        public event Action<SoundLineSelect, SoundLine> Changed; 
+        public event Action<SoundLineSelect, SoundLineAbstract> Changed;
         public SoundLineSelect()
         {
             InitializeComponent();
         }
 
-        public SoundLine Selected
+        public SoundLineAbstract Selected
         {
-            get { return MainSelect.SelectedValue as SoundLine; }
+            get { return MainSelect.SelectedValue as SoundLineAbstract; }
             set { MainSelect.SelectedValue = value; }
         }
         private void MainSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Changed?.Invoke(this, MainSelect.SelectedValue as SoundLine);
+            Changed?.Invoke(this, MainSelect.SelectedValue as SoundLineAbstract);
 
         }
 
         public void Generate()
         {
-           MainSelect.Items.Clear();
+            MainSelect.Items.Clear();
             foreach (var x in Project.current.lines)
             {
                 MainSelect.Items.Add(x);
-            } 
+            }
+            foreach (var x in Project.current.liveLines.getAvaibleInputs())
+            {
+                MainSelect.Items.Add(x);
+            }
         }
     }
 }

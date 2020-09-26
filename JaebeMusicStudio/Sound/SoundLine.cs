@@ -16,8 +16,9 @@ namespace JaebeMusicStudio.Sound
         /// </summary>
         public List<SoundLineConnection> inputs = new List<SoundLineConnection>();
         public List<Effect> effects = new List<Effect>();
-
+        
         public string Title { get; set; } = "";
+
         public event Action<int, Effect> effectAdded;
         public event Action<int> effectRemoved;
         public SoundLine()

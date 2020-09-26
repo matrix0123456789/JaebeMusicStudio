@@ -12,7 +12,7 @@ namespace JaebeMusicStudio.Sound
     {
 
         public int DeviceID { get; }
-
+        public string Title => Capabilities.ProductName;
         private WaveInCapabilities Capabilities;
         private WaveIn input = null;
         private List<float[,]> buffer = new List<float[,]>();

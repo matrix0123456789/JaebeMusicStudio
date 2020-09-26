@@ -118,7 +118,7 @@ namespace JaebeMusicStudio
 
         private void openMixerButton_Click(object sender, RoutedEventArgs e)
         {
-            PseudoWindow.OpenWindow(() => new Widgets.Mixer());
+            PseudoWindow.OpenWindow(() => new Widgets.Mixer.Mixer());
         }
 
         private void openOscilloscopeButton_Click(object sender, RoutedEventArgs e)
