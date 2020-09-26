@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="30" d:DesignWidth="30">
     <Grid>
-        <Button x:Name="button" FontFamily="/fonts/jms.ttf#jms"/>
+        <Button x:Name="button" FontFamily="pack://application:,,,/fonts/#jms"/>
 
     </Grid>
 </UserControl>

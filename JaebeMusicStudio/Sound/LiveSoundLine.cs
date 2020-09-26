@@ -44,6 +44,12 @@ namespace JaebeMusicStudio.Sound
                 var reader = new BinaryReader(new MemoryStream(e.Buffer));
                 sound = read(reader, input.WaveFormat.BitsPerSample, input.WaveFormat.Channels);
                 buffer.Add(sound);
+                if (buffer.Count > 16)
+                {
+                    bufferAvalible -= buffer[0].GetLength(1);
+                    buffer.RemoveAt(0);
+                    bufferPosition = 0; 
+                }
                 bufferAvalible += sound.GetLength(1);
 
                 if (connectedUIs != 0)

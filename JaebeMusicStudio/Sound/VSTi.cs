@@ -112,7 +112,8 @@ namespace JaebeMusicStudio.Sound
             int sumSamples = 0;
             for (var i = 0; i < timeBreaks.Count - 1; i++)
             {
-                writer.Write((int)JmsVstHost.Commands.GetSoundNoteSynth);
+                //todo temporary
+                //writer.Write((int)JmsVstHost.Commands.GetSoundNoteSynth);
                 var nowSamples = (int)Project.current.CountSamples(timeBreaks[i + 1] - start);
                 if (i == timeBreaks.Count - 2)
                     nowSamples = samples;//to provide errors of float incorrection
@@ -184,8 +185,9 @@ namespace JaebeMusicStudio.Sound
         }
         public void ShowWindow()
         {
-            writer.Write((int)JmsVstHost.Commands.ShowWindow);
-            writer.Flush();
+            //todo temporary
+        //    writer.Write((int)JmsVstHost.Commands.ShowWindow);
+        //    writer.Flush();
         }
     }
 }
