@@ -1,6 +1,7 @@
 ﻿using NAudio.Midi;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,52 +13,70 @@ namespace JaebeMusicStudio.Sound
     {
         public INoteSynth Synth { get; set; }
         Dictionary<int, Note> pressedNotes = new Dictionary<int, Note>();
+        public IEnumerable<Note> PressedNotes => pressedNotes.Values;
         private double curentPositon = 0;
         public NotesCollection Items { get; set; }
+
+        public bool ConstantVolume = false;
+
         static Dictionary<int, MidiInput> singletons = new Dictionary<int, MidiInput>();
         private MidiIn midiIn;
+        private MidiInCapabilities deviceInfo;
+        public Dictionary<int, int> Controlls { get; } = new Dictionary<int, int>();
+
+        public event Action PressedNotesChanged;
+        public event Action ControllsChanged;
 
         private MidiInput(int deviceId)
         {
             Items = new NotesCollection();
             Project.live.Add(this);
             midiIn = new MidiIn(deviceId); // default device
+            deviceInfo = MidiIn.DeviceInfo(deviceId);
             midiIn.MessageReceived += midiIn_MessageReceived;
             midiIn.Start();
         }
 
         private void midiIn_MessageReceived(object sender, MidiInMessageEventArgs e)
         {
-            switch (e.MidiEvent.CommandCode)
+            lock (this)
             {
-                case MidiCommandCode.NoteOn:
-                case MidiCommandCode.NoteOff:
-                    var eventObj = e.MidiEvent as NoteEvent;
-                    var eventObjOn = e.MidiEvent as NoteEvent;
-                    var pitch = eventObj.NoteNumber;
-                    if (eventObjOn != null && eventObj.Velocity > 0)
-                    {
-                        if (!pressedNotes.ContainsKey(pitch))
+                switch (e.MidiEvent.CommandCode)
+                {
+                    case MidiCommandCode.NoteOn:
+                    case MidiCommandCode.NoteOff:
+                        var eventObj = e.MidiEvent as NoteEvent;
+                        var eventObjOn = e.MidiEvent as NoteEvent;
+                        var pitch = eventObj.NoteNumber;
+                        if (eventObjOn != null && eventObj.Velocity > 0)
                         {
-                            var newNote = new Note() { Offset = (float)curentPositon, Length = float.MaxValue, Pitch = pitch, Volume = (float)eventObj.Velocity / 127 };
-                            pressedNotes.Add(pitch, newNote);
-                            Items.Add(newNote);
+                            if (!pressedNotes.ContainsKey(pitch))
+                            {
+                                var newNote = new Note() { Offset = (float)curentPositon, Length = float.MaxValue, Pitch = pitch, Volume = ConstantVolume ? 1 : ((float)eventObj.Velocity / 127) };
+                                pressedNotes.Add(pitch, newNote);
+                                Items.Add(newNote);
+                                PressedNotesChanged?.Invoke();
+                            }
                         }
-                    }
-                    else
-                    {
-                        if (pressedNotes.ContainsKey(pitch))
+                        else
                         {
-                            var endingNote = pressedNotes[pitch];
-                            pressedNotes.Remove(pitch);
-                            endingNote.Length = (float)(curentPositon - endingNote.Offset);
+                            if (pressedNotes.ContainsKey(pitch))
+                            {
+                                var endingNote = pressedNotes[pitch];
+                                pressedNotes.Remove(pitch);
+                                endingNote.Length = (float)(curentPositon - endingNote.Offset);
+                                PressedNotesChanged?.Invoke();
+                            }
                         }
-                    }
-                    break;
-
-                default:
-                    Console.WriteLine(e.MidiEvent.ToString());
-                    break;
+                        break;
+                    case MidiCommandCode.ControlChange:
+                        Controlls[(int)(e.MidiEvent as ControlChangeEvent).Controller] = (e.MidiEvent as ControlChangeEvent).ControllerValue;
+                        ControllsChanged?.Invoke();
+                        break;
+                    default:
+                        Debug.WriteLine(e.MidiEvent.ToString());
+                        break;
+                }
             }
         }
 
@@ -113,6 +132,10 @@ namespace JaebeMusicStudio.Sound
             var ret = Synth.GetSound((float)curentPositon, length, rendering, Items);
             curentPositon += length;
             return ret;
+        }
+        public override string ToString()
+        {
+            return deviceInfo.ProductName ?? "";
         }
     }
 }

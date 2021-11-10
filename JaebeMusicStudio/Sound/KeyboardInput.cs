@@ -16,7 +16,14 @@ namespace JaebeMusicStudio.Sound
         Dictionary<Key, Note> pressedNotes = new Dictionary<Key, Note>();
         private double curentPositon = 0;
         public Type type;
+
+        public event Action PressedNotesChanged;
+        public event Action ControllsChanged;
+
         public float Pitch { get; set; }
+        public IEnumerable<Note> PressedNotes => pressedNotes.Values;
+
+        public Dictionary<int, int> Controlls => new Dictionary<int, int>();
 
         public KeyboardInput(Type type)
         {
@@ -32,9 +39,10 @@ namespace JaebeMusicStudio.Sound
                 var pitch = getPitchBykey(e.Key);
                 if (pitch.HasValue)
                 {
-                    var newNote = new Note() { Offset = (float)curentPositon, Length = float.MaxValue, Pitch = pitch.Value+Pitch };
+                    var newNote = new Note() { Offset = (float)curentPositon, Length = float.MaxValue, Pitch = pitch.Value + Pitch };
                     pressedNotes.Add(e.Key, newNote);
                     Items.Add(newNote);
+                    PressedNotesChanged?.Invoke();
                 }
             }
         }
@@ -46,6 +54,7 @@ namespace JaebeMusicStudio.Sound
                 var endingNote = pressedNotes[e.Key];
                 pressedNotes.Remove(e.Key);
                 endingNote.Length = (float)(curentPositon - endingNote.Offset);
+                PressedNotesChanged?.Invoke();
             }
 
 
@@ -262,7 +271,7 @@ namespace JaebeMusicStudio.Sound
         }
         public enum Type
         {
-            silent, lower, upper,lowerAndUpper, launchpad
+            silent, lower, upper, lowerAndUpper, launchpad
         }
     }
 }

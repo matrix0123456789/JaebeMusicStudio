@@ -27,11 +27,19 @@ namespace JaebeMusicStudio.Widgets
             InitializeComponent();
             synthSelect1.Selected = midi.Synth;
             synthSelect1.Generate();
+            currentNotes.SetInput(midi);
+            controlls.SetInput(midi);
+            Title.Content = "Midi input: " + midi.ToString();
         }
 
         private void SynthSelect1_OnChanged(SynthSelect arg1, Sound.INoteSynth arg2)
         {
             midi.Synth = arg2;
+        }
+
+        private void constantVolume_Checked(object sender, RoutedEventArgs e)
+        {
+            midi.ConstantVolume = constantVolume.IsChecked.Value;
         }
     }
 }

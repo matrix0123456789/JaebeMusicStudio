@@ -113,6 +113,7 @@ namespace JaebeMusicStudio.Sound
             var aLen = Project.current.CountSamples(A);
             var dLen = Project.current.CountSamples(D);
             var rLen = Project.current.CountSamples(R);
+            var noteVolume = volume * note.Volume;
             for (int i = 0; i < samples; i++)
             {
                 float adsrVal;
@@ -127,7 +128,7 @@ namespace JaebeMusicStudio.Sound
                 if (toEnd < rLen)
                     adsrVal *= toEnd / rLen;
 
-                adsrVal *= volume;
+                adsrVal *= noteVolume;
                 ret[0, i] *= adsrVal;
                 ret[1, i] *= adsrVal;
             }

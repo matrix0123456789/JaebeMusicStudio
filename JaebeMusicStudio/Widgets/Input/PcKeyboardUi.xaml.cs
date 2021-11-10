@@ -25,6 +25,7 @@ namespace JaebeMusicStudio.Widgets
         {
             InitializeComponent();
             updateConfig();
+            currentNotes.SetInput(singleton);
         }
         void updateConfig()
         {

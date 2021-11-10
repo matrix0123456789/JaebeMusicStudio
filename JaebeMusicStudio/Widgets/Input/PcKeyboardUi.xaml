@@ -3,22 +3,26 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:JaebeMusicStudio.Widgets"
+             xmlns:Widgets="clr-namespace:JaebeMusicStudio.Widgets"
+             xmlns:local="clr-namespace:JaebeMusicStudio.Widgets.Input"
              xmlns:UI="clr-namespace:JaebeMusicStudio.UI"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <ComboBox HorizontalAlignment="Stretch" VerticalAlignment="Top" SelectionChanged="keyboardType_SelectionChanged"  Name="keyboardType">
+        <Label VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,0,0">PC keyboard</Label>
+        <Label VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,28,0,0">Mode</Label>
+        <ComboBox VerticalAlignment="Top" SelectionChanged="keyboardType_SelectionChanged"  Name="keyboardType" Margin="46,28,0,0">
             <ComboBoxItem>1 keyboard</ComboBoxItem>
             <ComboBoxItem>2 keyboards</ComboBoxItem>
             <ComboBoxItem>Launchpad</ComboBoxItem>
         </ComboBox>
-        <Grid Margin="0,27,0,0">
+        <Grid Margin="0,55,0,-28">
 
-            <local:SynthSelect x:Name="synthSelect1" Changed="SynthSelect1_OnChanged" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="0,0,69,0"/>
+            <Widgets:SynthSelect x:Name="synthSelect1" Changed="SynthSelect1_OnChanged" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="0,0,69,0"/>
             <UI:Slider x:Name="synthTranspose1" Minimum="-4" Maximum="4" Step="1" VerticalAlignment="Top" HorizontalAlignment="Right"  Width="69" Margin="231,0,0,0" ValueChanged="synthTranspose1_ValueChanged"></UI:Slider>
-            <local:SynthSelect x:Name="synthSelect2" Changed="SynthSelect2_OnChanged" VerticalAlignment="Top" Margin="0,27,69,0" HorizontalAlignment="Stretch" Width="231"/>
+            <Widgets:SynthSelect x:Name="synthSelect2" Changed="SynthSelect2_OnChanged" VerticalAlignment="Top" Margin="0,27,69,0" HorizontalAlignment="Stretch" Width="231"/>
             <UI:Slider x:Name="synthTranspose2" Minimum="-4" Maximum="4" Step="1" VerticalAlignment="Top" Margin="231,27,0,0" HorizontalAlignment="Right" Width="69" ValueChanged="synthTranspose2_ValueChanged"></UI:Slider>
         </Grid>
+        <local:CurrentNotesUI x:Name="currentNotes" Margin="0,109,0,0"></local:CurrentNotesUI>
     </Grid>
 </UserControl>
