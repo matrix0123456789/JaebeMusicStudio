@@ -159,11 +159,10 @@ namespace JaebeMusicStudio
 
         private void TempoTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            try
+            if (Project.current != null)
             {
                 Project.current.tempo = float.Parse(TempoTextBox.Text);
             }
-            catch { }
         }
     }
 }

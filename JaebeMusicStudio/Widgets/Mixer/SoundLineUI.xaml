@@ -7,7 +7,11 @@
              xmlns:UI="clr-namespace:JaebeMusicStudio.UI"
              mc:Ignorable="d" d:DesignWidth="300" Background="white">
     <StackPanel>
+        <Grid>
         <Label Name="title"></Label>
+            <CheckBox VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,60,0">Mute</CheckBox>
+            <RadioButton VerticalAlignment="Center" HorizontalAlignment="Right" Name="OutputRadioButton" Checked="OutputRadioButton_Checked">Output</RadioButton>
+        </Grid>
         <Grid Height="40">
         <UI:Slider Margin="10,10,105,0" Height="22" VerticalAlignment="Top" x:Name="volume" ValueChanged="Volume_OnValueChanged"></UI:Slider>
         <Grid Width="100" Height="40" Margin="0" VerticalAlignment="Top" HorizontalAlignment="Right">

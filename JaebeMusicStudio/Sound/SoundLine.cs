@@ -21,6 +21,8 @@ namespace JaebeMusicStudio.Sound
 
         public event Action<int, Effect> effectAdded;
         public event Action<int> effectRemoved;
+        public event Action<int, SoundLineConnection> inputAdded;
+        public event Action<int> inputRemoved;
         public SoundLine()
         {
         }
@@ -223,6 +225,24 @@ namespace JaebeMusicStudio.Sound
             var index = effects.IndexOf(e);
             effects.RemoveAt(index);
             effectRemoved?.Invoke(index);
+        }
+        public void AddInput(SoundLineConnection c)
+        {
+            var index = inputs.Count;
+            inputs.Add(c);
+            inputAdded?.Invoke(index, c);
+        }
+        public void AddInput(int index, SoundLineConnection c)
+        {
+            inputs.Insert(index, c);
+            inputAdded?.Invoke(index, c);
+        }
+
+        public void RemoveInput(SoundLineConnection c)
+        {
+            var index = inputs.IndexOf(c);
+            inputs.RemoveAt(index);
+            inputRemoved?.Invoke(index);
         }
 
         public override string ToString()

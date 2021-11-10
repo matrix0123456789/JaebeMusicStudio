@@ -23,17 +23,15 @@ namespace JaebeMusicStudio.Widgets.Mixer
     public partial class SoundLineUI : UserControl, IDisposable
     {
         public readonly SoundLineAbstract Line;
-        public SoundLineUI(SoundLineAbstract line)
+        public SoundLineUI(SoundLineAbstract line, bool isOutputLine)
         {
             Line = line;
             Line.ConnectUI();
             InitializeComponent();
             volume.Value = line.volume;
 
-            if (line is SoundLine)
-                title.Content = (line as SoundLine).Title;
-            else if (line is LiveSoundLine)
-                title.Content = (line as LiveSoundLine).Title;
+            title.Content = line.ToString();
+            OutputRadioButton.IsChecked = isOutputLine;
         }
 
         public void Dispose()
@@ -64,5 +62,9 @@ namespace JaebeMusicStudio.Widgets.Mixer
 
         }
 
+        private void OutputRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            Project.current.outputLine = Line;
+        }
     }
 }

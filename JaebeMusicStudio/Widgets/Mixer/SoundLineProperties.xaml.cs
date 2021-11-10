@@ -27,7 +27,9 @@ namespace JaebeMusicStudio.Widgets.Mixer
             InitializeComponent();
 
             Line.effectAdded += Line_effectAdded;
-            Line.effectRemoved += Line_effectRemoved; ;
+            Line.effectRemoved += Line_effectRemoved;
+            Line.inputAdded += Line_inputAdded;
+            Line.inputRemoved += Line_inputRemoved;
             ShowEffect();
             ShowInput();
             LineTitle.Text = Line.Title;
@@ -60,7 +62,12 @@ namespace JaebeMusicStudio.Widgets.Mixer
                 InputsList.Children.Insert(index, ui);
             }));
         }
-        void ShowEffect()
+        private void Line_inputRemoved(int index)
+        {
+            // var removed = EffectsList.Children[index];
+            InputsList.Children.RemoveAt(index);
+        }
+        void ShowInput()
         {
             InputsList.Children.Clear();
             int index = 0;
@@ -70,7 +77,7 @@ namespace JaebeMusicStudio.Widgets.Mixer
                 index++;
             };
         }
-        void ShowInput()
+        void ShowEffect()
         {
             EffectsList.Children.Clear();
             int index = 0;
@@ -146,7 +153,7 @@ namespace JaebeMusicStudio.Widgets.Mixer
             {
                 var connection = new SoundLineConnection(Project.current.lines.IndexOf(Line), LineInput_AddSelect.Selected, 1);
                 connection.input.outputs.Add(connection);
-                connection.output.inputs.Add(connection);
+                connection.output.AddInput(connection);
             }
         }
 

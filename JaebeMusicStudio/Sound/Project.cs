@@ -34,6 +34,7 @@ namespace JaebeMusicStudio.Sound
 
         public static Project current = null;
         public ObservableCollection<SoundLine> lines = new ObservableCollection<SoundLine>() { };
+        public SoundLineAbstract outputLine;
         public LiveSoundLineCollection liveLines = new LiveSoundLineCollection();
 
         /// <summary>
@@ -71,6 +72,7 @@ namespace JaebeMusicStudio.Sound
         {
             current?.stopOldProject();
             lines.Add(new SoundLine());
+            outputLine = lines.First();
         }
 
         public Project(string path)
@@ -203,8 +205,8 @@ namespace JaebeMusicStudio.Sound
                 if (liveElement.Synth == null)
                 {
                     if (NoteSynths.Count == 0)
-                        break;
-                    break;
+                        continue;
+                    continue;
                     liveElement.Synth = NoteSynths[0];
                 }
                 if (liveElement.Synth?.SoundLine == null) continue;
@@ -242,12 +244,12 @@ namespace JaebeMusicStudio.Sound
                 Console.WriteLine("Line" + line);
             }
             Console.WriteLine("LinesEnd");
-            //var liveLinesList = liveLines.getAvaibleInputs();
-            //foreach (var line in liveLinesList)
-            //{
-            //    line.checkIfReady(rendering);
-            //    Console.WriteLine("LineLive" + line);
-            //}
+            var liveLinesList = liveLines.getAvaibleInputs();
+            foreach (var line in liveLinesList)
+            {
+                line.checkIfReady(rendering);
+                Console.WriteLine("LineLive" + line);
+            }
             Console.WriteLine("LinesLiveEnd");
 
         }
@@ -313,7 +315,7 @@ namespace JaebeMusicStudio.Sound
                         {
                             var otherLineNumber = int.Parse(input.Attributes["lineNumber"].Value);
                             var connection = new SoundLineConnection(count, this.lines[otherLineNumber], volume);
-                            this.lines[count].inputs.Add(connection);
+                            this.lines[count].AddInput(connection);
                             this.lines[otherLineNumber].outputs.Add(connection);
                         }
                         else if (input.Attributes["liveLineNumber"] != null)
@@ -321,7 +323,7 @@ namespace JaebeMusicStudio.Sound
                             var liveLineNumber = int.Parse(input.Attributes["liveLineNumber"].Value);
                             var liveLine = liveLines.GetByDeviceID(liveLineNumber);
                             var connection = new SoundLineConnection(count, liveLine, volume);
-                            this.lines[count].inputs.Add(connection);
+                            this.lines[count].AddInput(connection);
                             liveLine.outputs.Add(connection);
                         }
                     }

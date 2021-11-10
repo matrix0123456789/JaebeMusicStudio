@@ -154,5 +154,9 @@ namespace JaebeMusicStudio.Sound
         public void prepareToRender(Rendering rendering)
         {
         }
+        public override string ToString()
+        {
+            return Title;
+        }
     }
 }
