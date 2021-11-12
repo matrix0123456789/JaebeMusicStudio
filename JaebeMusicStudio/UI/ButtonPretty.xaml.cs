@@ -39,26 +39,35 @@ namespace JaebeMusicStudio.UI
         {
             get
             {
-                return button.Content;
+                return text;
             }
             set
             {
-                button.Content = value;
+                text = value?.ToString();
+                refresh();
             }
         }
+
+        private void refresh()
+        {
+            button.Content = (icon > 0 ? icon + " " : "") + text??"";
+        }
+
         [Bindable(true)]
         public string Icon
         {
             get
             {
-                return ((int)(button.Content as string)[0]).ToString("X");
+                return ((int)icon).ToString("X");
             }
             set
             {
-                button.Content = ((char)int.Parse(value, NumberStyles.AllowHexSpecifier));
-               var a= button.FontFamily.Source;
+                icon = ((char)int.Parse(value, NumberStyles.AllowHexSpecifier)); ;
+                refresh();
             }
         }
+        private char icon;
+        private string text;
         [Bindable(true)]
         public event RoutedEventHandler Click;
     }

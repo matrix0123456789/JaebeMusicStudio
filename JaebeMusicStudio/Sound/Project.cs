@@ -34,7 +34,8 @@ namespace JaebeMusicStudio.Sound
 
         public static Project current = null;
         public ObservableCollection<SoundLine> lines = new ObservableCollection<SoundLine>() { };
-        public SoundLineAbstract outputLine;
+        public SoundLineAbstract OutputLine {get{return outputLine ?? lines.FirstOrDefault();} set{outputLine=value;}}
+        private SoundLineAbstract outputLine;
         public LiveSoundLineCollection liveLines = new LiveSoundLineCollection();
 
         /// <summary>
@@ -360,7 +361,7 @@ namespace JaebeMusicStudio.Sound
             }
             loadEnd?.Invoke();
         }
-                public float CountSamples(float input)
+        public float CountSamples(float input)
         {
             return input / tempo * 60f * _sampleRate;
         }

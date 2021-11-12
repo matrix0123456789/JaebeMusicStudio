@@ -31,6 +31,7 @@ namespace JaebeMusicStudio.Widgets
             InitializeComponent();
             slSelect.Selected = synth.SoundLine;
             slSelect.Generate();
+            Title.Content=synth.ToString();
         }
 
         private void Open_Click(object sender, RoutedEventArgs e)

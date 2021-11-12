@@ -25,7 +25,9 @@
             </ScrollViewer.ContextMenu>
             <Grid>
                 <StackPanel Name="SynthList">
-                    <Button Click="ButtonBase_OnClick">Dodaj</Button>
+                    <Grid Width="70" Margin="5">
+                        <Button Click="ButtonBase_OnClick">Dodaj</Button>
+                        </Grid>
                 </StackPanel>
             </Grid>
         </ScrollViewer>

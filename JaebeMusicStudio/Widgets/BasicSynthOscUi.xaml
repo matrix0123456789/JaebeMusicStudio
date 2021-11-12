@@ -7,21 +7,23 @@
              xmlns:local="clr-namespace:JaebeMusicStudio.Widgets"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-        <Grid Height="156" VerticalAlignment="Top" HorizontalAlignment="Left" Width="108">
-            <RadioButton Name="TypeOscSin" Margin="0,0,0,0" Checked="TypeOscSin_Checked" VerticalAlignment="Top">Sinusoida</RadioButton>
-            <RadioButton Name="TypeOscTri" Margin="0,20,0,0" Checked="TypeOscTri_Checked" VerticalAlignment="Top">Trójkątna</RadioButton>
-            <RadioButton Name="TypeOscSq" Margin="0,40,0,0" Checked="TypeOscSq_Checked" VerticalAlignment="Top">Prostokątna</RadioButton>
-            <RadioButton Name="TypeOscSaw" Margin="0,60,0,0" Checked="TypeOscSaw_Checked" VerticalAlignment="Top">Piłokształtna</RadioButton>
-            <RadioButton Name="TypeOscWhite" Margin="0,80,0,0" Checked="TypeOscWhite_Checked" VerticalAlignment="Top">Szum biały</RadioButton>
-            <RadioButton Name="TypeOscPink" Margin="0,100,0,0" Checked="TypeOscPink_Checked" VerticalAlignment="Top">Szum różowy</RadioButton>
+    <Grid Margin="10">
+        <Rectangle Stroke="#ccc" StrokeThickness="2" RadiusX="11.083" RadiusY="10"></Rectangle>
+        <Grid Margin="10">
+            <Grid Height="156" VerticalAlignment="Top" HorizontalAlignment="Left" Width="108">
+            <RadioButton Name="TypeOscSin" Margin="0,0,0,0" Checked="TypeOscSin_Checked" VerticalAlignment="Top">Sine</RadioButton>
+            <RadioButton Name="TypeOscTri" Margin="0,20,0,0" Checked="TypeOscTri_Checked" VerticalAlignment="Top">Triangle</RadioButton>
+            <RadioButton Name="TypeOscSq" Margin="0,40,0,0" Checked="TypeOscSq_Checked" VerticalAlignment="Top">Square</RadioButton>
+            <RadioButton Name="TypeOscSaw" Margin="0,60,0,0" Checked="TypeOscSaw_Checked" VerticalAlignment="Top">Saw</RadioButton>
+            <RadioButton Name="TypeOscWhite" Margin="0,80,0,0" Checked="TypeOscWhite_Checked" VerticalAlignment="Top">White noise</RadioButton>
+            <RadioButton Name="TypeOscPink" Margin="0,100,0,0" Checked="TypeOscPink_Checked" VerticalAlignment="Top">Pink noise</RadioButton>
             <CheckBox Name="randomPhase" Margin="0,120,0,0"  VerticalAlignment="Top" Checked="randomPhase_Checked" Unchecked="randomPhase_Unchecked">Losowa faza</CheckBox>
         </Grid>
         <Label Margin="108,5,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" >Attack</Label>
         <Label Margin="108,31,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" >Delay</Label>
         <Label Margin="108,57,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" >Sustain</Label>
         <Label Margin="108,83,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" >Release</Label>
-        <Label Margin="108,109,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" >Głośność</Label>
+        <Label Margin="108,109,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" >Volume</Label>
         <Label Margin="108,135,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" >Brzmienie</Label>
         <UI:Slider x:Name="A" Margin="165,10,0,0" VerticalAlignment="Top" ValueChanged="A_OnValueChanged"></UI:Slider>
         <UI:Slider x:Name="D" Margin="165,36,0,0" VerticalAlignment="Top" ValueChanged="D_OnValueChanged"></UI:Slider>
@@ -30,5 +32,6 @@
         <UI:Slider x:Name="Volume" Margin="165,114,0,0" VerticalAlignment="Top" ValueChanged="Volume_OnValueChanged"></UI:Slider>
         <UI:Slider x:Name="SquareRatio" Margin="165,140,0,0" VerticalAlignment="Top" ValueChanged="SquareRatio_OnValueChanged"></UI:Slider>
         <StackPanel Name="Pitchs" Margin="0,161,0,0"></StackPanel>
+        </Grid>
     </Grid>
 </UserControl>

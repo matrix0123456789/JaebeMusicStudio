@@ -64,7 +64,7 @@ namespace JaebeMusicStudio.Widgets.Mixer
 
         private void OutputRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            Project.current.outputLine = Line;
+            Project.current.OutputLine = Line;
         }
     }
 }

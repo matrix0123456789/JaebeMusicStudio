@@ -56,7 +56,7 @@ namespace JaebeMusicStudio.Widgets.Mixer
             {
                 foreach (var line in e.NewItems)
                 {
-                    var lineUI = new SoundLineUI(line as SoundLineAbstract, Project.current.outputLine==line);
+                    var lineUI = new SoundLineUI(line as SoundLineAbstract, Project.current.OutputLine==line);
                     lineUI.MouseDown += LineUI_MouseDown;
                     SoundLinesList.Children.Add(lineUI);
                 }
@@ -69,14 +69,14 @@ namespace JaebeMusicStudio.Widgets.Mixer
 
             foreach (var line in Sound.Project.current.lines)
             {
-                var lineUI = new SoundLineUI(line, line== Sound.Project.current.outputLine);
+                var lineUI = new SoundLineUI(line, line== Sound.Project.current.OutputLine);
                 lineUI.MouseDown += LineUI_MouseDown;
                 SoundLinesList.Children.Add(lineUI);
             }
 
             foreach (var line in Project.current.liveLines.getAvaibleInputs())
             {
-                var lineUI = new SoundLineUI(line, Project.current.outputLine == line);
+                var lineUI = new SoundLineUI(line, Project.current.OutputLine == line);
                 lineUI.MouseDown += LineUI_MouseDown;
                 SoundLinesList.Children.Add(lineUI);
             }
@@ -84,7 +84,7 @@ namespace JaebeMusicStudio.Widgets.Mixer
 
         private void lineAdded(int index, SoundLineAbstract line)
         {
-            var lineUI = new SoundLineUI(line, Project.current.outputLine == line);
+            var lineUI = new SoundLineUI(line, Project.current.OutputLine == line);
             SoundLinesList.Children.Insert(index, lineUI);
             lineUI.MouseDown += LineUI_MouseDown;
         }
