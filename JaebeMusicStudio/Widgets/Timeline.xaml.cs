@@ -43,7 +43,7 @@ namespace JaebeMusicStudio.Widgets
 
         private void Player_positionChanged(float obj = 0)
         {
-            Dispatcher.Invoke(() =>
+            Dispatcher.InvokeAsync(() =>
             {
                 playingPosition.Margin = new Thickness(Sound.Player.position * scaleX, 0, 0, 0);
             });
@@ -159,12 +159,25 @@ namespace JaebeMusicStudio.Widgets
                 rect.Fill = Brushes.Red;
                 grid.Children.Add(new OneSampleLookInside(element as OneSample));
             }
-            if (element is Sound.SoundElementClone)
+            if (element is Sound.SoundElementClone clone)
             {
                 rect.Fill = Brushes.Orange;
+                if (clone.Oryginal is Sound.OneSample)
+                {
+                    grid.Children.Add(new OneSampleLookInside(clone.Oryginal as OneSample));
+                }
+                else if (clone.Oryginal is Sound.Notes)
+                {
+                    grid.Children.Add(new NotesLookInside(clone.Oryginal as Sound.Notes));
+
+                }
             }
-            else
+            else if (element is Sound.Notes)
+            {
                 rect.Fill = Brushes.Blue;
+
+                grid.Children.Add(new NotesLookInside(element as Sound.Notes));
+            }
 
             grid.ToolTip = element.Title;
             grid.Width = element.Length * scaleX;
@@ -172,6 +185,10 @@ namespace JaebeMusicStudio.Widgets
             grid.Margin = new Thickness(element.Offset * scaleX, 0, 0, 0);
             grid.VerticalAlignment = VerticalAlignment.Stretch;
             grid.HorizontalAlignment = HorizontalAlignment.Left;
+            foreach (var x in trackContainer.Children.Cast<FrameworkElement>().ToList().Where(x => x.Tag == element))
+            {
+                trackContainer.Children.Remove(x);
+            }
             trackContainer.Children.Add(grid);
             grid.Tag = element;
             grid.MouseLeftButtonDown += Element_MouseLeftButtonDown;
@@ -415,8 +432,8 @@ namespace JaebeMusicStudio.Widgets
                         var trackNumber = getTrackNumberByMouse(e);
                         if (oldTrackNumber != trackNumber)
                         {
-                            Project.current.tracks[oldTrackNumber].Elements.Remove(editingElement);
-                            Project.current.tracks[trackNumber].Elements.Add(editingElement);
+                            Project.current.tracks[oldTrackNumber].RemoveElement(editingElement);
+                            Project.current.tracks[trackNumber].AddElement(editingElement);
                         }
                     }
                     editingVisualElement = null;
@@ -433,10 +450,26 @@ namespace JaebeMusicStudio.Widgets
 
         private void TimeLabels_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            var positionPixels=e.GetPosition(TimeLabels);
+            var positionPixels = e.GetPosition(TimeLabels);
             double pixelOffset = -scrollHorizontal.HorizontalOffset + tracksStack.ActualWidth;
-            var positionSound = (positionPixels.X- pixelOffset) / scaleX;
+            var positionSound = (positionPixels.X - pixelOffset) / scaleX;
             Sound.Player.SetPosition((float)positionSound);
+        }
+
+        private void playButton_Click(object sender, RoutedEventArgs e)
+        {
+            Sound.Player.Play();
+        }
+
+        private void rewindButton_Click(object sender, RoutedEventArgs e)
+        {
+
+            Sound.Player.SetPosition(0);
+        }
+
+        private void pauseButton_Click(object sender, RoutedEventArgs e)
+        {
+            Sound.Player.Pause();
         }
     }
 }

@@ -217,24 +217,53 @@ namespace JaebeMusicStudio.Widgets
         {
             Dispatcher.InvokeAsync(() =>
             {
-                playingPosition.Margin = new Thickness(Sound.Player.position * scaleX, 0, 0, 0);
+                var offsets = Sound.Project.current.tracks.SelectMany(x => x.Elements).Where(x => x == notes || (x as SoundElementClone)?.Oryginal==notes).Select(x => x.Offset);
+                var items = tracksContentStackGrid.Children.Cast<FrameworkElement>().Where(x => x is Rectangle && x != selection).ToList();
+                var i = 0;
+                foreach (var offset in offsets)
+                {
+                    FrameworkElement item;
+                    if (i < items.Count)
+                        item = items[i];
+                    else
+                    {
+                        item = new Rectangle() { Width = 3, Fill = Brushes.Black, Stroke = Brushes.White, HorizontalAlignment = HorizontalAlignment.Left };
+                        tracksContentStackGrid.Children.Add(item);
+                    }
+                    item.Margin = new Thickness((Sound.Player.position - offset) * scaleX, 0, 0, 0);
+                    i++;
+                }
+                while (i < items.Count)
+                {
+                    tracksContentStackGrid.Children.Remove(items[i]);
+                    i++;
+                }
             });
         }
         private void Page_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
-                if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightCtrl))
-                {
-                    scaleY *= Math.Pow(2, e.Delta / 200f);
-                    WholeScrollable.ScrollToVerticalOffset((WholeScrollable.VerticalOffset) * Math.Pow(2, e.Delta / 200f));
-                }
-                else
+                if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
                 {
                     scaleX *= Math.Pow(2, e.Delta / 200f);
                     scrollHorizontal.ScrollToHorizontalOffset((scrollHorizontal.HorizontalOffset + scrollHorizontal.ActualWidth / 2) * Math.Pow(2, e.Delta / 200f) - scrollHorizontal.ActualWidth / 2);
                 }
+                else
+                {
+                    scaleY *= Math.Pow(2, e.Delta / 200f);
+                    WholeScrollable.ScrollToVerticalOffset((WholeScrollable.VerticalOffset) * Math.Pow(2, e.Delta / 200f));
+                }
                 showContent();
+            }
+            else if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+            {
+                scrollHorizontal.ScrollToHorizontalOffset(scrollHorizontal.HorizontalOffset + e.Delta);
+            }
+            else
+            {
+                WholeScrollable.ScrollToVerticalOffset(WholeScrollable.VerticalOffset + e.Delta);
+
             }
         }
 

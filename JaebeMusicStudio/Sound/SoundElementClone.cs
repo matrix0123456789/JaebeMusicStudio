@@ -20,6 +20,7 @@ namespace JaebeMusicStudio.Sound
                 return original.Title + " - clone";
             }
         }
+        public ISoundElement Oryginal => original;
         public SoundElementClone(ISoundElement soundElement)
         {
             if (soundElement is SoundElementClone)

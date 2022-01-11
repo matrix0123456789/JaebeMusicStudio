@@ -14,7 +14,9 @@
       >
 
     <Grid>
-        <UI:ButtonPretty Height="20" Margin="0,10,10,0" VerticalAlignment="Top" FontFamily="/fonts/jms.ttf#jms" HorizontalAlignment="Left" Width="20" Icon="e800"></UI:ButtonPretty>
+        <UI:ButtonPretty Height="20" Margin="7,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="20" Icon="e800" x:Name="playButton" Click="playButton_Click" ToolTip="Play"/>
+        <UI:ButtonPretty Height="20" Margin="32,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="20" Icon="e802" x:Name="pauseButton" Click="pauseButton_Click" ToolTip="Pauza"/>
+        <UI:ButtonPretty Height="20" Margin="57,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="20" Icon="e804" x:Name="rewindButton" Click="rewindButton_Click" ToolTip="Przewiń do początku"/>
         <UI:ButtonPretty Height="20" Margin="0,10,35,0" VerticalAlignment="Top" FontFamily="/fonts/jms.ttf#jms" HorizontalAlignment="Right" Width="20" Icon="e800" x:Name="newNotesButton" Click="NewNotesButton_OnClick" ToolTip="próbka nut"></UI:ButtonPretty>
         <UI:ButtonPretty Height="20" Margin="0,10,10,0" VerticalAlignment="Top" FontFamily="/fonts/jms.ttf#jms" HorizontalAlignment="Right" Width="20" Icon="e800" x:Name="openFileSampleButton" Click="openFileSampleButton_Click" ToolTip="otworz plik"></UI:ButtonPretty>
 

@@ -24,7 +24,7 @@
                 <ScrollViewer Margin="100,0,0,0" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Visible" Name="scrollHorizontal">
                     <Grid 
       MouseWheel="Page_MouseWheel" Background="#22ffffff" Name="tracksContentStackGrid" MouseDown="tracksContentStackGrid_MouseDown">
-                        <Rectangle Width="3" Fill="Black" Stroke="white" HorizontalAlignment="Left" Name="playingPosition"></Rectangle>
+                        
                         <Rectangle Width="2" Fill="#55008800" Stroke="#008800" StrokeThickness="1" HorizontalAlignment="Left" Name="selection"></Rectangle>
                     </Grid>
                 </ScrollViewer>
