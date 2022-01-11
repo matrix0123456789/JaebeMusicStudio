@@ -16,7 +16,10 @@
     <Compile Update="Widgets\Mixer\SoundLineProperties.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Widgets\NotesLookInside.xaml.cs">
+    <Compile Update="Widgets\Timeline\NotesLookInside.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Widgets\Timeline\TimeLabels.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -33,7 +36,13 @@
     <Page Update="Widgets\Mixer\SoundLineProperties.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Widgets\NotesLookInside.xaml">
+    <Page Update="Widgets\Timeline\NotesLookInside.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Widgets\Timeline\TimeLines.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Widgets\Timeline\TimeLabels.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

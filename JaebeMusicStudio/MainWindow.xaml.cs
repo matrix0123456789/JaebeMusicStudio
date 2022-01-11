@@ -113,7 +113,7 @@ namespace JaebeMusicStudio
 
         private void openTimelineButton_Click(object sender, RoutedEventArgs e)
         {
-            PseudoWindow.OpenWindow(() => new Widgets.Timeline());
+            PseudoWindow.OpenWindow(() => new Widgets.Timeline.Timeline());
         }
 
         private void openMixerButton_Click(object sender, RoutedEventArgs e)

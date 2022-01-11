@@ -1,0 +1,40 @@
+﻿<Page x:Class="JaebeMusicStudio.Widgets.Timeline.Timeline"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:UI="clr-namespace:JaebeMusicStudio.UI"
+      xmlns:local="clr-namespace:JaebeMusicStudio.Widgets"
+      mc:Ignorable="d" 
+      d:DesignHeight="390" d:DesignWidth="652"
+      Title="Timeline"
+      AllowDrop="True" Drop="Timeline_OnDrop"
+      MouseMove="Timeline_OnMouseMove"
+      MouseUp="Timeline_OnMouseUp"
+      >
+
+    <Grid>
+        <UI:ButtonPretty Height="20" Margin="7,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="20" Icon="e800" x:Name="playButton" Click="playButton_Click" ToolTip="Play"/>
+        <UI:ButtonPretty Height="20" Margin="32,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="20" Icon="e802" x:Name="pauseButton" Click="pauseButton_Click" ToolTip="Pauza"/>
+        <UI:ButtonPretty Height="20" Margin="57,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="20" Icon="e804" x:Name="rewindButton" Click="rewindButton_Click" ToolTip="Przewiń do początku"/>
+        <UI:ButtonPretty Height="20" Margin="0,10,35,0" VerticalAlignment="Top" FontFamily="/fonts/jms.ttf#jms" HorizontalAlignment="Right" Width="20" Icon="e800" x:Name="newNotesButton" Click="NewNotesButton_OnClick" ToolTip="próbka nut"></UI:ButtonPretty>
+        <UI:ButtonPretty Height="20" Margin="0,10,10,0" VerticalAlignment="Top" FontFamily="/fonts/jms.ttf#jms" HorizontalAlignment="Right" Width="20" Icon="e800" x:Name="openFileSampleButton" Click="openFileSampleButton_Click" ToolTip="otworz plik"></UI:ButtonPretty>
+
+        <Grid Name="TimeLabels" Height="20" VerticalAlignment="Top" Margin="0,35,0,0" MouseDown="TimeLabels_MouseDown"></Grid>
+        <ScrollViewer Name="WholeScrollable" Margin="0,55,0,0">
+            <Grid 
+      MouseWheel="Page_MouseWheel" Background="#fff">
+                <StackPanel Width="200"  HorizontalAlignment="left" Name="tracksStack">
+                    <UI:ButtonPretty Text="Nowa ścierzka" x:Name="addNewTrackButton" Click="addNewTrackButton_Click"></UI:ButtonPretty>
+                </StackPanel>
+                <ScrollViewer Margin="200,0,0,0" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Visible" Name="scrollHorizontal">
+                    <Grid 
+      MouseWheel="Page_MouseWheel" Background="#fff" Name="tracksContentStackGrid">
+                        <StackPanel Name="tracksContentStack"></StackPanel>
+                        <Rectangle Width="3" Fill="Black" Stroke="white" HorizontalAlignment="Left" Name="playingPosition"></Rectangle>
+                    </Grid>
+                </ScrollViewer>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</Page>

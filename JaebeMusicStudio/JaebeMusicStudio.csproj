@@ -19,4 +19,17 @@
     <Resource Include="fonts\jms.ttf" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Widgets\Timeline\TimeLines.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Widgets\Timeline\TimeLines.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
 </Project>
