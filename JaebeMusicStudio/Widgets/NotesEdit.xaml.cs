@@ -42,6 +42,7 @@ namespace JaebeMusicStudio.Widgets
         {
             this.notes = notes;
             InitializeComponent();
+            this.title.Text = notes.Title;
             synthSelect.Selected = notes.Sound;
             synthSelect.Generate();
 
@@ -214,7 +215,7 @@ namespace JaebeMusicStudio.Widgets
 
         private void Player_positionChanged(float obj = 0)
         {
-            Dispatcher.Invoke(() =>
+            Dispatcher.InvokeAsync(() =>
             {
                 playingPosition.Margin = new Thickness(Sound.Player.position * scaleX, 0, 0, 0);
             });
@@ -596,6 +597,11 @@ namespace JaebeMusicStudio.Widgets
             }
             selection.Margin = new Thickness(selectStart * scaleX - 1, 0, 0, 0);
             selection.Width = (selectEnd - selectStart) * scaleX + 2;
+        }
+
+        private void notesName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            notes.Title = title.Text;
         }
     }
 }

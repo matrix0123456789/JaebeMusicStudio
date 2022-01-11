@@ -13,8 +13,9 @@
 
     <Grid>
         <local:SynthSelect x:Name="synthSelect" Changed="SynthSelect_OnChanged" VerticalAlignment="Top"/>
-        <Grid Name="TimeLabels" Height="20" VerticalAlignment="Top" Margin="0,35,0,0"/>
-        <ScrollViewer Name="WholeScrollable" Margin="0,55,0,0">
+        <TextBox VerticalAlignment="Top" Margin="0,27,0,0" x:Name="title" TextChanged="notesName_TextChanged"></TextBox>
+        <Grid Name="TimeLabels" Height="20" VerticalAlignment="Top" Margin="0,45,0,0"/>
+        <ScrollViewer Name="WholeScrollable" Margin="0,75,0,0">
             <Grid Name="WholeScrollableGrid"
       MouseWheel="Page_MouseWheel" Background="#fff">
                 <Grid HorizontalAlignment="Stretch" Name="tracksGrid">
