@@ -9,9 +9,19 @@ namespace JaebeMusicStudio.Sound
     abstract public class SoundLineAbstract
     {
         public List<SoundLineConnection> outputs = new List<SoundLineConnection>();
-        public float volume = 1;
+        private float volume = 1;
+        public float Volume
+        {
+            get { return volume; }
+            set
+            {
+                volume = value;
+                Changed?.Invoke(this);
+            }
+        }
         public float[] LastVolume = { 0, 0 };
         protected Dictionary<Rendering, SoundLineRendering> renderings = new Dictionary<Rendering, SoundLineRendering>();
+        public event Action<SoundLineAbstract> Changed;
         public void ConnectUI()
         {
             connectedUIs++;

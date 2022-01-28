@@ -15,6 +15,7 @@ namespace JaebeMusicStudio.Sound
         private FilterType type;
         public float Frequency { get { return frequency; } set { frequency = value; recalcFilter(); } }
         public float Resonation { get { return resonation; } set { resonation = value; recalcFilter(); } }
+        public float Volume { get { return volume; } set { volume = value; recalcFilter(); } }
         public FilterType Type { get { return type; } set { type = value; recalcFilter(); } }
         private void recalcFilter()
         {
@@ -23,7 +24,7 @@ namespace JaebeMusicStudio.Sound
                 case FilterType.Lowpass:
                     {
                         var c = 1.0f / (float)Math.Tan(Math.PI * frequency / Project.current.sampleRate);
-                        
+
                         level = 3;
                         a = new float[3];
                         b = new float[3];
@@ -54,7 +55,8 @@ namespace JaebeMusicStudio.Sound
         public SimpleFilter(XmlNode node)
         {
             frequency = float.Parse(node.Attributes["Frequency"].Value, CultureInfo.InvariantCulture);
-            resonation = float.Parse(node.Attributes["Resonation"].Value,CultureInfo.InvariantCulture);
+            resonation = float.Parse(node.Attributes["Resonation"].Value, CultureInfo.InvariantCulture);
+            volume = float.Parse(node.Attributes["Volume"]?.Value ?? "0", CultureInfo.InvariantCulture);
             type = (FilterType)Enum.Parse(typeof(FilterType), node.Attributes["Type"].Value);
             if (node.Attributes["isActive"] != null)
                 IsActive = bool.Parse(node.Attributes["isActive"].Value);
@@ -65,6 +67,7 @@ namespace JaebeMusicStudio.Sound
         {
             frequency = 200;
             resonation = (float)Math.Sqrt(2);
+            volume = 0;
             type = FilterType.Lowpass;
             recalcFilter();
         }
@@ -74,6 +77,7 @@ namespace JaebeMusicStudio.Sound
             var node2 = node.OwnerDocument.CreateElement("SimpleFilter");
             node2.SetAttribute("Frequency", Frequency.ToString(CultureInfo.InvariantCulture));
             node2.SetAttribute("Resonation", Resonation.ToString(CultureInfo.InvariantCulture));
+            node2.SetAttribute("Volume", Volume.ToString(CultureInfo.InvariantCulture));
             node2.SetAttribute("Type", Type.ToString());
             node2.SetAttribute("isActive", IsActive.ToString(CultureInfo.InvariantCulture));
             node.AppendChild(node2);

@@ -29,7 +29,7 @@ namespace JaebeMusicStudio.Sound
         public SoundLine(XmlElement xml)
         {
             if (xml.Attributes["volume"] != null)
-                volume = float.Parse(xml.Attributes["volume"].Value, CultureInfo.InvariantCulture);
+                Volume = float.Parse(xml.Attributes["volume"].Value, CultureInfo.InvariantCulture);
             if (xml.Attributes["title"] != null)
                 Title = xml.Attributes["title"].Value;
             foreach (XmlElement x in xml.ChildNodes)
@@ -56,7 +56,7 @@ namespace JaebeMusicStudio.Sound
         internal void Serialize(XmlDocument document)
         {
             var node = document.CreateElement("SoundLine");
-            node.SetAttribute("volume", volume.ToString(CultureInfo.InvariantCulture));
+            node.SetAttribute("volume", Volume.ToString(CultureInfo.InvariantCulture));
             node.SetAttribute("title", Title);
             foreach (var input in inputs)
             {
@@ -82,7 +82,7 @@ namespace JaebeMusicStudio.Sound
         {
             float vol = volumeChange;
 
-            if (volume != 0)
+            if (Volume != 0)
             {
                 var length = inputData.GetLength(1);
                 if (length + offset > outputData.GetLength(1))
@@ -157,15 +157,15 @@ namespace JaebeMusicStudio.Sound
                 }
                 //output.output.rendered(0, sound, rendering, output.volume);
             }
-            if (volume != 0)
+            if (Volume != 0)
             {
-                if (volume != 1)
+                if (Volume != 1)
                 {
                     var length = sound.GetLength(1);
                     for (int i = 0; i < length; i++)
                     {
-                        sound[0, i] *= volume;
-                        sound[1, i] *= volume;
+                        sound[0, i] *= Volume;
+                        sound[1, i] *= Volume;
                     }
                 }
                 foreach (var effect in effects)

@@ -10,6 +10,7 @@ namespace JaebeMusicStudio.Sound
     public abstract class FilterIIR : Effect
     {
         public bool IsActive { get; set; } = true;
+        protected float volume;
         protected float[] a;
         protected float[] b;
         protected int level;
@@ -25,9 +26,10 @@ namespace JaebeMusicStudio.Sound
         {
             lock (this)
             {
-                for(var i = 0; i < input.GetLength(1);i++)
+                var antiVolume = 1 - volume;
+                for (var i = 0; i < input.GetLength(1); i++)
                 {
-                    for(var j = level - 1; j >= 1; j--)
+                    for (var j = level - 1; j >= 1; j--)
                     {
                         inputHistory[0, j] = inputHistory[0, j - 1];
                         inputHistory[1, j] = inputHistory[1, j - 1];
@@ -46,8 +48,8 @@ namespace JaebeMusicStudio.Sound
                         newOutputRight = 1;
                     if (newOutputRight < -1)
                         newOutputRight = -1;
-                    input[0, i] = newOutputLeft;
-                    input[1, i] = newOutputRight;
+                    input[0, i] = input[0, i] * volume + newOutputLeft * antiVolume;
+                    input[1, i] = input[1, i] * volume + newOutputRight * antiVolume;
                     for (var j = level - 1; j >= 1; j--)
                     {
                         outputHistory[0, j] = outputHistory[0, j - 1];

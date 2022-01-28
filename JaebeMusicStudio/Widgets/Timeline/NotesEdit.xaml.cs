@@ -120,14 +120,16 @@ namespace JaebeMusicStudio.Widgets
 
             for (int i = 0; i < offsetY; i++)
             {
-                var text = new TextBlock();
-                text.Margin = new Thickness(0, (offsetY - i) * scaleY, 0, 0);
-                text.HorizontalAlignment = HorizontalAlignment.Stretch;
-                text.VerticalAlignment = VerticalAlignment.Top;
-                text.TextAlignment = TextAlignment.Left;
-                text.Height = scaleY;
-                text.Text = Note.GetName(i);
-                text.Tag = i;
+                var text = new TextBlock
+                {
+                    Margin = new Thickness(0, (offsetY - i) * scaleY, 0, 0),
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    TextAlignment = TextAlignment.Left,
+                    Height = scaleY,
+                    Text = Note.GetName(i),
+                    Tag = i
+                };
                 if (Note.IsPitchBlack(i))
                 {
                     text.Background = new SolidColorBrush(Color.FromArgb(56, 0, 0, 0));
@@ -273,23 +275,6 @@ namespace JaebeMusicStudio.Widgets
                 element.Changed += Note_Changed;
 
                 var menu = new ContextMenu();
-                //if (element is Notes)
-                //{
-                //    var menuOpen = new MenuItem() { Header = "Otwórz" };
-                //    menuOpen.Tag = new Object[] { element, trackContainer.Tag };
-                //    menuOpen.Click += element_open_Click;
-                //    menu.Items.Add(menuOpen);
-                //}
-
-                //var menuDuplicate = new MenuItem() { Header = "Duplikuj" };
-                //menuDuplicate.Tag = new Object[] { element, trackContainer.Tag };
-                //menuDuplicate.Click += element_duplicate_Click;
-                //menu.Items.Add(menuDuplicate);
-
-                //var menuClone = new MenuItem() { Header = "Klonuj" };
-                //menuClone.Tag = new Object[] { element, trackContainer.Tag };
-                //menuClone.Click += element_clone_Click;
-                //menu.Items.Add(menuClone);
 
                 var menuDelete = new MenuItem() { Header = "Usun" };
                 menuDelete.Tag = element;

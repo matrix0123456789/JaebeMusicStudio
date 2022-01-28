@@ -28,10 +28,21 @@ namespace JaebeMusicStudio.Widgets.Mixer
             Line = line;
             Line.ConnectUI();
             InitializeComponent();
-            volume.Value = line.volume;
+            volume.Value = line.Volume;
 
             title.Content = line.ToString();
             OutputRadioButton.IsChecked = isOutputLine;
+
+            line.Changed += Line_Changed;
+        }
+
+        private void Line_Changed(SoundLineAbstract obj)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                volume.Value = Line.Volume;
+                title.Content = Line.ToString();
+            });
         }
 
         public void Dispose()
@@ -41,7 +52,7 @@ namespace JaebeMusicStudio.Widgets.Mixer
 
         private void Volume_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            Line.volume = (float)volume.Value;
+            Line.Volume = (float)volume.Value;
         }
 
         public void Refresh()

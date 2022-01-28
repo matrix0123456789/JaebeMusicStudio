@@ -30,6 +30,7 @@ namespace JaebeMusicStudio.Widgets
 
             Frequency.Value = simpleFilter.Frequency;
             Resonation.Value = simpleFilter.Resonation;
+            Volume.Value = simpleFilter.Volume;
             lowpass.IsChecked = simpleFilter.Type == SimpleFilter.FilterType.Lowpass;
             highpass.IsChecked = simpleFilter.Type == SimpleFilter.FilterType.Highpass;
         }
@@ -43,7 +44,11 @@ namespace JaebeMusicStudio.Widgets
         {
             simpleFilter.Resonation = (float)Resonation.Value;
         }
-        
+        private void Volume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            simpleFilter.Volume = (float)Volume.Value;
+        }
+
 
         private void lowpass_Checked(object sender, RoutedEventArgs e)
         {
