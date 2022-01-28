@@ -48,7 +48,7 @@ namespace JaebeMusicStudio.Sound
                 {
                     bufferAvalible -= buffer[0].GetLength(1);
                     buffer.RemoveAt(0);
-                    bufferPosition = 0; 
+                    bufferPosition = 0;
                 }
                 bufferAvalible += sound.GetLength(1);
 
@@ -123,12 +123,10 @@ namespace JaebeMusicStudio.Sound
 
         }
 
-        public void checkIfReady(Rendering rendering)
+        public override async Task<float[,]> Render(Rendering rendering)
         {
-            if (!rendering.canHarvest)
-                return;
-            var slRend = getByRendering(rendering);
-            var data = slRend.data = new float[2, (int)Project.current.CountSamples(rendering.renderingLength)];
+
+            var data = new float[2, (int)Project.current.CountSamples(rendering.renderingLength)];
             var length = data.GetLength(1);
 
             if (buffer.Count > 0)
@@ -148,12 +146,9 @@ namespace JaebeMusicStudio.Sound
                     }
                 }
             }
-            slRend.Resolve();
+            return data;
+        }
 
-        }
-        public void prepareToRender(Rendering rendering)
-        {
-        }
         public override string ToString()
         {
             return Title;

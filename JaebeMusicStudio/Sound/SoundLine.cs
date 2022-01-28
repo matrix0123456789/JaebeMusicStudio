@@ -16,7 +16,7 @@ namespace JaebeMusicStudio.Sound
         /// </summary>
         public List<SoundLineConnection> inputs = new List<SoundLineConnection>();
         public List<Effect> effects = new List<Effect>();
-        
+
         public string Title { get; set; } = "";
 
         public event Action<int, Effect> effectAdded;
@@ -78,7 +78,7 @@ namespace JaebeMusicStudio.Sound
             }
             document.DocumentElement.AppendChild(node);
         }
-        public void rendered(int offset, float[,] inputData, float[,] outputData, float volumeChange = 1)
+        /*public void rendered(int offset, float[,] inputData, float[,] outputData, float volumeChange = 1)
         {
             float vol = volumeChange;
 
@@ -127,41 +127,35 @@ namespace JaebeMusicStudio.Sound
                 }
             }
 
-
-        }
-        public async void checkIfReady(Rendering rendering)
+        
+        }*/
+        public override async Task<float[,]> Render(Rendering rendering)
         {
-            if (!rendering.canHarvest)
-                return;
+            //if (!rendering.canHarvest)
+            //    return;
 
-            var slRend = getByRendering(rendering);
+            //var slRend = getByRendering(rendering);
 
 
-            var sound = slRend.data;
-            Console.WriteLine("startAwaiting");
-            foreach (var oneTask in slRend.currentToRender)
-            {
-                var result = await oneTask;
-                Console.WriteLine("ElementAwaited");
-                rendered(result.offset, result.data, sound, result.volumeChange);
-            }
+            //var sound = slRend.data;
+            //Console.WriteLine("startAwaiting");
+            //foreach (var oneTask in slRend.currentToRender)
+            //{
+            //    var result = await oneTask;
+            //    Console.WriteLine("ElementAwaited");
+            //    rendered(result.offset, result.data, sound, result.volumeChange);
+            //}
+            var sound = await RenderDirectSound(rendering);
+            var length = sound.GetLength(1);
             foreach (var input in inputs)
             {
-                var inputData = await input.input.getByRendering(rendering);
-                Console.WriteLine("inputAwaited");
-                var length = sound.GetLength(1);
-                for (int i = 0; i < length; i++)
-                {
-                    sound[0, i] += inputData[0, i];
-                    sound[1, i] += inputData[1, i];
-                }
-                //output.output.rendered(0, sound, rendering, output.volume);
+                var inputData = await rendering.soundLinesRenderings[input.input].Task;
+                SoundOperations.AddEqualLengths(sound, inputData);
             }
             if (Volume != 0)
             {
                 if (Volume != 1)
                 {
-                    var length = sound.GetLength(1);
                     for (int i = 0; i < length; i++)
                     {
                         sound[0, i] *= Volume;
@@ -174,10 +168,7 @@ namespace JaebeMusicStudio.Sound
                         sound = effect.DoFilter(sound);
                 }
             }
-            slRend.data = sound;
 
-            Console.WriteLine("RedyToResolve Line " + this);
-            slRend.Resolve();
 
             if (connectedUIs != 0)
             {
@@ -203,9 +194,98 @@ namespace JaebeMusicStudio.Sound
                 LastVolume[0] = minL > maxL ? minL : maxL;
                 LastVolume[1] = minR > maxR ? minR : maxR;
             }
-
+            return sound;
         }
 
+        public async Task<float[,]> RenderDirectSound(Rendering rendering)
+        {
+
+            var sound = new float[2, (int)rendering.project.CountSamples(rendering.renderingLength)];
+            float position = rendering.renderingStart;
+            float renderLength = rendering.renderingLength;
+
+            var tasks = new List<Task<SoundElementRenderResult>>();
+            foreach (var element in rendering.soundElements.Where(element => element.SoundLine == this))
+            {
+                var renderStart = element.Offset - position;
+                var task = new Task<SoundElementRenderResult>(() =>
+                {
+                    if (renderStart >= 0) //you must wait to start playing
+                    {
+                        var rendered = element.GetSound(0, rendering.renderingLength - renderStart, rendering);
+                        return new SoundElementRenderResult { data = rendered, offset = (int)rendering.project.CountSamples(renderStart) };
+                    }
+                    else
+                    {
+                        var rendered = element.GetSound(-renderStart, rendering.renderingLength, rendering);
+                        return new SoundElementRenderResult { data = rendered, offset = 0 };
+                    }
+                });
+                tasks.Add(task);
+                task.Start();
+            }
+            foreach (var liveElement in rendering.liveInputs.Where(liveElement => liveElement.Synth.SoundLine == this))
+            {
+                var task = new Task<SoundElementRenderResult>(() =>
+                {
+                    var rendered = liveElement.GetSound(0, rendering.renderingLength, rendering);
+                    return new SoundElementRenderResult { data = rendered, offset = 0 };
+                });
+                tasks.Add(task);
+                task.Start();
+            }
+            foreach (var task in tasks)
+            {
+                var result = await task;
+                float vol = Volume * result.volumeChange;
+
+                if (Volume != 0)
+                {
+                    var length = result.data.GetLength(1);
+                    if (length + result.offset > sound.GetLength(1))
+                        length = sound.GetLength(1) - result.offset;
+                    if (result.offset == 0)
+                    {
+                        if (result.data.GetLength(0) == 1)
+                        {
+                            for (int i = 0; i < length; i++)
+                            {
+                                sound[0, i] += result.data[0, i] * vol;
+                                sound[1, i] += result.data[0, i] * vol;
+                            }
+                        }
+                        else
+                        {
+                            for (int i = 0; i < length; i++)
+                            {
+                                sound[0, i] += result.data[0, i] * vol;
+                                sound[1, i] += result.data[1, i] * vol;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (result.data.GetLength(0) == 1)
+                        {
+                            for (int i = 0; i < length; i++)
+                            {
+                                sound[0, i + result.offset] += result.data[0, i] * vol;
+                                sound[1, i + result.offset] += result.data[0, i] * vol;
+                            }
+                        }
+                        else
+                        {
+                            for (int i = 0; i < length; i++)
+                            {
+                                sound[0, i + result.offset] += result.data[0, i] * vol;
+                                sound[1, i + result.offset] += result.data[1, i] * vol;
+                            }
+                        }
+                    }
+                }
+            }
+            return sound;
+        }
 
 
         public void AddEffect(Effect e)
@@ -259,10 +339,6 @@ namespace JaebeMusicStudio.Sound
             }
             return ret;
         }
-        public void clearAfterRender(Rendering rendering)
-        {
-            renderings.Remove(rendering);
-        }
     }
     public class SoundLineConnection
     {
@@ -275,67 +351,6 @@ namespace JaebeMusicStudio.Sound
             this.output = Project.current.lines[lineNumberOutput];
             this.input = input;
             this.volume = volume;
-        }
-    }
-    public class SoundLineRendering
-    {
-        public List<Task<SoundElementRenderResult>> currentToRender = new List<Task<SoundElementRenderResult>>();
-        public float[,] data;
-        public bool completed;
-        List<Action> waitingOnCompletion = new List<Action>();
-        public SoundLineRenderingAwaiter GetAwaiter()
-        {
-            return new SoundLineRenderingAwaiter(this);
-        }
-        public void Resolve()
-        {
-            lock (this)
-            {
-                this.completed = true;
-                Console.WriteLine("waitingOnCompletion" + waitingOnCompletion.Count);
-                foreach (var x in waitingOnCompletion)
-                {
-                    x();
-                }
-                waitingOnCompletion = null;
-            }
-        }
-        public class SoundLineRenderingAwaiter : INotifyCompletion
-        {
-            private SoundLineRendering parent;
-
-            public SoundLineRenderingAwaiter(SoundLineRendering parent)
-            {
-                this.parent = parent;
-            }
-
-            public bool IsCompleted
-            {
-                get
-                {
-                    return parent.completed;
-                }
-            }
-
-
-            public float[,] GetResult()
-            {
-                return this.parent.data;
-            }
-
-
-            public void OnCompleted(Action continuation)
-            {
-                lock (parent)
-                {
-                    if (IsCompleted)
-                        continuation();
-                    else
-                        parent.waitingOnCompletion.Add(continuation);
-                }
-            }
-
-            public void UnsafeOnCompleted(Action continuation) { OnCompleted(continuation); }
         }
     }
 }

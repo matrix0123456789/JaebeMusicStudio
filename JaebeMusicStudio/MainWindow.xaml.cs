@@ -17,6 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using JaebeMusicStudio.Sound;
 using JaebeMusicStudio.UI;
+using JaebeMusicStudio.Widgets;
 using Microsoft.Win32;
 
 namespace JaebeMusicStudio
@@ -145,11 +146,7 @@ namespace JaebeMusicStudio
 
         private void RenderButton_OnClick(object sender, RoutedEventArgs e)
         {
-            var dialog = new SaveFileDialog() { Filter = "mp3|*.mp3|wave|*.wav" };
-            dialog.ShowDialog();
-            if (dialog.FileName != "")
-                SaveSound.file = new FileInfo(dialog.FileName);
-            SaveSound.SaveFileAsync();
+            (new FileExport()).Show();
         }
 
         private void openInputsButton_Click(object sender, RoutedEventArgs e)

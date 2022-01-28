@@ -75,9 +75,7 @@ namespace JaebeMusicStudio.Sound
                         renderLength = 0;
                     liveRenderingNow = true;
                     var rendering = new Rendering() { renderingStart = position, renderingLength = (float)renderLength, project = Project.current, type = RenderngType.live };
-                    var soundReady = rendering.project.OutputLine.getByRendering(rendering);
-                    rendering.project.Render(rendering);
-                    var sound = await soundReady;
+                    var sound=await rendering.project.Render(rendering);
                     Console.WriteLine("ReturnedSound");
                     ReturnedSound(sound, buffer);
                     rendering.project.Clear(rendering);

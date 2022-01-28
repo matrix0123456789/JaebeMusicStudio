@@ -34,7 +34,7 @@ namespace JaebeMusicStudio.Sound
 
         public static Project current = null;
         public ObservableCollection<SoundLine> lines = new ObservableCollection<SoundLine>() { };
-        public SoundLineAbstract OutputLine {get{return outputLine ?? lines.FirstOrDefault();} set{outputLine=value;}}
+        public SoundLineAbstract OutputLine { get { return outputLine ?? lines.FirstOrDefault(); } set { outputLine = value; } }
         private SoundLineAbstract outputLine;
         public LiveSoundLineCollection liveLines = new LiveSoundLineCollection();
 
@@ -126,10 +126,6 @@ namespace JaebeMusicStudio.Sound
 
         internal void Clear(Rendering rendering)
         {
-            foreach (var line in lines)
-            {
-                line.clearAfterRender(rendering);
-            }
             var liveLinesList = liveLines.getAvaibleInputs();
             foreach (var line in liveLinesList)
             {
@@ -154,20 +150,8 @@ namespace JaebeMusicStudio.Sound
                 trackAdded(number, newTrack);
             return newTrack;
         }
-        void prepareToRender(Rendering rendering)
-        {
-            var liveLinesList = liveLines.getAvaibleInputs();
 
-            foreach (var line in lines)
-            {
-                line.prepareToRender(rendering);
-            }
-            foreach (var line in liveLinesList)
-            {
-                line.prepareToRender(rendering);
-            }
-        }
-        void playTracks(Rendering rendering)
+        IEnumerable<ISoundElement> playTracks(Rendering rendering)
         {
             float position = rendering.renderingStart;
             float renderLength = rendering.renderingLength;
@@ -178,28 +162,12 @@ namespace JaebeMusicStudio.Sound
                     if (element.SoundLine == null) continue; //skip element without output
                     if (element.Offset < position + rendering.renderingLength && element.Offset + element.Length > position)
                     {
-                        var lineRendering = element.SoundLine.getByRendering(rendering);
-                        var renderStart = element.Offset - position;
-                        var task = new Task<SoundElementRenderResult>(() =>
-                         {
-                             if (renderStart >= 0) //you must wait to start playing
-                             {
-                                 var rendered = element.GetSound(0, rendering.renderingLength - renderStart, rendering);
-                                 return new SoundElementRenderResult { data = rendered, offset = (int)CountSamples(renderStart) };
-                             }
-                             else
-                             {
-                                 var rendered = element.GetSound(-renderStart, rendering.renderingLength, rendering);
-                                 return new SoundElementRenderResult { data = rendered, offset = 0 };
-                             }
-                         });
-                        lineRendering.currentToRender.Add(task);
-                        task.Start();
+                        yield return element;
                     }
                 }
             }
         }
-        void playLive(Rendering rendering)
+        IEnumerable<ILiveInput> playLive(Rendering rendering)
         {
             foreach (var liveElement in live)
             {
@@ -211,48 +179,39 @@ namespace JaebeMusicStudio.Sound
                     liveElement.Synth = NoteSynths[0];
                 }
                 if (liveElement.Synth?.SoundLine == null) continue;
-
-                var lineRendering = liveElement.Synth.SoundLine.getByRendering(rendering);
-                var task = new Task<SoundElementRenderResult>(() =>
-                 {
-                     var rendered = liveElement.GetSound(0, rendering.renderingLength, rendering);
-                     return new SoundElementRenderResult { data = rendered, offset = 0 };
-                 });
-                lineRendering.currentToRender.Add(task);
-                task.Start();
+                yield return liveElement;
             }
         }
-        internal void Render(Rendering rendering)
+        public async Task<float[,]> Render(Rendering rendering)
         {
-            prepareToRender(rendering);
+            //prepareToRender(rendering);
+            IEnumerable<ISoundElement> soundElements = Array.Empty<ISoundElement>();
+            IEnumerable<ILiveInput> liveInputs = Array.Empty<ILiveInput>();
             if (rendering.type == RenderngType.live)
             {
                 if (Player.status != Player.Status.paused)
                 {
-                    playTracks(rendering);
+                    soundElements = playTracks(rendering);
                 }
-                playLive(rendering);
+                liveInputs = playLive(rendering);
             }
             else
             {
-                playTracks(rendering);
+                soundElements = playTracks(rendering);
             }
-            rendering.canHarvest = true;
-            Console.WriteLine("LinesStart");
-            foreach (var line in lines)
+            rendering.soundElements = soundElements;
+            rendering.liveInputs = liveInputs;
+            var lines = rendering.project.lines.Cast<SoundLineAbstract>().Concat(rendering.project.liveLines.getAvaibleInputs()).ToArray();
+            rendering.soundLinesRenderings = lines.Select(x => new KeyValuePair<SoundLineAbstract, TaskCompletionSource<float[,]>>(x, new TaskCompletionSource<float[,]>())).ToDictionary(x => x.Key, x => x.Value);
+            foreach (var r in rendering.soundLinesRenderings)
             {
-                line.checkIfReady(rendering);
-                Console.WriteLine("Line" + line);
+                var task = Task.Run(async () =>
+                {
+                    var result = await r.Key.Render(rendering);
+                    r.Value.SetResult(result);
+                });
             }
-            Console.WriteLine("LinesEnd");
-            var liveLinesList = liveLines.getAvaibleInputs();
-            foreach (var line in liveLinesList)
-            {
-                line.checkIfReady(rendering);
-                Console.WriteLine("LineLive" + line);
-            }
-            Console.WriteLine("LinesLiveEnd");
-
+            return await rendering.soundLinesRenderings[rendering.project.OutputLine].Task;
         }
 
         public void Serialize(string path)

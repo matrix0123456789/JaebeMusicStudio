@@ -13,7 +13,12 @@ namespace JaebeMusicStudio.Sound
         internal Project project;
         public bool canHarvest = false;//all tasks to render was created
         public RenderngType type;
+        internal Dictionary<SoundLineAbstract, TaskCompletionSource<float[,]>> soundLinesRenderings;
         public readonly DateTime started = DateTime.Now;
+
+        public int frequency { get; internal set; }
+        public IEnumerable<ISoundElement> soundElements { get; internal set; }
+        internal IEnumerable<ILiveInput> liveInputs { get; set; }
     }
     public enum RenderngType { live, block };
 }
