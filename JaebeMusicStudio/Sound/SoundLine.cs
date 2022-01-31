@@ -130,7 +130,7 @@ namespace JaebeMusicStudio.Sound
         public async Task<SoundSample> RenderDirectSound(Rendering rendering)
         {
 
-            var sound = new float[2, (int)rendering.project.CountSamples(rendering.renderingLength)];
+            var sound = new SoundSample((int)rendering.project.CountSamples(rendering.renderingLength));
             float position = rendering.renderingStart;
             float renderLength = rendering.renderingLength;
 
@@ -171,46 +171,16 @@ namespace JaebeMusicStudio.Sound
 
                 if (Volume != 0)
                 {
-                    var length = result.data.GetLength(1);
-                    if (length + result.offset > sound.GetLength(1))
-                        length = sound.GetLength(1) - result.offset;
+                    var length = result.data.SampleCount;
+                    if (length + result.offset > sound.SampleCount)
+                        length = sound.SampleCount - result.offset;
                     if (result.offset == 0)
                     {
-                        if (result.data.GetLength(0) == 1)
-                        {
-                            for (int i = 0; i < length; i++)
-                            {
-                                sound[0, i] += result.data[0, i] * vol;
-                                sound[1, i] += result.data[0, i] * vol;
-                            }
-                        }
-                        else
-                        {
-                            for (int i = 0; i < length; i++)
-                            {
-                                sound[0, i] += result.data[0, i] * vol;
-                                sound[1, i] += result.data[1, i] * vol;
-                            }
-                        }
+                        sound.AddEqualLength(result.data, vol);
                     }
                     else
                     {
-                        if (result.data.GetLength(0) == 1)
-                        {
-                            for (int i = 0; i < length; i++)
-                            {
-                                sound[0, i + result.offset] += result.data[0, i] * vol;
-                                sound[1, i + result.offset] += result.data[0, i] * vol;
-                            }
-                        }
-                        else
-                        {
-                            for (int i = 0; i < length; i++)
-                            {
-                                sound[0, i + result.offset] += result.data[0, i] * vol;
-                                sound[1, i + result.offset] += result.data[1, i] * vol;
-                            }
-                        }
+                        sound.AddWithOffset(result.data, result.offset, vol);
                     }
                 }
             }

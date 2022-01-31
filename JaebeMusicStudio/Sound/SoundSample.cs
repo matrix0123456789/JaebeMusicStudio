@@ -8,7 +8,7 @@ namespace JaebeMusicStudio.Sound
     {
         private float[,] raw;
 
-        public SoundSample(int sampleCount)
+        public SoundSample(long sampleCount)
         {
             this.raw = new float[2, sampleCount];
         }
@@ -43,6 +43,17 @@ namespace JaebeMusicStudio.Sound
             {
                 this.raw[0, i] += b.raw[0, i] * volume;
                 this.raw[1, i] += b.raw[1, i] * volume;
+            }
+        }
+        public void AddWithOffset(SoundSample b, long offset, float volume)
+        {
+            var aSample = SampleCount - offset;
+            var bSample = b.SampleCount;
+            var min = aSample > bSample ? bSample : aSample;
+            for (long i = 0; i < min; i++)
+            {
+                this.raw[0, i + offset] += b.raw[0, i] * volume;
+                this.raw[1, i + offset] += b.raw[1, i] * volume;
             }
         }
         public void Multiply(float volume)

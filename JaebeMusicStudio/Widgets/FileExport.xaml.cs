@@ -36,11 +36,13 @@ namespace JaebeMusicStudio.Widgets
                 return;
 
             var file = new FileInfo(dialog.FileName);
-
+            var start = DateTime.Now;
             var rendering = new Rendering() { renderingStart = 0, renderingLength = Project.current.length, project = Project.current, type = RenderngType.block, frequency = int.Parse((frequency.SelectedValue as ComboBoxItem)?.Content.ToString() ?? "48000") };
             var sound = await rendering.project.Render(rendering);
+            var end = DateTime.Now;
             SaveFileEnd(sound, file);
             rendering.project.Clear(rendering);
+            MessageBox.Show((end - start).TotalSeconds.ToString());
         }
         public void SaveFileEnd(float[,] data, FileInfo file)
         {

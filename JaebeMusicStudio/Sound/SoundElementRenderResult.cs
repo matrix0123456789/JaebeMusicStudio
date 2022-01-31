@@ -9,7 +9,7 @@ namespace JaebeMusicStudio.Sound
    public class SoundElementRenderResult
     {
         public int offset;
-        public float[,] data;
+        public SoundSample data;
         public float volumeChange = 1;
     }
 }

@@ -80,12 +80,12 @@ namespace JaebeMusicStudio.Sound
             }
         }
 
-        internal float[,] GetSound(float start, float length, Note note)
+        internal float[,] GetSound(float start, float length, Note note, Rendering rendering)
         {
             long samples = (long)Project.current.CountSamples(length); //how many samples you need on output
             float samplesTotal = Project.current.CountSamples(note.Length + R);
             var phaseTimeWaited = Project.current.CountSamples(randomPhase ? start + 1000 : start);//+1000 to taki trik
-            var realTimeWaited = Project.current.CountSamples( start);//+1000 to taki trik
+            var realTimeWaited = Project.current.CountSamples(start);//+1000 to taki trik
             var ret = new float[2, samples]; //sound that will be returned
 
             foreach (var p in Pitchs.ToArray())
