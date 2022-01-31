@@ -18,6 +18,7 @@ namespace JaebeMusicStudio.Sound
         private float volume = 1;
         public bool randomPhase = false;
         public float Volume { get { return volume; } set { volume = value; } }
+        public float Balance { get; set; } = .5f;
         public float SquareRatio { get { return squareRatio; } set { squareRatio = value; } }
         static Random rand = new Random();
         public event Action<Oscillator> AdsrChanged;
@@ -73,6 +74,8 @@ namespace JaebeMusicStudio.Sound
                 squareRatio = float.Parse(x.Attributes["squareRatio"].Value, CultureInfo.InvariantCulture);
             if (x.Attributes["volume"] != null)
                 volume = float.Parse(x.Attributes["volume"].Value, CultureInfo.InvariantCulture);
+            if (x.Attributes["balance"] != null)
+                Balance = float.Parse(x.Attributes["balance"].Value, CultureInfo.InvariantCulture);
             Pitchs.Clear();
             foreach (XmlElement pitch in x.ChildNodes)
             {
@@ -114,6 +117,8 @@ namespace JaebeMusicStudio.Sound
             var dLen = Project.current.CountSamples(D);
             var rLen = Project.current.CountSamples(R);
             var noteVolume = volume * note.Volume;
+            var noteVolumeL = noteVolume * Math.Min((1 - Balance) * 2, 1);
+            var noteVolumeR = noteVolume * Math.Min(Balance * 2, 1);
             for (int i = 0; i < samples; i++)
             {
                 float adsrVal;
@@ -128,9 +133,8 @@ namespace JaebeMusicStudio.Sound
                 if (toEnd < rLen)
                     adsrVal *= toEnd / rLen;
 
-                adsrVal *= noteVolume;
-                ret[0, i] *= adsrVal;
-                ret[1, i] *= adsrVal;
+                ret[0, i] *= adsrVal* noteVolumeL;
+                ret[1, i] *= adsrVal* noteVolumeR;
             }
             return ret;
         }

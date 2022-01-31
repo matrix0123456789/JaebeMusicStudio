@@ -64,6 +64,7 @@ namespace JaebeMusicStudio.Widgets
             R.Value = osc.R;
             randomPhase.IsChecked = osc.randomPhase;
             Volume.Value = osc.Volume;
+            Balance.Value = osc.Balance;
             switch (osc.Type)
             {
                 case OscillatorType.sine:
@@ -185,6 +186,10 @@ namespace JaebeMusicStudio.Widgets
         private void Volume_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             osc.Volume = (float)e.NewValue;
+        }
+        private void Balance_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            osc.Balance = (float)e.NewValue;
         }
 
         private void SquareRatio_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

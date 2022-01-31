@@ -33,7 +33,8 @@ namespace JaebeMusicStudio.Sound
 
         public BasicSynth()
         {
-            oscillators.Add(new Oscillator());
+            lock (oscillators)
+                oscillators.Add(new Oscillator());
             oscillators.CollectionChanged += Oscillators_CollectionChanged;
             try
             {
@@ -70,7 +71,8 @@ namespace JaebeMusicStudio.Sound
             {
                 if (ch.Name == "Oscillator")
                 {
-                    oscillators.Add(new Oscillator(ch));
+                    lock (oscillators)
+                        oscillators.Add(new Oscillator(ch));
                 }
             }
             oscillators.CollectionChanged += Oscillators_CollectionChanged;
@@ -79,33 +81,38 @@ namespace JaebeMusicStudio.Sound
         {
             long samples = (long)Project.current.CountSamples(length);//how many samples you need on output
             var ret = new SoundSample(samples);//sound that will be returned
-            var arr = oscillators.ToArray().SelectMany(o => notes.Where(note => note.Offset < start + length && note.Offset + note.Length + o.R > start).Select(note => (o, note.Clone()))).Select(x =>
+            //we could make parralelism here, but need to consider if it will make better performance, becouse each sound element is already paraller 
+            Oscillator[] oscs;
+            lock (oscillators)
+            {
+                oscs = oscillators.ToArray();
+            }
+            var arr = oscs.SelectMany(o => notes.Where(note => note.Offset < start + length && note.Offset + note.Length + o.R > start).Select(note => (o, note.Clone()))).Select(x =>
+            {
+                var (oscillator, note) = x;
+                var notSamplesOffset = (long)Project.current.CountSamples(note.Offset - start);
 
-                  {
-                      var (oscillator, note) = x;
-                      var notSamplesOffset = (long)Project.current.CountSamples(note.Offset - start);
+                float[,] returnedSound;
+                if (start > note.Offset)
+                {
+                    var l1 = note.Length + oscillator.R - (start - note.Offset);
+                    if (length < l1)
+                    {
+                        l1 = length;
+                    }
+                    returnedSound = oscillator.GetSound(start - note.Offset, l1, note, rendering);
+                    return (returnedSound, 0);
+                }
+                else
+                {
+                    var l1 = length + start - note.Offset;
+                    if (note.Length + oscillator.R < l1)
+                        l1 = note.Length + oscillator.R;
+                    returnedSound = oscillator.GetSound(0, l1, note, rendering);
 
-                      float[,] returnedSound;
-                      if (start > note.Offset)
-                      {
-                          var l1 = note.Length + oscillator.R - (start - note.Offset);
-                          if (length < l1)
-                          {
-                              l1 = length;
-                          }
-                          returnedSound = oscillator.GetSound(start - note.Offset, l1, note, rendering);
-                          return (returnedSound, 0);
-                      }
-                      else
-                      {
-                          var l1 = length + start - note.Offset;
-                          if (note.Length + oscillator.R < l1)
-                              l1 = note.Length + oscillator.R;
-                          returnedSound = oscillator.GetSound(0, l1, note, rendering);
-
-                          return (returnedSound, notSamplesOffset);
-                      }
-                  }).ToArray();
+                    return (returnedSound, notSamplesOffset);
+                }
+            }).ToArray();
 
             foreach (var x in arr)
             {
