@@ -127,7 +127,7 @@ namespace JaebeMusicStudio.Sound
 
 
         }
-        public float[,] GetSound(float start, float length, Rendering rendering)
+        public SoundSample GetSound(float start, float length, Rendering rendering)
         {
             var ret = Synth.GetSound((float)curentPositon, length, rendering, Items);
             curentPositon += length;

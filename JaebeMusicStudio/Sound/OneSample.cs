@@ -48,10 +48,10 @@ namespace JaebeMusicStudio.Sound
             Length = this.sample.Length;
         }
 
-        public float[,] GetSound(float start, float length, Rendering rendering)
+        public SoundSample GetSound(float start, float length, Rendering rendering)
         {
             long samples = (long)Project.current.CountSamples(length);//how many samples you need on output
-            var ret = new float[sample.channels, samples];//sound that will be returned
+            var ret = new float[2, samples];//sound that will be returned
             var startOffset = ((innerOffset + start) / Project.current.tempo * 60f) * sample.sampleRate;//start of reading in sample
             var samplesRatio = sample.sampleRate / Project.current.sampleRate;
 
@@ -64,7 +64,7 @@ namespace JaebeMusicStudio.Sound
                     var offset = (startOffset + (float)i * samplesRatio);
                     var offsetInt = (int)offset;
                     var lerp = (offset - offsetInt);
-                    ret[0, i] = (float)(sample.wave[0, offsetInt] * (1 - lerp) + sample.wave[0, offsetInt + 1] * lerp);
+                    ret[0, i]= ret[1, i] = (float)(sample.wave[0, offsetInt] * (1 - lerp) + sample.wave[0, offsetInt + 1] * lerp);
                 }
             else
                 for (var i = 0; i < samples - Math.Ceiling(samplesRatio); i++)//odejmuje ceil żeby nie wyjść z tablicy

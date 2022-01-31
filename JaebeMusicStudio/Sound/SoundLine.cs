@@ -78,89 +78,19 @@ namespace JaebeMusicStudio.Sound
             }
             document.DocumentElement.AppendChild(node);
         }
-        /*public void rendered(int offset, float[,] inputData, float[,] outputData, float volumeChange = 1)
-        {
-            float vol = volumeChange;
-
-            if (Volume != 0)
-            {
-                var length = inputData.GetLength(1);
-                if (length + offset > outputData.GetLength(1))
-                    length = outputData.GetLength(1) - offset;
-                if (offset == 0)
-                {
-                    if (inputData.GetLength(0) == 1)
-                    {
-                        for (int i = 0; i < length; i++)
-                        {
-                            outputData[0, i] += inputData[0, i] * vol;
-                            outputData[1, i] += inputData[0, i] * vol;
-                        }
-                    }
-                    else
-                    {
-                        for (int i = 0; i < length; i++)
-                        {
-                            outputData[0, i] += inputData[0, i] * vol;
-                            outputData[1, i] += inputData[1, i] * vol;
-                        }
-                    }
-                }
-                else
-                {
-                    if (inputData.GetLength(0) == 1)
-                    {
-                        for (int i = 0; i < length; i++)
-                        {
-                            outputData[0, i + offset] += inputData[0, i] * vol;
-                            outputData[1, i + offset] += inputData[0, i] * vol;
-                        }
-                    }
-                    else
-                    {
-                        for (int i = 0; i < length; i++)
-                        {
-                            outputData[0, i + offset] += inputData[0, i] * vol;
-                            outputData[1, i + offset] += inputData[1, i] * vol;
-                        }
-                    }
-                }
-            }
-
-        
-        }*/
         public override async Task<float[,]> Render(Rendering rendering)
         {
-            //if (!rendering.canHarvest)
-            //    return;
-
-            //var slRend = getByRendering(rendering);
-
-
-            //var sound = slRend.data;
-            //Console.WriteLine("startAwaiting");
-            //foreach (var oneTask in slRend.currentToRender)
-            //{
-            //    var result = await oneTask;
-            //    Console.WriteLine("ElementAwaited");
-            //    rendered(result.offset, result.data, sound, result.volumeChange);
-            //}
             var sound = await RenderDirectSound(rendering);
-            var length = sound.GetLength(1);
             foreach (var input in inputs)
             {
                 var inputData = await rendering.soundLinesRenderings[input.input].Task;
-                SoundOperations.AddEqualLengths(sound, inputData);
+                sound.AddEqualLength(inputData, input.volume);
             }
             if (Volume != 0)
             {
                 if (Volume != 1)
                 {
-                    for (int i = 0; i < length; i++)
-                    {
-                        sound[0, i] *= Volume;
-                        sound[1, i] *= Volume;
-                    }
+                    sound.Multiply(Volume);
                 }
                 foreach (var effect in effects)
                 {
@@ -176,7 +106,7 @@ namespace JaebeMusicStudio.Sound
                 float minR = sound[1, 0];
                 float maxL = sound[0, 0];
                 float maxR = sound[1, 0];
-                for (var i = 0; i < sound.GetLength(1); i++)
+                for (var i = 0; i < sound.SampleCount; i++)
                 {
                     if (sound[0, i] < minL)
                         minL = sound[0, i];
@@ -197,7 +127,7 @@ namespace JaebeMusicStudio.Sound
             return sound;
         }
 
-        public async Task<float[,]> RenderDirectSound(Rendering rendering)
+        public async Task<SoundSample> RenderDirectSound(Rendering rendering)
         {
 
             var sound = new float[2, (int)rendering.project.CountSamples(rendering.renderingLength)];

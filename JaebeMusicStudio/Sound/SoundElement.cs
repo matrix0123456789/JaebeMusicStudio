@@ -19,7 +19,7 @@ namespace JaebeMusicStudio.Sound
         /// <param name="start"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        float[,] GetSound(float start, float length, Rendering rendering);
+        SoundSample GetSound(float start, float length, Rendering rendering);
         float Offset { get; set; }
         float Length { get; set; }
         SoundLine SoundLine { get; }

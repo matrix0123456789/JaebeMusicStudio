@@ -10,7 +10,7 @@ namespace JaebeMusicStudio.Sound
     interface ILiveInput
     {
         INoteSynth Synth { get; set; }
-        float[,] GetSound(float start, float length, Rendering rendering);
+        SoundSample GetSound(float start, float length, Rendering rendering);
         event Action PressedNotesChanged;
         IEnumerable<Note> PressedNotes { get; }
         event Action ControllsChanged;

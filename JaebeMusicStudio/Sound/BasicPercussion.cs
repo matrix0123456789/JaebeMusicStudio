@@ -61,7 +61,7 @@ namespace JaebeMusicStudio.Sound
                 }
             }
         }
-        public float[,] GetSound(float start, float length, Rendering rendering, NotesCollection notes)
+        public SoundSample GetSound(float start, float length, Rendering rendering, NotesCollection notes)
         {
             var maxLength = notes.Any() ? notes.Max(note => (note != null && pitchesToElement.ContainsKey((int)note?.Pitch)) ? pitchesToElement[(int)note.Pitch].SoundLength + note.Offset : 0) : 0;
             if (length > maxLength)

@@ -58,7 +58,7 @@ namespace JaebeMusicStudio.Sound
 
         public event Action<ISoundElement> positionChanged;
 
-        public float[,] GetSound(float start, float length, Rendering rendering)
+        public SoundSample GetSound(float start, float length, Rendering rendering)
         {
             return Sound.GetSound(start, length, rendering, Items);
         }
