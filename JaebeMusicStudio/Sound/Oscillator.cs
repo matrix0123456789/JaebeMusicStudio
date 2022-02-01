@@ -93,7 +93,7 @@ namespace JaebeMusicStudio.Sound
 
             foreach (var p in Pitchs.ToArray())
             {
-                var waveTime = Project.current.waveTime(note.Pitch + p);
+                var waveTime = (float)Project.current.waveTime(note.Pitch + p);
                 switch (Type)
                 {
                     case OscillatorType.sine:
@@ -133,28 +133,31 @@ namespace JaebeMusicStudio.Sound
                 if (toEnd < rLen)
                     adsrVal *= toEnd / rLen;
 
-                ret[0, i] *= adsrVal* noteVolumeL;
-                ret[1, i] *= adsrVal* noteVolumeR;
+                ret[0, i] *= adsrVal * noteVolumeL;
+                ret[1, i] *= adsrVal * noteVolumeR;
             }
             return ret;
         }
 
-        void createSine(float[,] ret, double waveTime, double phase)
+        void createSine(float[,] ret, float waveTime, float phase)
         {
-            double divider = waveTime / Math.PI / 2;
-            for (int i = 0; i < ret.LongLength / 2; i++)
+            long len = ret.LongLength / 2;
+            float multipler = MathF.PI * 2f / waveTime;
+            for (int i = 0; i < len; i++)
             {
-                var sin = (float)Math.Sin((i + phase) / divider);
+                var sin = MathF.Sin((i + phase) * multipler);
                 ret[0, i] += sin;
                 ret[1, i] += sin;
             }
         }
 
-        void createSaw(float[,] ret, double waveTime, double phase)
+        void createSaw(float[,] ret, float waveTime, float phase)
         {
-            for (int i = 0; i < ret.LongLength / 2; i++)
+            var reversedWaveTime2 = 2f / waveTime;
+            long len = ret.LongLength / 2;
+            for (int i = 0; i < len; i++)
             {
-                var val = (float)(((i + phase) / waveTime) % 1 * 2 - 1);
+                var val = (((i + phase) * reversedWaveTime2) % 2f - 1f);
                 ret[0, i] += val;
                 ret[1, i] += val;
             }
@@ -162,9 +165,11 @@ namespace JaebeMusicStudio.Sound
 
         void createTriangle(float[,] ret, double waveTime, double phase)
         {
-            for (int i = 0; i < ret.LongLength / 2; i++)
+            var reversedWaveTime4 = 4f / waveTime;
+            long len = ret.LongLength / 2;
+            for (int i = 0; i < len; i++)
             {
-                var val = (float)(((i + phase) / waveTime) % 1 * 4);
+                var val = (float)(((i + phase) * reversedWaveTime4) % 4);
                 if (val < 2)
                     val = val - 1;
                 else
@@ -178,34 +183,26 @@ namespace JaebeMusicStudio.Sound
 
         void createSquare(float[,] ret, double waveTime, double phase)
         {
-            float val1, val2;
+            var squareRatio = this.squareRatio;
+            long len = ret.LongLength / 2;
 
-            val1 = squareRatio - 1;
-            val2 = squareRatio;
-
-            for (int i = 0; i < ret.LongLength / 2; i++)
+            for (int i = 0; i < len ; i++)
             {
-                if (((i + phase) % waveTime) / waveTime < squareRatio)
-                {
-                    ret[0, i] += val1;
-                    ret[1, i] += val1;
-                }
-                else
-                {
-                    ret[0, i] += val2;
-                    ret[1, i] += val2;
-                }
+                var bottom = ((i + phase) % waveTime) / waveTime < squareRatio;
+                var val = squareRatio - (bottom ? 1f : 0f);
+                ret[0, i] += val;
+                ret[1, i] += val;
             }
         }
 
         void createWhite(float[,] ret, double waveTime, double phase)
         {
-            for (int i = 0; i < ret.LongLength / 2; i++)
+            long len = ret.LongLength / 2;
+            for (int i = 0; i < len; i++)
             {
                 ret[0, i] += (float)(rand.NextDouble() * 2 - 1);
                 ret[1, i] += (float)(rand.NextDouble() * 2 - 1);
             }
-
         }
 
         public void Serialize(XmlNode node)
