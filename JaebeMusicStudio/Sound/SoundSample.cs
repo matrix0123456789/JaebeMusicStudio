@@ -22,7 +22,8 @@ namespace JaebeMusicStudio.Sound
 
         public void AddEqualLength(SoundSample b)
         {
-            for (int i = 0; i < b.SampleCount; i++)
+            var count = b.SampleCount;
+            for (long i = 0; i < count; i++)
             {
                 this.raw[0, i] += b.raw[0, i];
                 this.raw[1, i] += b.raw[1, i];
@@ -39,7 +40,8 @@ namespace JaebeMusicStudio.Sound
         }
         public void AddEqualLength(SoundSample b, float volume)
         {
-            for (int i = 0; i < b.SampleCount; i++)
+            var count = b.SampleCount;
+            for (long i = 0; i < count; i++)
             {
                 this.raw[0, i] += b.raw[0, i] * volume;
                 this.raw[1, i] += b.raw[1, i] * volume;
@@ -60,7 +62,8 @@ namespace JaebeMusicStudio.Sound
         {
             if (volume != 0)
             {
-                for (int i = 0; i < SampleCount; i++)
+                var count = SampleCount;
+                for (int i = 0; i < count; i++)
                 {
                     this.raw[0, i] *= volume;
                     this.raw[1, i] *= volume;

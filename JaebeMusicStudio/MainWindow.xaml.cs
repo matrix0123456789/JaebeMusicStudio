@@ -134,8 +134,14 @@ namespace JaebeMusicStudio
 
         private void MainWindow_OnKeyDown(object sender, KeyEventArgs e)
         {
-            KeyboardInput.singleton1.KeyDown(e);
-            KeyboardInput.singleton2.KeyDown(e);
+            if (e.Key == Key.F9) {
+                Task.Run(async () => MessageBox.Show(await PerformanceTests.Run()));
+            }
+            else
+            {
+                KeyboardInput.singleton1.KeyDown(e);
+                KeyboardInput.singleton2.KeyDown(e);
+            }
         }
 
         private void MainWindow_OnKeyUp(object sender, KeyEventArgs e)
