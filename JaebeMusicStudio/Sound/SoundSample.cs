@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 
 namespace JaebeMusicStudio.Sound
@@ -20,31 +21,66 @@ namespace JaebeMusicStudio.Sound
         public static implicit operator float[,](SoundSample x) => x.raw;
         public int SampleCount => raw.GetLength(1);
 
-        public void AddEqualLength(SoundSample b)
+        public unsafe void AddEqualLength(SoundSample b)
         {
             var count = b.SampleCount;
-            for (long i = 0; i < count; i++)
-            {
-                this.raw[0, i] += b.raw[0, i];
-                this.raw[1, i] += b.raw[1, i];
-            }
-            //fixed (float* t = target)
+            var count2 = count * 2;
+            //for (long i = 0; i < count; i++)
             //{
-            //    fixed (float* s = source)
-            //    {
-            //        var vtarget = new Vector<float>(new Span<float>(t, target.Length));
-            //        var vsource = new Vector<float>(new Span<float>(s, source.Length));
-            //        var x=Vector.Add(vtarget, vsource);
-            //    }
+            //    this.raw[0, i] += b.raw[0, i];
+            //    this.raw[1, i] += b.raw[1, i];
             //}
+            fixed (float* pA = raw)
+            {
+                fixed (float* pB = b.raw)
+                {
+                    var sA = new Span<float>(pA, raw.Length);
+                    var sB = new Span<float>(pB, b.raw.Length);
+                    int i = 0;
+                    for (; i + Vector<float>.Count < count2; i += Vector<float>.Count)
+                    {
+                        var vA = new Vector<float>(sA.Slice(i));
+                        var vB = new Vector<float>(sB.Slice(i));
+
+                        var x = Vector.Add(vA, vB);
+                        x.CopyTo(sA.Slice(i));
+                    }
+                    for (; i < count2; i++)
+                    {
+                        sA[i] += sB[i];
+                    }
+                }
+            }
         }
-        public void AddEqualLength(SoundSample b, float volume)
+        public unsafe void AddEqualLength(SoundSample b, float volume)
         {
             var count = b.SampleCount;
-            for (long i = 0; i < count; i++)
+            var count2 = count * 2;
+            //for (long i = 0; i < count; i++)
+            //{
+            //    this.raw[0, i] += b.raw[0, i] * volume;
+            //    this.raw[1, i] += b.raw[1, i] * volume;
+            //}
+            fixed (float* pA = raw)
             {
-                this.raw[0, i] += b.raw[0, i] * volume;
-                this.raw[1, i] += b.raw[1, i] * volume;
+                fixed (float* pB = b.raw)
+                {
+                    var sA = new Span<float>(pA, raw.Length);
+                    var sB = new Span<float>(pB, b.raw.Length);
+                    int i = 0;
+                    for (; i + Vector<float>.Count < count2; i += Vector<float>.Count)
+                    {
+                        var vA = new Vector<float>(sA.Slice(i));
+                        var vB = new Vector<float>(sB.Slice(i));
+
+                        var x = Vector.Multiply(Vector.Add(vA, vB), volume);
+                        x.CopyTo(sA.Slice(i));
+                    }
+                    for (; i < count2; i++)
+                    {
+                        sA[i] = MathF.FusedMultiplyAdd(volume, sB[i], sA[i]);
+                    }
+                }
             }
         }
         public void AddWithOffset(SoundSample b, long offset, float volume)
@@ -54,8 +90,8 @@ namespace JaebeMusicStudio.Sound
             var min = aSample > bSample ? bSample : aSample;
             for (long i = 0; i < min; i++)
             {
-                this.raw[0, i + offset] += b.raw[0, i] * volume;
-                this.raw[1, i + offset] += b.raw[1, i] * volume;
+                this.raw[0, i + offset] = MathF.FusedMultiplyAdd(b.raw[0, i], volume, this.raw[0, i + offset]);
+                this.raw[1, i + offset] = MathF.FusedMultiplyAdd(b.raw[1, i], volume, this.raw[1, i + offset]);
             }
         }
         public void Multiply(float volume)
