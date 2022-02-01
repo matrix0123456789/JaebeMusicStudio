@@ -85,10 +85,10 @@ namespace JaebeMusicStudio.Sound
 
         internal float[,] GetSound(float start, float length, Note note, Rendering rendering)
         {
-            long samples = (long)Project.current.CountSamples(length); //how many samples you need on output
-            float samplesTotal = Project.current.CountSamples(note.Length + R);
-            var phaseTimeWaited = Project.current.CountSamples(randomPhase ? start + 1000 : start);//+1000 to taki trik
-            var realTimeWaited = Project.current.CountSamples(start);//+1000 to taki trik
+            long samples = (long)rendering.CountSamples(length); //how many samples you need on output
+            float samplesTotal = rendering.CountSamples(note.Length + R);
+            var phaseTimeWaited = rendering.CountSamples(randomPhase ? start + 1000 : start);//+1000 to taki trik
+            var realTimeWaited = rendering.CountSamples(start);//+1000 to taki trik
             var ret = new float[2, samples]; //sound that will be returned
 
             foreach (var p in Pitchs.ToArray())
@@ -113,9 +113,9 @@ namespace JaebeMusicStudio.Sound
                         break;
                 }
             }
-            var aLen = Project.current.CountSamples(A);
-            var dLen = Project.current.CountSamples(D);
-            var rLen = Project.current.CountSamples(R);
+            var aLen = rendering.CountSamples(A);
+            var dLen = rendering.CountSamples(D);
+            var rLen = rendering.CountSamples(R);
             var noteVolume = volume * note.Volume;
             var noteVolumeL = noteVolume * Math.Min((1 - Balance) * 2, 1);
             var noteVolumeR = noteVolume * Math.Min(Balance * 2, 1);

@@ -19,6 +19,16 @@ namespace JaebeMusicStudio.Sound
         public int frequency { get; internal set; }
         public IEnumerable<ISoundElement> soundElements { get; internal set; }
         internal IEnumerable<ILiveInput> liveInputs { get; set; }
+
+
+        public float CountSamples(float input)
+        {
+            return input / project.tempo * 60f * project.sampleRate;
+        }
+        public float SamplesToBeats(float input)
+        {
+            return input * project.tempo / 60f / project.sampleRate;
+        }
     }
     public enum RenderngType { live, block };
 }

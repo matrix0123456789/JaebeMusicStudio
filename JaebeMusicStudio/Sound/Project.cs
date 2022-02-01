@@ -320,17 +320,10 @@ namespace JaebeMusicStudio.Sound
             }
             loadEnd?.Invoke();
         }
-        public float CountSamples(float input)
-        {
-            return input / tempo * 60f * _sampleRate;
-        }
+       
         public TimeSpan CountTime(float input)
         {
             return new TimeSpan((long)(100 * input / tempo * 60f) * 100000);
-        }
-        public float SamplesToBeats(float input)
-        {
-            return input * tempo / 60f / _sampleRate;
         }
         public Track FindTrackWithSpace(float from, float to)
         {
