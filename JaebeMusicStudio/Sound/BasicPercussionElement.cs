@@ -45,10 +45,10 @@ namespace JaebeMusicStudio.Sound
                 }
             }
         }
-        public float[,] GetSound(float start, float length, Note note)
+        public float[,] GetSound(float start, float length, Note note, Rendering rendering)
         {
-            var Noise = GetNoise(start, length, note);
-            var Tone = GetTone(start, length, note);
+            var Noise = GetNoise(start, length, note, rendering);
+            var Tone = GetTone(start, length, note, rendering);
             var samples = Noise.GetLength(1);
             for (var i = 0; i < samples; i++)
             {
@@ -57,11 +57,11 @@ namespace JaebeMusicStudio.Sound
             }
             return Noise;
         }
-        public float[,] GetNoise(float start, float length, Note note)
+        public float[,] GetNoise(float start, float length, Note note, Rendering rendering)
         {
             Random RandomGenerator = new Random();
-            long samples = (long)Project.current.CountSamples(length); //how many samples you need on output
-            var timeWaited = Project.current.CountSamples(start);
+            long samples = (long)rendering.CountSamples(length); //how many samples you need on output
+            var timeWaited = rendering.CountSamples(start);
             var ret = new float[2, samples]; //sound that will be returned
             for (var i = 0; i < samples; i++)
             {
@@ -69,22 +69,22 @@ namespace JaebeMusicStudio.Sound
                 if (NoiseHalfTime == 0)
                     volume = 0;
                 else
-                    volume = (float)Math.Pow(.5, (i + timeWaited) / Project.current.sampleRate / NoiseHalfTime) * NoiseVolume;
+                    volume = (float)Math.Pow(.5, (i + timeWaited) / rendering.sampleRate / NoiseHalfTime) * NoiseVolume;
                 ret[0, i] = ((float)RandomGenerator.NextDouble() * 2f - 1f) * volume;
                 ret[1, i] = ((float)RandomGenerator.NextDouble() * 2f - 1f) * volume;
             }
             return ret;
         }
-        public float[,] GetTone(float start, float length, Note note)
+        public float[,] GetTone(float start, float length, Note note, Rendering rendering)
         {
-            long samples = (long)Project.current.CountSamples(length); //how many samples you need on output
-            float samplesTotal = Project.current.CountSamples(SoundLength);
-            var timeWaited = Project.current.CountSamples(start);
+            long samples = (long)rendering.CountSamples(length); //how many samples you need on output
+            float samplesTotal = rendering.CountSamples(SoundLength);
+            var timeWaited = rendering.CountSamples(start);
             var ret = new float[2, samples]; //sound that will be returned
             for (var i = 0; i < samples; i++)
             {
-                var volume = Math.Pow(.5, (i + timeWaited) / Project.current.sampleRate / ToneHalfTime) * ToneVolume;
-                var secondsOfNote = (i + timeWaited) / Project.current.sampleRate;
+                var volume = Math.Pow(.5, (i + timeWaited) / rendering.sampleRate / ToneHalfTime) * ToneVolume;
+                var secondsOfNote = (i + timeWaited) / rendering.sampleRate;
                 double ModulatedX = 0;
                 if (secondsOfNote < ToneModulationTime)
                     ModulatedX = ModulationFunction(secondsOfNote);

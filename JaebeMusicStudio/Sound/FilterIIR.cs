@@ -22,7 +22,7 @@ namespace JaebeMusicStudio.Sound
             outputHistory = new float[2, level];
         }
 
-        public float[,] DoFilter(float[,] input)
+        public virtual float[,] DoFilter(float[,] input, Rendering rendering)
         {
             lock (this)
             {

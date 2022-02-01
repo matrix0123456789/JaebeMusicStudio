@@ -116,7 +116,7 @@ namespace JaebeMusicStudio.Sound
 
         public float Length
         {
-            get { return Project.current.SamplesToBeats(wave.Length); }
+            get { return wave.Length/ sampleRate/ Project.current.tempo; }
         }
 
         public float[,] simpled(int levelOfDetail)

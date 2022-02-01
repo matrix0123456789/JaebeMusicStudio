@@ -68,7 +68,7 @@ namespace JaebeMusicStudio.Widgets
             {
                 input[0, i] = ((float)i / (float)points * 2) - 1;
             }
-            var output = Effect.DoFilter(input);
+            var output = Effect.DoFilter(input, new Rendering { sampleRate=48000});
             chart.Points.Clear();
             for (var i = 0; i < points; i++)
             {

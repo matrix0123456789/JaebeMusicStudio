@@ -40,7 +40,7 @@ namespace JaebeMusicStudio.Sound
             node.AppendChild(node2);
         }
 
-        public float[,] DoFilter(float[,] input)
+        public float[,] DoFilter(float[,] input, Rendering renderind)
         {
             switch (effectType)
             {

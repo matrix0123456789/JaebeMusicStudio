@@ -13,17 +13,18 @@ namespace JaebeMusicStudio.Sound
         private float frequency;
         private float resonation;
         private FilterType type;
-        public float Frequency { get { return frequency; } set { frequency = value; recalcFilter(); } }
-        public float Resonation { get { return resonation; } set { resonation = value; recalcFilter(); } }
-        public float Volume { get { return volume; } set { volume = value; recalcFilter(); } }
-        public FilterType Type { get { return type; } set { type = value; recalcFilter(); } }
-        private void recalcFilter()
+        private uint recalcedSampleRate = 0;
+        public float Frequency { get { return frequency; } set { frequency = value; recalcedSampleRate = 0; } }
+        public float Resonation { get { return resonation; } set { resonation = value; recalcedSampleRate = 0; } }
+        public float Volume { get { return volume; } set { volume = value; recalcedSampleRate = 0; } }
+        public FilterType Type { get { return type; } set { type = value; recalcedSampleRate = 0; } }
+        private void recalcFilter(uint sampleRate)
         {
             switch (type)
             {
                 case FilterType.Lowpass:
                     {
-                        var c = 1.0f / (float)Math.Tan(Math.PI * frequency / Project.current.sampleRate);
+                        var c = 1.0f / (float)Math.Tan(Math.PI * frequency / sampleRate);
 
                         level = 3;
                         a = new float[3];
@@ -37,7 +38,7 @@ namespace JaebeMusicStudio.Sound
                     }
                 case FilterType.Highpass:
                     {
-                        var c = (float)Math.Tan(Math.PI * frequency / Project.current.sampleRate);
+                        var c = (float)Math.Tan(Math.PI * frequency / sampleRate);
                         level = 3;
                         a = new float[3];
                         b = new float[3];
@@ -50,6 +51,7 @@ namespace JaebeMusicStudio.Sound
                     }
             }
             CleanMemory();
+            recalcedSampleRate = sampleRate;
         }
 
         public SimpleFilter(XmlNode node)
@@ -60,7 +62,6 @@ namespace JaebeMusicStudio.Sound
             type = (FilterType)Enum.Parse(typeof(FilterType), node.Attributes["Type"].Value);
             if (node.Attributes["isActive"] != null)
                 IsActive = bool.Parse(node.Attributes["isActive"].Value);
-            recalcFilter();
         }
 
         public SimpleFilter()
@@ -69,7 +70,6 @@ namespace JaebeMusicStudio.Sound
             resonation = (float)Math.Sqrt(2);
             volume = 0;
             type = FilterType.Lowpass;
-            recalcFilter();
         }
 
         public override void Serialize(XmlNode node)
@@ -85,6 +85,14 @@ namespace JaebeMusicStudio.Sound
         public enum FilterType
         {
             Lowpass, Highpass
+        }
+
+        public override float[,] DoFilter(float[,] input, Rendering rendering)
+        {
+            if (rendering.sampleRate != recalcedSampleRate)
+                recalcFilter(rendering.sampleRate);
+
+            return base.DoFilter(input, rendering);
         }
     }
 }

@@ -21,11 +21,11 @@ namespace JaebeMusicStudio.Sound
             throw new NotImplementedException();
         }
 
-        public float[,] DoFilter(float[,] input)
+        public float[,] DoFilter(float[,] input, Rendering rendering)
         {
 
-            var time = input.GetLength(1) / Project.current.sampleRate;
-            var waveTime = Project.current.sampleRate / frequency;
+            var time = input.GetLength(1) / rendering.sampleRate;
+            var waveTime = rendering.sampleRate / frequency;
             var samples = input.GetLength(1);
             var phaseSamples = phase * waveTime;
             float[,] modulation;

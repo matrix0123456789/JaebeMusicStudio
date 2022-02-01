@@ -47,7 +47,6 @@ namespace JaebeMusicStudio.Widgets
             var levelOfDetails = (int)Math.Log(samples / ActualWidth, 64);
             if (levelOfDetails < 1)
                 levelOfDetails = 1;
-            long offset = (long)Project.current.CountSamples(element.Offset);
 
             var simpledSound = element.sample.simpled(levelOfDetails);
             double ratio = samples / (double)pixels / Math.Pow(64, levelOfDetails);

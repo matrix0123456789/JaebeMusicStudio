@@ -16,7 +16,7 @@ namespace JaebeMusicStudio.Sound
         {
         }
 
-        public float[,] DoFilter(float[,] input)
+        public float[,] DoFilter(float[,] input, Rendering renderind)
         {
             var length = input.GetLength(1);
             var output = new float[2, length];

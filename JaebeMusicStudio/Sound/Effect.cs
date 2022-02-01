@@ -10,7 +10,7 @@ namespace JaebeMusicStudio.Sound
     public interface Effect
     {
         bool IsActive { get; set; }
-        float[,] DoFilter(float[,] input);
+        float[,] DoFilter(float[,] input, Rendering renderind);
         void CleanMemory();
         void Serialize(XmlNode node);
     }

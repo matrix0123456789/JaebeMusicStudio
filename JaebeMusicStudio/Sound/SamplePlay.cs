@@ -52,7 +52,7 @@ namespace JaebeMusicStudio.Sound
         }
         public SoundSample GetSound(float start, float length, Rendering rendering, NotesCollection notes)
         {
-            long samples = (long)Project.current.CountSamples(length);//how many samples you need on output
+            long samples = (long)rendering.CountSamples(length);//how many samples you need on output
             var ret = new float[2, samples];//sound that will be returned
             var notesCount = notes.Count;
             var tasks = new Task<float[,]>[notesCount];
@@ -75,14 +75,14 @@ namespace JaebeMusicStudio.Sound
                                 {
                                     l1 = length;
                                 }
-                                return item.GetSound(start - note.Offset, l1, note);
+                                return item.GetSound(start - note.Offset, l1, note, rendering);
                             }
                             else
                             {
                                 var l1 = length + start - note.Offset;
                                 if (note.Length + item.R < l1)
                                     l1 = currentNoteLength;
-                                return item.GetSound(0, l1, note);
+                                return item.GetSound(0, l1, note, rendering);
                             }
                         }
                         catch
@@ -117,7 +117,7 @@ namespace JaebeMusicStudio.Sound
                 }
                 else
                 {
-                    var notSamplesOffset = (long)Project.current.CountSamples(note.Offset - start);
+                    var notSamplesOffset = (long)rendering.CountSamples(note.Offset - start);
 
                     if (tasks[i] != null)
                     {
@@ -166,13 +166,13 @@ namespace JaebeMusicStudio.Sound
                 R = float.Parse(element.Attributes["r"].Value, CultureInfo.InvariantCulture);
             sample = SampledSound.FindByUrl(element.Attributes["src"].Value);
         }
-        public float[,] GetSound(float start, float length, Note note)
+        public float[,] GetSound(float start, float length, Note note, Rendering rendering)
         {
-            long samples = (long)Project.current.CountSamples(length);//how many samples you need on output
+            long samples = (long)rendering.CountSamples(length);//how many samples you need on output
             var ret = new float[sample.channels, samples];//sound that will be returned
             var pitchRatio = Math.Pow(2, (note.Pitch - Pitch) / 12);
             var startOffset = ((innerOffset + start * pitchRatio) / Project.current.tempo * 60f) * sample.sampleRate;//start of reading in sample
-            var filesRatio = sample.sampleRate / Project.current.sampleRate;
+            var filesRatio = sample.sampleRate / rendering.sampleRate;
             var samplesRatio = filesRatio * pitchRatio;
 
             if ((int)(startOffset + (float)samples * samplesRatio) >= sample.wave.GetLength(1))//end of sample

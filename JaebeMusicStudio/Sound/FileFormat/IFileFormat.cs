@@ -9,6 +9,6 @@ namespace JaebeMusicStudio.Sound.FileFormat
 {
     public interface IFileFormat
     {
-        void Write(FileStream str, float[,] data);
+        void Write(FileStream str, float[,] data, Rendering renderind);
     }
 }

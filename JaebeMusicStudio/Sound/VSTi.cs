@@ -80,7 +80,7 @@ namespace JaebeMusicStudio.Sound
             }
             lastPlayedStart = start;
 
-            int samples = (int)Project.current.CountSamples(length);//how many samples you need on output
+            int samples = (int)rendering.CountSamples(length);//how many samples you need on output
 
             Note[] startNotes, endNotes;
             List<float> timeBreaks;
@@ -114,7 +114,7 @@ namespace JaebeMusicStudio.Sound
             {
                 //todo temporary
                 //writer.Write((int)JmsVstHost.Commands.GetSoundNoteSynth);
-                var nowSamples = (int)Project.current.CountSamples(timeBreaks[i + 1] - start);
+                var nowSamples = (int)rendering.CountSamples(timeBreaks[i + 1] - start);
                 if (i == timeBreaks.Count - 2)
                     nowSamples = samples;//to provide errors of float incorrection
                 if (nowSamples - sumSamples <= 0)

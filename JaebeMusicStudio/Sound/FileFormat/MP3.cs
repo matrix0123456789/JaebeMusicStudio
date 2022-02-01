@@ -10,7 +10,7 @@ namespace JaebeMusicStudio.Sound.FileFormat
     public class MP3 : IFileFormat
     {
         public int BitsPerSample = 16;
-        public void Write(FileStream str, float[,] data)
+        public void Write(FileStream str, float[,] data, Rendering renderind)
         {
             var writer = new BinaryWriter(str);
             var fileSize = 44 + data.Length * (BitsPerSample / 8);
@@ -21,8 +21,8 @@ namespace JaebeMusicStudio.Sound.FileFormat
             writer.Write(16);
             writer.Write((short)1);
             writer.Write((short)2);
-            writer.Write((int)Project.current.sampleRate);
-            writer.Write((int)Project.current.sampleRate * BitsPerSample * 4);
+            writer.Write((int)renderind.sampleRate);
+            writer.Write((int)renderind.sampleRate * BitsPerSample * 4);
             writer.Write((short)(BitsPerSample * 4));
             writer.Write((short)(BitsPerSample));
             writer.Write("data".ToCharArray());

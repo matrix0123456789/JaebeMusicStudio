@@ -28,7 +28,7 @@ namespace JaebeMusicStudio.Sound
             }
         }
 
-        public float[,] DoFilter(float[,] input)
+        public float[,] DoFilter(float[,] input, Rendering rendering)
         {
             lock (this)
             {
@@ -37,8 +37,8 @@ namespace JaebeMusicStudio.Sound
                 var ret = new float[input.GetLength(0), input.GetLength(1)];
                 for (int n = 0; n < items.Count; n++)
                 {
-                    var amplitude_sample = items[n].Amplitude * Project.current.sampleRate;
-                    var ileNaCykl = 1 / items[n].Frequency * Project.current.sampleRate / Math.PI / 2;
+                    var amplitude_sample = items[n].Amplitude * rendering.sampleRate;
+                    var ileNaCykl = 1 / items[n].Frequency * rendering.sampleRate / Math.PI / 2;
                     for (int i = 0; i < len1; i++)
                     {
 

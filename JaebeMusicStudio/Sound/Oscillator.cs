@@ -93,7 +93,7 @@ namespace JaebeMusicStudio.Sound
 
             foreach (var p in Pitchs.ToArray())
             {
-                var waveTime = (float)Project.current.waveTime(note.Pitch + p);
+                var waveTime = (float)rendering.waveTime(note.Pitch + p);
                 switch (Type)
                 {
                     case OscillatorType.sine:

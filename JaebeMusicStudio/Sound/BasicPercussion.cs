@@ -66,7 +66,7 @@ namespace JaebeMusicStudio.Sound
             var maxLength = notes.Any() ? notes.Max(note => (note != null && pitchesToElement.ContainsKey((int)note?.Pitch)) ? pitchesToElement[(int)note.Pitch].SoundLength + note.Offset : 0) : 0;
             if (length > maxLength)
                 length = maxLength;
-            long samples = (long)Project.current.CountSamples(length);//how many samples you need on output
+            long samples = (long)rendering.CountSamples(length);//how many samples you need on output
             var ret = new float[2, samples];//sound that will be returned
             var notesCount = notes.Count;
             var tasks = new Task<float[,]>[notesCount];
@@ -88,14 +88,14 @@ namespace JaebeMusicStudio.Sound
                             {
                                 l1 = length;
                             }
-                            return pitchesToElement[(int)note.Pitch]?.GetSound(start - note.Offset, l1, note);
+                            return pitchesToElement[(int)note.Pitch]?.GetSound(start - note.Offset, l1, note, rendering);
                         }
                         else
                         {
                             var l1 = length + start - note.Offset;
                             if (note.Length < l1)
                                 l1 = BPElement.SoundLength;
-                            return pitchesToElement[(int)note.Pitch]?.GetSound(0, l1, note);
+                            return pitchesToElement[(int)note.Pitch]?.GetSound(0, l1, note, rendering);
                         }
                     });
 
@@ -128,7 +128,7 @@ namespace JaebeMusicStudio.Sound
                 }
                 else
                 {
-                    var notSamplesOffset = (long)Project.current.CountSamples(note.Offset - start);
+                    var notSamplesOffset = (long)rendering.CountSamples(note.Offset - start);
 
                     if (tasks[i] != null)
                     {

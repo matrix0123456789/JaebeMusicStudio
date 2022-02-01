@@ -79,7 +79,7 @@ namespace JaebeMusicStudio.Sound
         }
         public SoundSample GetSound(float start, float length, Rendering rendering, NotesCollection notes)
         {
-            long samples = (long)Project.current.CountSamples(length);//how many samples you need on output
+            long samples = (long)rendering.CountSamples(length);//how many samples you need on output
             var ret = new SoundSample(samples);//sound that will be returned
             //we could make parralelism here, but need to consider if it will make better performance, becouse each sound element is already paraller 
             Oscillator[] oscs;
@@ -90,7 +90,7 @@ namespace JaebeMusicStudio.Sound
             var arr = oscs.SelectMany(o => notes.Where(note => note.Offset < start + length && note.Offset + note.Length + o.R > start).Select(note => (o, note.Clone()))).Select(x =>
             {
                 var (oscillator, note) = x;
-                var notSamplesOffset = (long)Project.current.CountSamples(note.Offset - start);
+                var notSamplesOffset = (long)rendering.CountSamples(note.Offset - start);
 
                 float[,] returnedSound;
                 if (start > note.Offset)

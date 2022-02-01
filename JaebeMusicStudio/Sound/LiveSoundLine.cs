@@ -126,7 +126,7 @@ namespace JaebeMusicStudio.Sound
         public override async Task<float[,]> Render(Rendering rendering)
         {
 
-            var data = new float[2, (int)Project.current.CountSamples(rendering.renderingLength)];
+            var data = new float[2, (int)rendering.CountSamples(rendering.renderingLength)];
             var length = data.GetLength(1);
 
             if (buffer.Count > 0)

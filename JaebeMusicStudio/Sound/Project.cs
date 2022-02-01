@@ -19,17 +19,11 @@ namespace JaebeMusicStudio.Sound
     class Project
     {
         float _tempo = 120;
-        uint _sampleRate = 48000;
         public event Action loadEnd;
         public float tempo
         {
             get { return _tempo; }
             set { _tempo = value; }
-        }
-
-        public float sampleRate
-        {
-            get { return _sampleRate; }
         }
 
         public static Project current = null;
@@ -343,10 +337,7 @@ namespace JaebeMusicStudio.Sound
             }
             return AddEmptyTrack();
         }
-        public double waveTime(float pitch)
-        {
-            return sampleRate / (Math.Pow(2, (pitch - 69) / 12) * 440f);
-        }
+       
         public bool checkNamedElement(string name) => NamedElements.ContainsKey(name);
         long generatedNamedElementNumber = 0;
         public void generateNamedElement(INamedElement el)

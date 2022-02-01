@@ -50,10 +50,10 @@ namespace JaebeMusicStudio.Sound
 
         public SoundSample GetSound(float start, float length, Rendering rendering)
         {
-            long samples = (long)Project.current.CountSamples(length);//how many samples you need on output
+            long samples = (long)rendering.CountSamples(length);//how many samples you need on output
             var ret = new float[2, samples];//sound that will be returned
             var startOffset = ((innerOffset + start) / Project.current.tempo * 60f) * sample.sampleRate;//start of reading in sample
-            var samplesRatio = sample.sampleRate / Project.current.sampleRate;
+            var samplesRatio = sample.sampleRate / (float)rendering.sampleRate;
 
             if ((int)(startOffset + (float)samples * samplesRatio) >= sample.wave.GetLength(1))//end of sample
                 samples = (long)((sample.wave.GetLength(1) - 1 - startOffset) / samplesRatio);

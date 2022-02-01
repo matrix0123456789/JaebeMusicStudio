@@ -95,7 +95,7 @@ namespace JaebeMusicStudio.Sound
                 foreach (var effect in effects)
                 {
                     if (effect.IsActive)
-                        sound = effect.DoFilter(sound);
+                        sound = effect.DoFilter(sound, rendering);
                 }
             }
 
@@ -130,7 +130,7 @@ namespace JaebeMusicStudio.Sound
         public async Task<SoundSample> RenderDirectSound(Rendering rendering)
         {
 
-            var sound = new SoundSample((int)rendering.project.CountSamples(rendering.renderingLength));
+            var sound = new SoundSample((int)rendering.CountSamples(rendering.renderingLength));
             float position = rendering.renderingStart;
             float renderLength = rendering.renderingLength;
 
@@ -143,7 +143,7 @@ namespace JaebeMusicStudio.Sound
                     if (renderStart >= 0) //you must wait to start playing
                     {
                         var rendered = element.GetSound(0, rendering.renderingLength - renderStart, rendering);
-                        return new SoundElementRenderResult { data = rendered, offset = (int)rendering.project.CountSamples(renderStart) };
+                        return new SoundElementRenderResult { data = rendered, offset = (int)rendering.CountSamples(renderStart) };
                     }
                     else
                     {

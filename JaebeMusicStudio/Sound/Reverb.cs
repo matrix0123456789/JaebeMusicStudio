@@ -53,11 +53,11 @@ namespace JaebeMusicStudio.Sound
             node.AppendChild(node2);
         }
 
-        public float[,] DoFilter(float[,] input)
+        public float[,] DoFilter(float[,] input, Rendering rendering)
         {
             lock (this)
             {
-                long samplesToWait = (long)Project.current.CountSamples(delay);
+                long samplesToWait = (long)rendering.CountSamples(delay);
                 if (samplesToWait < 1)
                     samplesToWait = 1;
                 float[,] ret = new float[2, input.GetLength(1)];

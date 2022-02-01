@@ -52,7 +52,7 @@ namespace JaebeMusicStudio.Widgets
                     }
                 });
         }
-        private int samplesPerFrame => (int)(Project.current.sampleRate / 60.0);
+        private int samplesPerFrame => (int)(48000 / 60.0);//todo tmp
         void UpdateFrame()
         {
             float[,] nextFrame;

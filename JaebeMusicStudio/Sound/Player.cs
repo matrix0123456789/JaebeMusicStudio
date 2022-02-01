@@ -19,7 +19,7 @@ namespace JaebeMusicStudio.Sound
         static System.Threading.Thread renderingThread;
         public enum Status { fileRendering, playing, paused }
         static WaveProvider provider = new WaveProvider();
-       static WaveFormat WaveFormat = new WaveFormat((int)Sound.Project.current.sampleRate, 2);
+        static WaveFormat WaveFormat = new WaveFormat(48000, 2);
         public static WasapiOut2 WasapiWyjście = new WasapiOut2(AudioClientShareMode.Shared, true, renderPeriod);
         public static event Action<float> positionChanged;
         public static event Action<float[,]> SoundPlayed;
@@ -74,7 +74,7 @@ namespace JaebeMusicStudio.Sound
                     if (renderLength < 0)
                         renderLength = 0;
                     liveRenderingNow = true;
-                    var rendering = new Rendering() { renderingStart = position, renderingLength = (float)renderLength, project = Project.current, type = RenderngType.live };
+                    var rendering = new Rendering() { renderingStart = position, renderingLength = (float)renderLength, project = Project.current, type = RenderngType.live, sampleRate=48000 };
                     var sound=await rendering.project.Render(rendering);
                     Console.WriteLine("ReturnedSound");
                     ReturnedSound(sound, buffer);
