@@ -83,26 +83,68 @@ namespace JaebeMusicStudio.Sound
                 }
             }
         }
-        public void AddWithOffset(SoundSample b, long offset, float volume)
+        public unsafe void AddWithOffset(SoundSample b, long offset, float volume)
         {
-            var aSample = SampleCount - offset;
+            var aSample = (int)(SampleCount - offset);
             var bSample = b.SampleCount;
             var min = aSample > bSample ? bSample : aSample;
-            for (long i = 0; i < min; i++)
+            //for (long i = 0; i < min; i++)
+            //{
+            //    this.raw[0, i + offset] = MathF.FusedMultiplyAdd(b.raw[0, i], volume, this.raw[0, i + offset]);
+            //    this.raw[1, i + offset] = MathF.FusedMultiplyAdd(b.raw[1, i], volume, this.raw[1, i + offset]);
+            //}
+            fixed (float* pA = raw)
             {
-                this.raw[0, i + offset] = MathF.FusedMultiplyAdd(b.raw[0, i], volume, this.raw[0, i + offset]);
-                this.raw[1, i + offset] = MathF.FusedMultiplyAdd(b.raw[1, i], volume, this.raw[1, i + offset]);
+                fixed (float* pB = b.raw)
+                {
+                    var sAL = new Span<float>(pA + offset, min);
+                    var sAR = new Span<float>(pA + SampleCount + offset, min);
+                    var sBL = new Span<float>(pB, min);
+                    var sBR = new Span<float>(pB + b.SampleCount, min);
+                    int i = 0;
+                    for (; i + Vector<float>.Count < min; i += Vector<float>.Count)
+                    {
+                        var vAL = new Vector<float>(sAL.Slice(i));
+                        var vAR = new Vector<float>(sAR.Slice(i));
+                        var vBL = new Vector<float>(sBL.Slice(i));
+                        var vBR = new Vector<float>(sBR.Slice(i));
+
+                        Vector.Multiply(Vector.Add(vAL, vBL), volume).CopyTo(sAL.Slice(i));
+                        Vector.Multiply(Vector.Add(vAR, vBR), volume).CopyTo(sAR.Slice(i));
+                    }
+                    for (; i < min; i++)
+                    {
+                        sAL[i] = MathF.FusedMultiplyAdd(volume, sBL[i], sAL[i]);
+                        sAR[i] = MathF.FusedMultiplyAdd(volume, sBR[i], sAR[i]);
+                    }
+                }
             }
         }
-        public void Multiply(float volume)
+        public unsafe void Multiply(float volume)
         {
-            if (volume != 0)
+            if (volume != 1)
             {
                 var count = SampleCount;
-                for (int i = 0; i < count; i++)
+                var count2 = count * 2;
+                //for (int i = 0; i < count; i++)
+                //{
+                //    this.raw[0, i] *= volume;
+                //    this.raw[1, i] *= volume;
+                //}
+                fixed (float* p = raw)
                 {
-                    this.raw[0, i] *= volume;
-                    this.raw[1, i] *= volume;
+                    var s = new Span<float>(p, count2);
+                    int i = 0;
+                    for (; i + Vector<float>.Count < count2; i += Vector<float>.Count)
+                    {
+                        var v = new Vector<float>(s.Slice(i));
+                        var x = Vector.Multiply(v, volume);
+                        x.CopyTo(s.Slice(i));
+                    }
+                    for (; i < count2; i++)
+                    {
+                        s[i] *= volume;
+                    }
                 }
             }
         }
